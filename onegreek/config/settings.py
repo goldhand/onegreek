@@ -54,6 +54,7 @@ class Common(Configuration):
 
     # Apps specific for this project go here.
     LOCAL_APPS = (
+        'apiroot',
         'utils',
         'core',
         'users',  # custom users app
