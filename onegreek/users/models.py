@@ -12,15 +12,17 @@ from model_utils import Choices
 # Subclass AbstractUser
 class User(AbstractUser):
     STATUS = Choices(
-        ('Potential', ['rushee', 'pledge']),
+        ('guest', 'Guest'),
+        ('Potential', ['guest', 'rushee']),
         ('Active', [
             ('goodstanding', 'In Good Standing'),
-            ('badstanding', 'In Bad Standing')
+            ('badstanding', 'In Bad Standing'),
+            ('alumni', 'Alumni'),
+            ('pledge', 'Pledge'),
         ]),
         ('Inactive', [
-            ('alumni', 'Alumni'),
             ('withdrew', 'Withdrew'),
-            ('unacceped', 'Did not pass Pledging')
+            ('unaccepted', 'Did not pass Pledging')
         ])
     )
     COLLEGE_YEARS = (

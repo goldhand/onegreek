@@ -15,7 +15,6 @@ class BaseAbstractModel(TimeStampedModel):
         abstract = True
 
 
-
 def base_concrete_model(abstract, instance):
     """
     source: @stephenmcd/mezzanine
@@ -125,3 +124,11 @@ class Slugged(TimeStampedModel):
 
     admin_link.allow_tags = True
     admin_link.short_description = ""
+
+
+class Ownable(models.Model):
+    #TODO: Make this required, was having issues with migrations in past attempt
+    owner = models.ForeignKey('users.User', null=True, blank=True)
+
+    class meta:
+        abstract = True

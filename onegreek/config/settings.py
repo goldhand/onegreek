@@ -59,6 +59,9 @@ class Common(Configuration):
         'core',
         'users',  # custom users app
         'chapters',
+        'universities',
+        'events',
+        'comments'
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

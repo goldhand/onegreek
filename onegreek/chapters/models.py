@@ -11,6 +11,7 @@ from core.models import Slugged
 class Chapter(Slugged, StatusModel):
 
     STATUS = Choices('excellence', 'achievement', 'probation', 'inactive')
+    university = models.ForeignKey('universities.University', null=True, blank=True)
     description = SplitField()
     awards = SplitField()
     philanthropy = SplitField()
