@@ -8,10 +8,11 @@ from model_utils.models import TimeStampedModel
 
 from rest_framework.renderers import JSONRenderer
 
-from core.models import Slugged, Ownable
+from core.models import Slugged
 
 
-class Comment(Ownable, TimeStampedModel, StatusModel):
+class Comment(TimeStampedModel, StatusModel):
+    owner = models.ForeignKey('users.User', null=True, blank=True)
     STATUS = Choices(('draft', 'Draft'), ('public', 'Public'),
                      ('private', 'Share with members of your chapter'),
                      ('custom', 'Share with other chapters'))
@@ -21,3 +22,9 @@ class Comment(Ownable, TimeStampedModel, StatusModel):
     def __unicode__(self):
         time = JSONRenderer().render(self.created)
         return '%s-%s' % (str(self.owner.id), time.strip('"'))
+
+    def user_can_view(self, _user):
+        if _user.chapter in self.viewers.all() or self.owner == _user:
+            return True
+        else:
+            return False

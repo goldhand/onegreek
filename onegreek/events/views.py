@@ -1,3 +1,5 @@
+from django.views import generic
+
 from rest_framework import viewsets
 from rest_framework import permissions
 
@@ -12,3 +14,6 @@ class EventViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated,
         IsOwnerOrViewer
     )
+
+class EventDetail(generic.DetailView):
+    model = Event

@@ -50,6 +50,7 @@ class Common(Configuration):
         'avatar',  # for user avatars
         'rest_framework',
         'django_extensions',
+        'akismet',
     )
 
     # Apps specific for this project go here.
@@ -57,11 +58,12 @@ class Common(Configuration):
         'apiroot',
         'utils',
         'core',
-        'users',  # custom users app
-        'chapters',
         'universities',
+        'chapters',
         'events',
-        'comments'
+        'comments',
+        'users',  # custom users app
+        'fluent_comments',
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -73,6 +75,10 @@ class Common(Configuration):
         'allauth',  # registration
         'allauth.account',  # registration
         'allauth.socialaccount',  # registration
+    )
+
+    INSTALLED_APPS += (
+       'django.contrib.comments',
     )
     ########## END APP CONFIGURATION
 
@@ -276,6 +282,23 @@ class Common(Configuration):
         }
     }
     ########## END LOGGING CONFIGURATION
+
+    ########## FLUENT_COMMENTS CONFIGURATION
+
+    COMMENTS_APP = 'fluent_comments'
+    #AKISMET_API_KEY = "your-api-key"
+    #AKISMET_BLOG_URL = "http://example.com"        # Optional, to override auto detection
+    #AKISMET_IS_TEST = False                        # Enable to make test runs
+
+    FLUENT_CONTENTS_USE_AKISMET = False             # Enabled by default when AKISMET_API_KEY is set.
+    FLUENT_COMMENTS_CLOSE_AFTER_DAYS = None        # Auto-close comments after N days
+    FLUENT_COMMENTS_MODERATE_AFTER_DAYS = None     # Auto-moderate comments after N days.
+    FLUENT_COMMENTS_AKISMET_ACTION = 'moderate'    # Set to 'moderate' or 'delete'
+
+    FLUENT_COMMENTS_USE_EMAIL_NOTIFICATION = False
+    FLUENT_COMMENTS_EXCLUDE_FIELDS = ('name', 'email', 'url')
+
+    ########## END FLUENT_COMMENTS CONFIGURATION
 
 
     ########## Your common stuff: Below this line define 3rd party libary settings

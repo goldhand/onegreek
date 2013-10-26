@@ -40,3 +40,4 @@ django-avatar==2.0
 
 # Your custom requirements go here
 djangorestframework==2.3.8
+akismet>=0.2

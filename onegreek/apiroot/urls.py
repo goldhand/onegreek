@@ -18,6 +18,6 @@ router.register(r'comments', CommentViewSet)
 router.register(r'events', EventViewSet)
 router.register(r'universities', UniversityViewSet)
 
-urlpatterns = patterns('chapters.views',
+urlpatterns = patterns('apiroot.views',
                        url(r'^', include(router.urls)),
                        )

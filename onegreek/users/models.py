@@ -44,3 +44,6 @@ class User(AbstractUser):
 
     def __unicode__(self):
         return self.username
+
+    def can_view_object(self, _object):
+        return _object.user_can_view(self)

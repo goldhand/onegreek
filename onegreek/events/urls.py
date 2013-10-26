@@ -3,4 +3,10 @@ try:
 except ImportError:  # django < 1.4
     from django.conf.urls.defaults import *
 
-# place app url patterns here
+from .views import EventDetail
+
+
+urlpatterns = patterns("events.views",
+                       url(r"^(?P<pk>\d+)/$", EventDetail.as_view(), name='detail'),
+)
+

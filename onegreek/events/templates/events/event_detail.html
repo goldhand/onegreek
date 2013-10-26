@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load comments staticfiles i18n fluent_comments_tags %}
+
+{% block css %}
+    {{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static "fluent_comments/css/ajaxcomments.css" %}" />
+{% endblock css %}
+{% block javascript %}
+    {{ block.super }}
+<script type="text/javascript" src="{% static "fluent_comments/js/ajaxcomments.js" %}"></script>
+{% endblock javascript %}
+
+{% block content %}
+    {% if request.user == event.owner %}
+    <div>
+    <dl>
+        <dt>Created by:</dt>
+        <dd>{{ event.owner }}</dd>
+        <dt>Status:</dt>
+        <dd>{{ event.status }}</dd>
+        <dt>Viewers:</dt>
+        <dd>
+            <ul>
+                {% for viewer in event.viewers.all %}
+                <li>{{ viewer.title }}</li>
+                {% endfor %}
+            </ul>
+        </dd>
+        <dt>Attendees:</dt>
+        <dd>
+            <ul>
+                {% for attendee in event.attendees.all %}
+                    <li>{{ attendee.get_full_name }}</li>
+                {% endfor %}
+            </ul>
+        </dd>
+    </dl>
+    </div>
+    {% endif %}
+    <div>
+    <h1>
+        {{ event.title }}
+        <small>
+            {{ event.start }} -
+            {{ event.end }}
+        </small>
+    </h1>
+
+    <p>
+        {{ event.description }}
+    </p>
+    </div>
+
+
+<div id="comments-wrapper">
+    {% if comments_count %}
+    <h3 class="has-comments-title">{% blocktrans with entry_title=event.title count comments_count=comments_count %}{{ comments_count }} comment to {{ entry_title }}{% plural %}{{ comments_count }} comments to {{ entry_title }}{% endblocktrans %}</h3>
+      {% render_comment_list for object %}
+
+      {% if not event|comments_are_open %}
+        <p class="comments-closed">{% trans "Comments are closed." %}</p>
+      {% endif %}
+    {% else %}
+      {# no comments yet, invite #}
+      {% if event|comments_are_open %}
+        <h3 class="no-comments-title">{% trans "Leave a reply" %}</h3>
+
+        {# include the empty list, so the <div> is there for Ajax code #}
+        {% render_comment_list for object %}
+
+      {% endif %}
+    {% endif %}
+  </div>
+
+  {% if event|comments_are_open %}
+    <div id="comments-form-wrapper">
+      {% render_comment_form for object %}
+    </div>
+  {% endif %}
+{% endblock content %}
