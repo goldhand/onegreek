@@ -59,6 +59,8 @@ class Common(Configuration):
         'utils',
         'core',
         'universities',
+        'fraternities',
+        #'sororities',
         'chapters',
         'events',
         'comments',
