@@ -37,8 +37,8 @@ class Fraternity(Slugged):
         self.slug = unique_slug(slug_qs, "slug", self.slug)
 
         try:
-            self.group = Group.objects.get(name="%s_%s" % ("fraternity", self.slug))
+            self.group = Group.objects.get(name="%s_%d" % ("fraternity", self.id))
         except ObjectDoesNotExist:
-            self.group = Group.objects.create(name="%s_%s" % ("fraternity", self.slug))
+            self.group = Group.objects.create(name="%s_%d" % ("fraternity", self.id))
 
         super(Fraternity, self).save(*args, **kwargs)

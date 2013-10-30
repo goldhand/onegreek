@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from .serializers import CommentSerializer
-from .models import Comment
+from .models import PComment as Comment
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()

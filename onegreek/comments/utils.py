@@ -6,12 +6,8 @@ from django.core.mail import send_mail
 from django.dispatch import receiver
 from django.contrib.comments import signals
 from django.shortcuts import render
-from fluent_comments import appsettings
+from comments import settings as comment_settings
 from django.db import models
-
-
-class PermissionedComment(comments.Comment):
-    viewers = models.ManyToManyField('chapters.Chapter', null=True, blank=True)
 
 
 @receiver(signals.comment_was_posted)
@@ -25,7 +21,7 @@ def on_comment_posted(sender, comment, request, **kwargs):
     #
     # Instead of implementing this feature in the moderator class, the signal is used instead
     # so the notification feature works regardless of a manual moderator.register() call in the project.
-    if not appsettings.FLUENT_COMMENTS_USE_EMAIL_NOTIFICATION:
+    if not comment_settings.COMMENTS_USE_EMAIL_NOTIFICATION:
         return
 
     recipient_list = [manager_tuple[1] for manager_tuple in settings.MANAGERS]

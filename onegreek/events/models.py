@@ -6,8 +6,7 @@ from model_utils.fields import SplitField, StatusField
 from model_utils.models import TimeFramedModel
 from model_utils import Choices, FieldTracker
 
-from fluent_comments.moderation import moderate_model, comments_are_open, comments_are_moderated
-from fluent_comments.models import get_comments_for_model, CommentsRelation
+from comments.utils import CommentsRelation
 
 from core.models import Slugged
 
@@ -42,7 +41,3 @@ class Event(TimeFramedModel, Slugged):
         else:
             return False
 
-    # Optional, give direct access to moderation info via the model:
-    comments = property(get_comments_for_model)
-    comments_are_open = property(comments_are_open)
-    comments_are_moderated = property(comments_are_moderated)

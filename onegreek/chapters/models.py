@@ -38,9 +38,9 @@ class Chapter(Slugged, StatusModel):
         self.slug = unique_slug(slug_qs, "slug", self.slug)
 
         try:
-            self.group = Group.objects.get(name="%s_%s" % ("chapter", self.slug))
+            self.group = Group.objects.get(name="%s_%d" % ("chapter", self.id))
         except ObjectDoesNotExist:
-            self.group = Group.objects.create(name="%s_%s" % ("chapter", self.slug))
+            self.group = Group.objects.create(name="%s_%d" % ("chapter", self.id))
 
         super(Chapter, self).save(*args, **kwargs)
 

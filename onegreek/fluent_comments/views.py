@@ -95,6 +95,10 @@ def post_comment_ajax(request, using=None):
 
     # Save the comment and signal that it was saved
     comment.save()
+    print comment.viewers.all()
+    from .forms import FluentCommentForm
+    form = FluentCommentForm(request.POST)
+    print form
     signals.comment_was_posted.send(
         sender  = comment.__class__,
         comment = comment,

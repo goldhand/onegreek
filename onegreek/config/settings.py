@@ -51,6 +51,7 @@ class Common(Configuration):
         'rest_framework',
         'django_extensions',
         'akismet',
+        'guardian',
     )
 
     # Apps specific for this project go here.
@@ -65,7 +66,6 @@ class Common(Configuration):
         'events',
         'comments',
         'users',  # custom users app
-        'fluent_comments',
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -149,7 +149,7 @@ class Common(Configuration):
 
     ########## GENERAL CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#time-zone
-    TIME_ZONE = 'America/Los_Angeles'
+    TIME_ZONE = 'America/Phoenix'
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
     LANGUAGE_CODE = 'en-us'
@@ -234,6 +234,7 @@ class Common(Configuration):
     ########## AUTHENTICATION CONFIGURATION
     AUTHENTICATION_BACKENDS = (
         "django.contrib.auth.backends.ModelBackend",
+        "guardian.backends.ObjectPermissionBackend",
         "allauth.account.auth_backends.AuthenticationBackend",
     )
 
@@ -285,23 +286,19 @@ class Common(Configuration):
     }
     ########## END LOGGING CONFIGURATION
 
-    ########## FLUENT_COMMENTS CONFIGURATION
+    ########## COMMENTS CONFIGURATION
 
-    COMMENTS_APP = 'fluent_comments'
-    #AKISMET_API_KEY = "your-api-key"
-    #AKISMET_BLOG_URL = "http://example.com"        # Optional, to override auto detection
-    #AKISMET_IS_TEST = False                        # Enable to make test runs
+    COMMENTS_APP = 'comments'
+    COMMENTS_USE_EMAIL_NOTIFICATION = False
+    COMMENTS_EXCLUDE_FIELDS = ('url', 'name', 'email')
 
-    FLUENT_CONTENTS_USE_AKISMET = False             # Enabled by default when AKISMET_API_KEY is set.
-    FLUENT_COMMENTS_CLOSE_AFTER_DAYS = None        # Auto-close comments after N days
-    FLUENT_COMMENTS_MODERATE_AFTER_DAYS = None     # Auto-moderate comments after N days.
-    FLUENT_COMMENTS_AKISMET_ACTION = 'moderate'    # Set to 'moderate' or 'delete'
+    ########## END COMMENTS CONFIGURATION
 
-    FLUENT_COMMENTS_USE_EMAIL_NOTIFICATION = False
-    FLUENT_COMMENTS_EXCLUDE_FIELDS = ('name', 'email', 'url')
+    ########## DJANGO_GUARDIAN CONFIGURATION
+    ANONYMOUS_USER_ID = -1
+    ANONYMOUS_DEFAULT_USERNAME_VALUE = "ANON"
 
-    ########## END FLUENT_COMMENTS CONFIGURATION
-
+    ########## END DJANGO_GUARDIAN CONFIGURATION
 
     ########## Your common stuff: Below this line define 3rd party libary settings
 
