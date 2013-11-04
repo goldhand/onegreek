@@ -19,14 +19,13 @@ class ContentObjectRelatedField(serializers.RelatedField):
         raise Exception('Unexpected type of content object')
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.HyperlinkedRelatedField(view_name='user-detail')
-    viewers = serializers.HyperlinkedRelatedField(many=True, view_name='chapter-detail')
+    viewers = serializers.PrimaryKeyRelatedField(many=True)
     content_object = ContentObjectRelatedField()
 
     class Meta:
         model = Comment
         fields = [
-            'url', 'user', 'comment',
+            'url', 'comment',
             'submit_date',
             'viewers',
             'content_object',
