@@ -26,7 +26,18 @@
     {% endblock %}
 
     {% block angular %}
-      <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+      <!--script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script-->
+        <script src="{% static 'angularjs/app/lib/angular/angular.min.js' %}"></script>
+        <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
+        <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
+        <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
+
+        <script src="{% static 'angularjs/app/lib/bootstrap/ui-bootstrap-tpls-0.6.0.js' %}"></script>
+
+        <script src="{% static 'angularjs/app/js/app.js' %}"></script>
+        <script src="{% static 'angularjs/app/js/controllers.js' %}"></script>
+        <script src="{% static 'angularjs/app/js/services.js' %}"></script>
+        <script src="{% static 'angularjs/app/js/filters.js' %}"></script>
     {% endblock %}
 
   </head>
@@ -74,7 +85,6 @@
       <!-- Your stuff: Third-party javascript libraries go here -->
 
       <!-- place project specific Javascript in this file -->
-      <script src="{% static 'js/project.js' %}"></script>
     {% endblock javascript %}
   </body>
 </html>

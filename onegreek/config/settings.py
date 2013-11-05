@@ -60,6 +60,7 @@ class Common(Configuration):
         'apiroot',
         'utils',
         'core',
+        'angularjs',
         'universities',
         'fraternities',
         #'sororities',
@@ -196,7 +197,7 @@ class Common(Configuration):
 
     ########## STATIC FILE CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-root
-    STATIC_ROOT = join(os.path.dirname(BASE_DIR), 'staticfiles')
+    STATIC_ROOT = join(os.path.dirname(BASE_DIR), 'static')
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
     STATIC_URL = '/static/'
