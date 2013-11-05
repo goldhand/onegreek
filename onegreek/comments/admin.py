@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _, ungettext
 
 from .models import Comment
 from comments import get_model
-from .views.moderation import perform_flag, perform_approve, perform_delete
+from .views import perform_flag, perform_approve, perform_delete
 
 
 class UsernameSearch(object):

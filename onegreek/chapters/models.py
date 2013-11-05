@@ -37,11 +37,11 @@ class Chapter(Slugged, StatusModel):
         slug_qs = concrete_model.objects.exclude(id=self.id)
         self.slug = unique_slug(slug_qs, "slug", self.slug)
 
+        super(Chapter, self).save(*args, **kwargs)
         try:
             self.group = Group.objects.get(name="%s_%d" % ("chapter", self.id))
         except ObjectDoesNotExist:
             self.group = Group.objects.create(name="%s_%d" % ("chapter", self.id))
 
-        super(Chapter, self).save(*args, **kwargs)
 
 

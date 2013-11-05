@@ -59,7 +59,7 @@ def get_form_target():
     if get_comment_app_name() != DEFAULT_COMMENTS_APP and hasattr(get_comment_app(), "get_form_target"):
         return get_comment_app().get_form_target()
     else:
-        return urlresolvers.reverse("comments.views.comments.post_comment")
+        return urlresolvers.reverse("comments.views.post_comment")
 
 def get_flag_url(comment):
     """
@@ -68,7 +68,7 @@ def get_flag_url(comment):
     if get_comment_app_name() != DEFAULT_COMMENTS_APP and hasattr(get_comment_app(), "get_flag_url"):
         return get_comment_app().get_flag_url(comment)
     else:
-        return urlresolvers.reverse("comments.views.moderation.flag",
+        return urlresolvers.reverse("comments.views.flag",
                                     args=(comment.id,))
 
 def get_delete_url(comment):
@@ -78,7 +78,7 @@ def get_delete_url(comment):
     if get_comment_app_name() != DEFAULT_COMMENTS_APP and hasattr(get_comment_app(), "get_delete_url"):
         return get_comment_app().get_delete_url(comment)
     else:
-        return urlresolvers.reverse("comments.views.moderation.delete",
+        return urlresolvers.reverse("comments.views.delete",
                                     args=(comment.id,))
 
 def get_approve_url(comment):
@@ -88,5 +88,5 @@ def get_approve_url(comment):
     if get_comment_app_name() != DEFAULT_COMMENTS_APP and hasattr(get_comment_app(), "get_approve_url"):
         return get_comment_app().get_approve_url(comment)
     else:
-        return urlresolvers.reverse("comments.views.moderation.approve",
+        return urlresolvers.reverse("comments.views.approve",
                                     args=(comment.id,))

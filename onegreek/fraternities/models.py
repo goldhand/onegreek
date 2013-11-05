@@ -36,9 +36,9 @@ class Fraternity(Slugged):
         slug_qs = concrete_model.objects.exclude(id=self.id)
         self.slug = unique_slug(slug_qs, "slug", self.slug)
 
+        super(Fraternity, self).save(*args, **kwargs)
         try:
             self.group = Group.objects.get(name="%s_%d" % ("fraternity", self.id))
         except ObjectDoesNotExist:
             self.group = Group.objects.create(name="%s_%d" % ("fraternity", self.id))
 
-        super(Fraternity, self).save(*args, **kwargs)
