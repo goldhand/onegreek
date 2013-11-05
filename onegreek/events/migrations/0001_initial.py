@@ -19,6 +19,7 @@ class Migration(SchemaMigration):
             ('slug', self.gf('django.db.models.fields.CharField')(max_length=2000, null=True, blank=True)),
             ('owner', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='events', null=True, to=orm['users.User'])),
             ('description', self.gf('model_utils.fields.SplitField')(no_excerpt_field=True)),
+            ('enable_comments', self.gf('django.db.models.fields.BooleanField')(default=True)),
             (u'_description_excerpt', self.gf('django.db.models.fields.TextField')()),
         ))
         db.send_create_signal(u'events', ['Event'])
@@ -79,7 +80,9 @@ class Migration(SchemaMigration):
             'description': ('model_utils.fields.SplitField', [], {u'no_excerpt_field': 'True'}),
             'facebook': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
             'fb_status': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'fraternity': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['fraternities.Fraternity']", 'null': 'True', 'blank': 'True'}),
             'gpa': ('django.db.models.fields.FloatField', [], {}),
+            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.Group']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'philanthropy': ('model_utils.fields.SplitField', [], {u'no_excerpt_field': 'True'}),
@@ -103,6 +106,7 @@ class Migration(SchemaMigration):
             'attendees': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'attending'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['users.User']"}),
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             'description': ('model_utils.fields.SplitField', [], {u'no_excerpt_field': 'True'}),
+            'enable_comments': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'end': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
@@ -112,9 +116,24 @@ class Migration(SchemaMigration):
             'title': ('django.db.models.fields.CharField', [], {'max_length': '500'}),
             'viewers': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['chapters.Chapter']", 'null': 'True', 'blank': 'True'})
         },
+        u'fraternities.fraternity': {
+            'Meta': {'object_name': 'Fraternity'},
+            u'_description_excerpt': ('django.db.models.fields.TextField', [], {}),
+            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
+            'description': ('model_utils.fields.SplitField', [], {u'no_excerpt_field': 'True'}),
+            'facebook': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
+            'fb_status': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'gpa': ('django.db.models.fields.FloatField', [], {}),
+            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.Group']", 'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '500'})
+        },
         u'universities.university': {
             'Meta': {'object_name': 'University'},
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
+            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.Group']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),

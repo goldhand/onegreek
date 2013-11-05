@@ -56,6 +56,7 @@ class Common(Configuration):
 
     # Apps specific for this project go here.
     LOCAL_APPS = (
+        'users',  # custom users app
         'apiroot',
         'utils',
         'core',
@@ -65,7 +66,6 @@ class Common(Configuration):
         'chapters',
         'events',
         'comments',
-        'users',  # custom users app
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
