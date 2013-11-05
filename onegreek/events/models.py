@@ -6,7 +6,7 @@ from model_utils.fields import SplitField, StatusField
 from model_utils.models import TimeFramedModel
 from model_utils import Choices, FieldTracker
 
-from comments.utils import CommentsRelation
+#from comments.utils import CommentsRelation
 
 from core.models import Slugged
 
@@ -23,7 +23,7 @@ class Event(TimeFramedModel, Slugged):
     enable_comments = models.BooleanField("Enable comments", default=True)
 
     # Optional reverse relation, allow ORM querying:
-    comments_set = CommentsRelation()
+    #comments_set = CommentsRelation()
 
     class Meta:
         verbose_name = "Event"

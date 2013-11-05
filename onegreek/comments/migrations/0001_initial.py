@@ -9,34 +9,46 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'Comment'
-        db.create_table(u'comments_comment', (
+        db.create_table('comments', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
-            ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
-            ('status', self.gf('model_utils.fields.StatusField')(default='draft', max_length=100, no_check_for_status=True)),
-            ('status_changed', self.gf('model_utils.fields.MonitorField')(default=datetime.datetime.now, monitor=u'status')),
-            ('owner', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['users.User'], null=True, blank=True)),
-            ('content', self.gf('model_utils.fields.SplitField')(no_excerpt_field=True)),
-            (u'_content_excerpt', self.gf('django.db.models.fields.TextField')()),
+            ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='content_type_set_for_comment', to=orm['contenttypes.ContentType'])),
+            ('object_pk', self.gf('django.db.models.fields.TextField')()),
+            ('site', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['sites.Site'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='comment_comments', null=True, to=orm['users.User'])),
+            ('user_name', self.gf('django.db.models.fields.CharField')(max_length=50, blank=True)),
+            ('user_email', self.gf('django.db.models.fields.EmailField')(max_length=75, blank=True)),
+            ('user_url', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
+            ('comment', self.gf('django.db.models.fields.TextField')(max_length=3000)),
+            ('submit_date', self.gf('django.db.models.fields.DateTimeField')(default=None)),
+            ('ip_address', self.gf('django.db.models.fields.GenericIPAddressField')(max_length=39, null=True, blank=True)),
+            ('is_public', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('is_removed', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
         db.send_create_signal(u'comments', ['Comment'])
 
-        # Adding M2M table for field viewers on 'Comment'
-        m2m_table_name = db.shorten_name(u'comments_comment_viewers')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('comment', models.ForeignKey(orm[u'comments.comment'], null=False)),
-            ('chapter', models.ForeignKey(orm[u'chapters.chapter'], null=False))
+        # Adding model 'CommentFlag'
+        db.create_table('django_comment_flags', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='comment_flags', to=orm['users.User'])),
+            ('comment', self.gf('django.db.models.fields.related.ForeignKey')(related_name='flags', to=orm['comments.Comment'])),
+            ('flag', self.gf('django.db.models.fields.CharField')(max_length=30, db_index=True)),
+            ('flag_date', self.gf('django.db.models.fields.DateTimeField')(default=None)),
         ))
-        db.create_unique(m2m_table_name, ['comment_id', 'chapter_id'])
+        db.send_create_signal(u'comments', ['CommentFlag'])
+
+        # Adding unique constraint on 'CommentFlag', fields ['user', 'comment', 'flag']
+        db.create_unique('django_comment_flags', ['user_id', 'comment_id', 'flag'])
 
 
     def backwards(self, orm):
-        # Deleting model 'Comment'
-        db.delete_table(u'comments_comment')
+        # Removing unique constraint on 'CommentFlag', fields ['user', 'comment', 'flag']
+        db.delete_unique('django_comment_flags', ['user_id', 'comment_id', 'flag'])
 
-        # Removing M2M table for field viewers on 'Comment'
-        db.delete_table(db.shorten_name(u'comments_comment_viewers'))
+        # Deleting model 'Comment'
+        db.delete_table('comments')
+
+        # Deleting model 'CommentFlag'
+        db.delete_table('django_comment_flags')
 
 
     models = {
@@ -65,7 +77,9 @@ class Migration(SchemaMigration):
             'description': ('model_utils.fields.SplitField', [], {u'no_excerpt_field': 'True'}),
             'facebook': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
             'fb_status': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'fraternity': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['fraternities.Fraternity']", 'null': 'True', 'blank': 'True'}),
             'gpa': ('django.db.models.fields.FloatField', [], {}),
+            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.Group']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'philanthropy': ('model_utils.fields.SplitField', [], {u'no_excerpt_field': 'True'}),
@@ -77,16 +91,28 @@ class Migration(SchemaMigration):
             'university': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['universities.University']", 'null': 'True', 'blank': 'True'})
         },
         u'comments.comment': {
-            'Meta': {'object_name': 'Comment'},
-            u'_content_excerpt': ('django.db.models.fields.TextField', [], {}),
-            'content': ('model_utils.fields.SplitField', [], {u'no_excerpt_field': 'True'}),
-            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
+            'Meta': {'ordering': "('submit_date',)", 'object_name': 'Comment', 'db_table': "'comments'"},
+            'comment': ('django.db.models.fields.TextField', [], {'max_length': '3000'}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'content_type_set_for_comment'", 'to': u"orm['contenttypes.ContentType']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['users.User']", 'null': 'True', 'blank': 'True'}),
-            'status': ('model_utils.fields.StatusField', [], {'default': "'draft'", 'max_length': '100', u'no_check_for_status': 'True'}),
-            'status_changed': ('model_utils.fields.MonitorField', [], {'default': 'datetime.datetime.now', u'monitor': "u'status'"}),
-            'viewers': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['chapters.Chapter']", 'null': 'True', 'blank': 'True'})
+            'ip_address': ('django.db.models.fields.GenericIPAddressField', [], {'max_length': '39', 'null': 'True', 'blank': 'True'}),
+            'is_public': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'is_removed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'object_pk': ('django.db.models.fields.TextField', [], {}),
+            'site': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['sites.Site']"}),
+            'submit_date': ('django.db.models.fields.DateTimeField', [], {'default': 'None'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'comment_comments'", 'null': 'True', 'to': u"orm['users.User']"}),
+            'user_email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
+            'user_name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
+            'user_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
+        },
+        u'comments.commentflag': {
+            'Meta': {'unique_together': "[('user', 'comment', 'flag')]", 'object_name': 'CommentFlag', 'db_table': "'django_comment_flags'"},
+            'comment': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'flags'", 'to': u"orm['comments.Comment']"}),
+            'flag': ('django.db.models.fields.CharField', [], {'max_length': '30', 'db_index': 'True'}),
+            'flag_date': ('django.db.models.fields.DateTimeField', [], {'default': 'None'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'comment_flags'", 'to': u"orm['users.User']"})
         },
         u'contenttypes.contenttype': {
             'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
@@ -95,9 +121,30 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        u'fraternities.fraternity': {
+            'Meta': {'object_name': 'Fraternity'},
+            u'_description_excerpt': ('django.db.models.fields.TextField', [], {}),
+            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
+            'description': ('model_utils.fields.SplitField', [], {u'no_excerpt_field': 'True'}),
+            'facebook': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
+            'fb_status': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'gpa': ('django.db.models.fields.FloatField', [], {}),
+            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.Group']", 'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '500'})
+        },
+        u'sites.site': {
+            'Meta': {'ordering': "('domain',)", 'object_name': 'Site', 'db_table': "'django_site'"},
+            'domain': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        },
         u'universities.university': {
             'Meta': {'object_name': 'University'},
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
+            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.Group']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),

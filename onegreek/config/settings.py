@@ -79,9 +79,6 @@ class Common(Configuration):
         'allauth.socialaccount',  # registration
     )
 
-    INSTALLED_APPS += (
-       'django.contrib.comments',
-    )
     ########## END APP CONFIGURATION
 
     ########## MIDDLEWARE CONFIGURATION

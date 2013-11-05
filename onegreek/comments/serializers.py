@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import PComment as Comment
+from .models import Comment
 from events.models import Event
 
 class ContentObjectRelatedField(serializers.RelatedField):
