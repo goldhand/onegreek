@@ -11,15 +11,15 @@ myApp.service('item', ['$rootScope', function( $rootScope ) {
             service.items.push( item );
             $rootScope.$broadcast('items.update');
         }
-    }
+    };
     return service;
 
 }]);
 
 
-myApp.service('group', ['$rootScope', function( $rootScope ) {
+myApp.service('group', [function() {
 
-    var service = {
+    return {
         groups: [
             {
                 title: "Header 1",
@@ -31,7 +31,6 @@ myApp.service('group', ['$rootScope', function( $rootScope ) {
             }
         ]
     };
-    return service;
 
 }]);
 

@@ -3,7 +3,7 @@
 /* Directives */
 
 
-myApp.directive('addItemButton', ['item', function( item ) {
+myApp.directive('nuAddItemButton', ['item', function( item ) {
     return {
         restrict: "A",
         link: function( scope, element, attrs ) {

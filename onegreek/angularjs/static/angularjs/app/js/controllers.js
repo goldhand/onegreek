@@ -11,5 +11,8 @@ myApp.controller('AccordionDemoCtrl', ['$scope', 'group', 'item', function($scop
 
         $scope.items = item.items;
         $scope.groups = group.groups;
+        $scope.addItem = function() {
+            item.addItem('item');
+        };
 
     }]);
