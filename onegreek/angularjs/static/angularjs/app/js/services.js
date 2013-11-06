@@ -34,3 +34,22 @@ myApp.service('group', [function() {
 
 }]);
 
+myApp.service('alert', ['$rootScope', function( $rootScope ) {
+var service = {
+        alerts: [
+        { type: 'error', msg: 'Oh snap! Change a few things up and try submitting again.' },
+        { type: 'success', msg: 'Well done! You successfully read this important alert message.' }
+        ],
+
+    addAlert: function( msg ) {
+        service.alerts.push( msg );
+        $rootScope.$broadcast( 'alerts.update' );
+        },
+
+    closeAlert: function(index) {
+        service.alerts.splice(index, 1);
+        $rootScope.$broadcast( 'alerts.destroy' );
+        }
+    };
+    return service;
+}]);
