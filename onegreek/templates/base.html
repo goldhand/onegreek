@@ -1,5 +1,5 @@
 {% load staticfiles i18n %}<!DOCTYPE html>
-<html lang="en" ng-app>
+<html lang="en" ng-app="myApp">
   <head>
     <meta charset="utf-8">
     <title>{% block title %}onegreek{% endblock title %}</title>
@@ -14,10 +14,10 @@
 
     {% block css %}
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/2.3.1/css/bootstrap.min.css">
 
     <!-- Optional theme -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
+    <!--link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css"-->
 
     <!-- Your stuff: Third-party css libraries go here -->
 
@@ -27,17 +27,6 @@
 
     {% block angular %}
       <!--script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script-->
-        <script src="{% static 'angularjs/app/lib/angular/angular.min.js' %}"></script>
-        <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
-        <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
-        <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
-
-        <script src="{% static 'angularjs/app/lib/bootstrap/ui-bootstrap-tpls-0.6.0.js' %}"></script>
-
-        <script src="{% static 'angularjs/app/js/app.js' %}"></script>
-        <script src="{% static 'angularjs/app/js/controllers.js' %}"></script>
-        <script src="{% static 'angularjs/app/js/services.js' %}"></script>
-        <script src="{% static 'angularjs/app/js/filters.js' %}"></script>
     {% endblock %}
 
   </head>
@@ -65,7 +54,6 @@
     <div class="container">
 
       {% block content %}
-        <p>Use this document as a way to quick start any new project.</p>
       {% endblock content %}
 
     </div> <!-- /container -->
@@ -80,11 +68,26 @@
       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 
       <!-- Latest compiled and minified JavaScript -->
-      <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+      <!--script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script-->
 
       <!-- Your stuff: Third-party javascript libraries go here -->
 
       <!-- place project specific Javascript in this file -->
+        <!--script src="{% static 'angularjs/app/lib/angular/angular.min.js' %}"></script-->
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.js"></script>
+        <script src="{% static 'angularjs/app/lib/bootstrap/ui-bootstrap-tpls-0.6.0.js' %}"></script>
+
+        <script src="{% static 'angularjs/app/lib/angular/angular-cookies.js' %}"></script>
+        <!--script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script-->
+        <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
+        <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
+
+        <script src="{% static 'angularjs/app/js/app.js' %}"></script>
+        <script src="{% static 'angularjs/app/js/controllers.js' %}"></script>
+        <script src="{% static 'angularjs/app/js/services.js' %}"></script>
+        <script src="{% static 'angularjs/app/js/filters.js' %}"></script>
+
+
     {% endblock javascript %}
   </body>
 </html>

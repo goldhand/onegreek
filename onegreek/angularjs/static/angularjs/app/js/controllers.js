@@ -2,10 +2,25 @@
 
 /* Controllers */
 
-angular.module('myApp.controllers', []).
-  controller('MyCtrl1', [function() {
+myApp.controller('AccordionDemoCtrl', ['$scope', function($scope) {
+        $scope.oneAtATime = true;
 
-  }])
-  .controller('MyCtrl2', [function() {
+        $scope.groups = [
+            {
+                title: "Header 1",
+                content: "Body 1"
+            },
+            {
+                title: "Header 2",
+                content: "Body 2"
+            }
+        ];
 
-  }]);
+        $scope.items = ['Item 1', 'Item 2', 'Item 3'];
+
+        $scope.addItem = function() {
+            var newItemNo = $scope.items.length + 1;
+            $scope.items.push('Item ' + newItemNo);
+        };
+
+    }]);
