@@ -3,9 +3,15 @@
 /* Directives */
 
 
-angular.module('myApp.directives', []).
-  directive('appVersion', ['version', function(version) {
-    return function(scope, elm, attrs) {
-      elm.text(version);
+myApp.directive('addItemButton', ['item', function( item ) {
+    return {
+        restrict: "A",
+        link: function( scope, element, attrs ) {
+            element.bind( "click", function() {
+                item.addItem( 'newItem' );
+                //var newItemNo = group.items.length + 1;
+                //var newItem = ('Item ' + newItemNo);
+        });
+        }
     };
-  }]);
+}]);

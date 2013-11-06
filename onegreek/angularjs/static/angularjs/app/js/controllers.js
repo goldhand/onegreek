@@ -2,25 +2,14 @@
 
 /* Controllers */
 
-myApp.controller('AccordionDemoCtrl', ['$scope', function($scope) {
+myApp.controller('AccordionDemoCtrl', ['$scope', 'group', 'item', function($scope, group, item) {
         $scope.oneAtATime = true;
 
-        $scope.groups = [
-            {
-                title: "Header 1",
-                content: "Body 1"
-            },
-            {
-                title: "Header 2",
-                content: "Body 2"
-            }
-        ];
+        $scope.$on( 'items.update', function( event ) {
+            $scope.items = item.items;
+        });
 
-        $scope.items = ['Item 1', 'Item 2', 'Item 3'];
-
-        $scope.addItem = function() {
-            var newItemNo = $scope.items.length + 1;
-            $scope.items.push('Item ' + newItemNo);
-        };
+        $scope.items = item.items;
+        $scope.groups = group.groups;
 
     }]);

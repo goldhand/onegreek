@@ -2,8 +2,36 @@
 
 /* Services */
 
+myApp.service('item', ['$rootScope', function( $rootScope ) {
+    var service = {
 
-// Demonstrate how to register services
-// In this case it is a simple value service.
-angular.module('myApp.services', []).
-  value('version', '0.1');
+        items: ['Item 1', 'Item 2', 'Item 3'],
+
+        addItem: function ( item ) {
+            service.items.push( item );
+            $rootScope.$broadcast('items.update');
+        }
+    }
+    return service;
+
+}]);
+
+
+myApp.service('group', ['$rootScope', function( $rootScope ) {
+
+    var service = {
+        groups: [
+            {
+                title: "Header 1",
+                content: "Body 1"
+            },
+            {
+                title: "Header 2",
+                content: "Body 2"
+            }
+        ]
+    };
+    return service;
+
+}]);
+
