@@ -142,3 +142,11 @@ myApp.controller('PopoverDemoCtrl', ['$scope', function ($scope) {
   $scope.dynamicPopoverTitle = "Title";
 }]);
 
+
+myApp.controller('MyFormCtrl', ['$scope', '$http', function ($scope, $http) {
+    $scope.submit = function() {
+        $http.post('/api/events/', $scope.events).success(function(out_data) {
+            // do something
+        });
+    }
+}]);

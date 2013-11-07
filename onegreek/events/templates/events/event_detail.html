@@ -1,13 +1,11 @@
 {% extends 'base.html' %}
-{% load comments staticfiles i18n %}
+{% load staticfiles i18n %}
 
 {% block css %}
     {{ block.super }}
-<link rel="stylesheet" type="text/css" href="{% static "fluent_comments/css/ajaxcomments.css" %}" />
 {% endblock css %}
 {% block javascript %}
     {{ block.super }}
-<script type="text/javascript" src="{% static "fluent_comments/js/ajaxcomments.js" %}"></script>
 {% endblock javascript %}
 
 {% block content %}

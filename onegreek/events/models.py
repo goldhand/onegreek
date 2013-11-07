@@ -33,7 +33,10 @@ class Event(TimeFramedModel, Slugged):
         return reverse('events:detail', kwargs={'pk': self.pk})
 
     def get_chapter(self):
-        return self.owner.chapter
+        if self.owner:
+            return self.owner.chapter
+        else:
+            return None
 
     def user_can_view(self, _user):
         if _user.chapter in self.viewers.all() or self.owner == _user:

@@ -1,0 +1,182 @@
+<div ng-controller="AccordionDemoCtrl">
+    <label class="checkbox">
+        <input type="checkbox" ng-model="oneAtATime">
+        Open only one at a time
+    </label>
+
+    <accordion close-others="oneAtATime">
+        <accordion-group heading="Static Header">
+            This content is straight in the template.
+        </accordion-group>
+        <accordion-group heading="{[{group.title}]}" ng-repeat="group in groups">
+            {[{group.content}]}
+        </accordion-group>
+        <accordion-group heading="Dynamic Body Content">
+            <p>The body of the accordion group grows to fit the contents</p>
+            <button class="btn btn-small" ng-click="addItem()">Add Item</button>
+            <div ng-repeat="item in items">{[{item}]}</div>
+        </accordion-group>
+        <accordion-group>
+            <accordion-heading>
+                I can have markup, too! <i class="icon-check"></i>
+            </accordion-heading>
+            This is just some content to illustrate fancy headings.
+        </accordion-group>
+    </accordion>
+</div>
+
+
+<div ng-controller="AlertDemoCtrl">
+    <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{[{alert.msg}]}</alert>
+    <button class='btn' ng-click="addAlert()">Add Alert</button>
+</div>
+
+<div ng-controller="ModalDemoCtrl">
+    <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3>I'm a modal!</h3>
+        </div>
+        <div class="modal-body">
+            <ul>
+                <li ng-repeat="item in items">
+                    <a ng-click="selected.item = item">{[{ item }]}</a>
+                </li>
+            </ul>
+            Selected: <b>{[{ selected.item }]}</b>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
+    <button class="btn" ng-click="open()">Open me!</button>
+    <div ng-show="selected">Selection from a modal: {[{ selected }]}</div>
+</div>
+
+<div ng-controller="TabsDemoCtrl">
+    Select a tab by setting active binding to true:
+    <br />
+    <button class="btn btn-small" ng-click="tabs[0].active = true">Select second tab</button>
+    <button class="btn btn-small" ng-click="tabs[1].active = true">Select third tab</button>
+    <button class="btn btn-small" ng-click="tabs[1].disabled = ! tabs[1].disabled">Enable / Disable third tab</button>
+    <hr />
+
+    <tabset>
+        <tab heading="Static title">Static content</tab>
+        <tab ng-repeat="tab in tabs" heading="{[{tab.title}]}" active="tab.active" disabled="tab.disabled">
+            {[{tab.content}]}
+        </tab>
+        <tab select="alertMe()">
+            <tab-heading>
+                <i class="icon-bell"></i> Select me for alert!
+            </tab-heading>
+            I've got an HTML heading, and a select callback. Pretty cool!
+        </tab>
+    </tabset>
+
+    <hr />
+
+    <tabset vertical="true" type="navType">
+        <tab heading="Vertical 1">Vertical content 1</tab>
+        <tab heading="Vertical 2">Vertical content 2</tab>
+    </tabset>
+</div>
+
+
+<div ng-controller="TimepickerDemoCtrl">
+    <div ng-model="mytime" ng-change="changed()" class="well well-small" style="display:inline-block;">
+        <timepicker hour-step="hstep" minute-step="mstep" show-meridian="ismeridian"></timepicker>
+    </div>
+
+    <pre>Time is: {[{mytime | date:'shortTime' }]}</pre>
+
+    <div>Hours step is: <select ng-model="hstep" ng-options="opt for opt in options.hstep"></select></div>
+    <div>Minutes step is: <select ng-model="mstep" ng-options="opt for opt in options.mstep"></select></div>
+
+    <button class="btn" ng-click="toggleMode()">12H / 24H</button>
+    <button class="btn" ng-click="update()">Set to 14:00</button>
+    <button class="btn btn-danger" ng-click="clear()">Clear</button>
+</div>
+
+
+<div ng-controller="TooltipDemoCtrl">
+    <div class="well">
+        <div>Dynamic Tooltip Text: <input type="text" ng-model="dynamicTooltipText"></div>
+        <div>Dynamic Tooltip Popup Text: <input type="text" ng-model="dynamicTooltip"></div>
+        <p>
+            Pellentesque <a><span tooltip="{[{dynamicTooltip}]}">{[{dynamicTooltipText}]}</span></a>,
+            sit amet venenatis urna cursus eget nunc scelerisque viverra mauris, in
+            aliquam. Tincidunt lobortis feugiat vivamus at
+            <a><span tooltip-placement="left" tooltip="On the Left!">left</span></a> eget
+            arcu dictum varius duis at consectetur lorem. Vitae elementum curabitur
+            <a><span tooltip-placement="right" tooltip="On the Right!">right</span></a>
+            nunc sed velit dignissim sodales ut eu sem integer vitae. Turpis egestas
+            <a><span tooltip-placement="bottom" tooltip="On the Bottom!">bottom</span></a>
+            pharetra convallis posuere morbi leo urna,
+            <a><span tooltip-animation="false" tooltip="I don't fade. :-(">fading</span></a>
+            at elementum eu, facilisis sed odio morbi quis commodo odio. In cursus
+            <a><span tooltip-popup-delay='1000' tooltip='appears with delay'>delayed</span></a> turpis massa tincidunt dui ut.
+        </p>
+
+        <p>
+            I can even contain HTML. <a><span tooltip-html-unsafe="{[{htmlTooltip}]}">Check me out!</span></a>
+        </p>
+        <p>
+            Or use custom triggers, like focus:
+            <input type="text" value="Click me!"
+                   tooltip="See? Now click away..."
+                   tooltip-trigger="focus"
+                   tooltip-placement="right" />
+        </p>
+    </div>
+</div>
+
+<div class='container-fluid' ng-controller="TypeaheadCtrl">
+    <pre>Model: {[{selected| json}]}</pre>
+    <input type="text" ng-model="selected" typeahead="state for state in states | filter:$viewValue | limitTo:8">
+</div>
+
+
+
+<div ng-controller="PopoverDemoCtrl">
+    <div class="well">
+        <div>
+            <h4>Dynamic</h4>
+            <div>Dynamic Popover : <input type="text" ng-model="dynamicPopoverText"></div>
+            <div>Dynamic Popover Popup Text: <input type="text" ng-model="dynamicPopover"></div>
+            <div>Dynamic Popover Popup Title: <input type="text" ng-model="dynamicPopoverTitle"></div>
+            <div><button popover="{[{dynamicPopover}]}" popover-title="{[{dynamicPopoverTitle}]}" class="btn">{[{dynamicPopoverText}]}</button></div>
+        </div>
+        <div>
+            <h4>Positional</h4>
+            <button popover-placement="top" popover="On the Top!" class="btn">Top</button>
+            <button popover-placement="left" popover="On the Left!" class="btn">Left</button>
+            <button popover-placement="right" popover="On the Right!" class="btn">Right</button>
+            <button popover-placement="bottom" popover="On the Bottom!" class="btn">Bottom</button>
+        </div>
+        <div>
+            <h4>Triggers</h4>
+            <button popover="I appeared on mouse enter!" popover-trigger="mouseenter" class="btn">Mouseenter</button>
+            <input type="text" value="Click me!"
+                   popover="I appeared on focus! Click away and I'll vanish..."
+                   popover-trigger="focus" />
+        </div>
+        <div>
+            <h4>Other</h4>
+            <button Popover-animation="true" popover="I fade in and out!" class="btn">fading</button>
+            <button popover="I have a title!" popover-title="The title." class="btn">title</button>
+        </div>
+    </div>
+</div>
+
+<div contentEditable="true" ng-model="divContent" title="Click to edit">Some</div>
+<pre>model = {[{divContent}]}</pre>
+
+<style type="text/css">
+    div[contentEditable] {
+        cursor: pointer;
+        background-color: #D0D0D0;
+    }
+</style>
+

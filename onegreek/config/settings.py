@@ -52,6 +52,7 @@ class Common(Configuration):
         'django_extensions',
         'akismet',
         'guardian',
+        'djangular',
     )
 
     # Apps specific for this project go here.
