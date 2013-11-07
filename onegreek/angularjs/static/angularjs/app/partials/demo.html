@@ -84,6 +84,9 @@
 </div>
 
 
+<div class="row">
+    <div class="span6">
+
 <div ng-controller="TimepickerDemoCtrl">
     <div ng-model="mytime" ng-change="changed()" class="well well-small" style="display:inline-block;">
         <timepicker hour-step="hstep" minute-step="mstep" show-meridian="ismeridian"></timepicker>
@@ -98,7 +101,31 @@
     <button class="btn" ng-click="update()">Set to 14:00</button>
     <button class="btn btn-danger" ng-click="clear()">Clear</button>
 </div>
+    </div>
+    <div class="span6">
 
+<div ng-controller="DatepickerDemoCtrl">
+    <pre>Selected date is: <em>{[{dt | date:'fullDate' }]}</em></pre>
+
+    <div class="well well-small pull-left" ng-model="dt">
+        <datepicker min="minDate" show-weeks="showWeeks"></datepicker>
+    </div>
+
+    <div class="form-horizontal">
+        <input type="text" datepicker-popup="dd-MMMM-yyyy" ng-model="dt" is-open="opened" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" />
+        <button class="btn" ng-click="open()"><i class="icon-calendar"></i></button>
+    </div>
+
+    <hr />
+    <button class="btn btn-small btn-inverse" ng-click="today()">Today</button>
+    <button class="btn btn-small btn-inverse" ng-click="dt = '2009-08-24'">2009-08-24</button>
+    <button class="btn btn-small btn-success" ng-click="toggleWeeks()" tooltip="For inline datepicker">Toggle Weeks</button>
+    <button class="btn btn-small btn-danger" ng-click="clear()">Clear</button>
+    <button class="btn btn-small" ng-click="toggleMin()" tooltip="After today restriction">Min date</button>
+</div>
+
+    </div>
+</div>
 
 <div ng-controller="TooltipDemoCtrl">
     <div class="well">

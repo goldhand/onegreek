@@ -1,21 +1,30 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
     <form ng-controller="MyFormCtrl">
     {% csrf_token %}
-    {{event_form}}
+    {% crispy event_form %}
     <button ng-click="submit()">Submit</button>
     </form>
 
+
+
+
 {% for event in event_list %}
 
+    <div>
 <h1>
+<a href="{% url 'events:detail' event.id %}">
     {{ event.title }}
+</a>
     <small>
         {{ event.start }} -
         {{ event.end }}
     </small>
 </h1>
+    <p>{{ event.description }}</p>
+    </div>
 
 {% endfor %}
 {% endblock content %}
