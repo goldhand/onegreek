@@ -20,7 +20,8 @@ var eventsApp = angular.module('eventsApp', [
 eventsApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-    $routeProvider.when('/', {templateUrl: 'static/events/app/partials/demo.html'});
-    $routeProvider.otherwise({redirectTo: '/'});
+    $routeProvider.when('/events', {templateUrl: 'list.html', controller: 'EventListCtrl'});
+    $routeProvider.when('/events/:eventId', {templateUrl: 'detail.html', controller: 'EventDetailCtrl'});
+    $routeProvider.otherwise({redirectTo: '/events'});
 }]);
 

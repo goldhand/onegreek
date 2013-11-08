@@ -12,10 +12,6 @@ from .forms import EventForm
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
-    permission_classes = (
-        permissions.IsAuthenticated,
-        IsOwnerOrViewer
-    )
 
     def pre_save(self, obj):
         obj.owner = self.request.user

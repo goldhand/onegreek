@@ -9,5 +9,4 @@ eventsApp.service('Event', ['$rootScope', '$resource', function( $rootScope, $re
 
 }]);
 
-eventsApp.service('')
 

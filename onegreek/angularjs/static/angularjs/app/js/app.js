@@ -20,7 +20,7 @@ var myApp = angular.module('myApp', [
 myApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-    $routeProvider.when('/demo', {templateUrl: 'static/angularjs/app/partials/demo.html'});
+    $routeProvider.when('/demo', {templateUrl: '/static/angularjs/app/partials/demo.html'});
     //$routeProvider.when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'});
     //$routeProvider.when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'});
     $routeProvider.otherwise({redirectTo: '/demo'});

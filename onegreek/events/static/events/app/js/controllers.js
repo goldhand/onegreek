@@ -1,16 +1,30 @@
 'use strict';
 
 /* Controllers */
-
-eventsApp.controller('MyFormCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
+eventsApp.controller('EventListCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
     $http.get('/api/events/').success(function(data) {
-      $scope.events = data;
+        $scope.events = data;
     });
     $scope.submit = function() {
-        $http.post('/api/events/', $scope.newEvent).success(function(event_data) {
+        $http.post('/api/events/', $scope.event).success(function(event_data) {
             $scope.events.push(event_data);
         });
     };
+}]);
+
+eventsApp.controller('EventDetailCtrl', ['$scope', '$http', '$routeParams', function ($scope, $http, $routeParams) {
+    $http.get('/api/events/' + $routeParams.eventId + '/').success(function(data) {
+        $scope.event = data;
+    });
+    $scope.submit = function() {
+        $http.post('/api/events/' + $routeParams.eventId + '/', $scope.event).success(function(event_data) {
+            $scope.events.push(event_data);
+        });
+    };
+}]);
+
+
+eventsApp.controller('MyFormCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
 
     $scope.openStart = function() {
         $timeout(function() {
@@ -32,42 +46,3 @@ eventsApp.controller('MyFormCtrl', ['$scope', '$http', '$timeout', function ($sc
     $scope.ismeridian = true;
 }]);
 
-myApp.controller('ModalDemoCtrl', ['$scope', '$modal', '$log', function ($scope, $modal, $log) {
-
-    $scope.items = ['item1', 'item2', 'item3'];
-
-    $scope.open = function () {
-
-        var modalInstance = $modal.open({
-            templateUrl: 'myModalContent.html',
-            controller: 'ModalInstanceCtrl',
-            resolve: {
-                items: function () {
-                    return $scope.items;
-                }
-            }
-        });
-
-        modalInstance.result.then(function (selectedItem) {
-            $scope.selected = selectedItem;
-        }, function () {
-            $log.info('Modal dismissed at: ' + new Date());
-        });
-    };
-}]);
-
-myApp.controller('ModalInstanceCtrl', ['$scope', '$modalInstance', 'items', function ($scope, $modalInstance, items) {
-
-    $scope.items = items;
-    $scope.selected = {
-        item: $scope.items[0]
-    };
-
-    $scope.ok = function () {
-        $modalInstance.close($scope.selected.item);
-    };
-
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}]);
