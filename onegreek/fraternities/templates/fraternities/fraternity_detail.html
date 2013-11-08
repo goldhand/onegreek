@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load staticfiles i18n %}
+
+{% block css %}
+    {{ block.super }}
+{% endblock css %}
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}
+
+{% block content %}
+    {% if request.user == event.owner %}
+    <div>
+    <dl>
+        <dt>Created by:</dt>
+        <dd>{{ event.owner }}</dd>
+        <dt>Status:</dt>
+        <dd>{{ event.status }}</dd>
+        <dt>Viewers:</dt>
+        <dd>
+            <ul>
+                {% for viewer in event.viewers.all %}
+                <li>{{ viewer.title }}</li>
+                {% endfor %}
+            </ul>
+        </dd>
+        <dt>Attendees:</dt>
+        <dd>
+            <ul>
+                {% for attendee in event.attendees.all %}
+                    <li>{{ attendee.get_full_name }}</li>
+                {% endfor %}
+            </ul>
+        </dd>
+    </dl>
+    </div>
+    {% endif %}
+    <div>
+    <h1>
+        {{ event.title }}
+        <small>
+            {{ event.start }} -
+            {{ event.end }}
+        </small>
+    </h1>
+
+    <p>
+        {{ event.description }}
+    </p>
+    </div>
+
+
+{% endblock content %}

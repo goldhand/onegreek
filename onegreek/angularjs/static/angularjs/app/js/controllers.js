@@ -182,32 +182,3 @@ myApp.controller('DatepickerDemoCtrl', ['$scope', '$timeout', function ($scope, 
   };
 }]);
 
-myApp.controller('MyFormCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
-    $scope.submit = function() {
-        $http.post('/api/events/', $scope.events).success(function(out_data) {
-            // do something
-        });
-    };
-
-    $scope.openStart = function() {
-        $timeout(function() {
-            $scope.openedStart = true;
-        });
-    };
-    $scope.openEnd = function() {
-        $timeout(function() {
-            $scope.openedEnd = true;
-        });
-    };
-
-
-    $scope.dateOptions = {
-        'year-format': "'yyyy'",
-        'month-format': "'mm'",
-        'starting-day': 1
-    };
-    $scope.hstep = 1;
-    $scope.mstep = 15;
-
-    $scope.ismeridian = true;
-}]);

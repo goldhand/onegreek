@@ -43,15 +43,15 @@ class EventForm(NgModelFormMixin, forms.ModelForm):
 
 
     def __init__(self, *args, **kwargs):
-        kwargs.update(scope_prefix='events')
+        kwargs.update(scope_prefix='newEvent')
         super(EventForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.form_class = 'form-horizontal'
         self.helper.layout = Layout(
             Div(
-                HTML(date_time_widget('events.start', 'Start')),
-                HTML(date_time_widget('events.end', 'End')),
+                HTML(date_time_widget('newEvent.start', 'Start')),
+                HTML(date_time_widget('newEvent.end', 'End')),
                 'title',
                 'description',
                 'viewers',
