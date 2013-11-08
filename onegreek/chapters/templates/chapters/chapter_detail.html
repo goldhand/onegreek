@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags staticfiles %}
+
+{% block content %}
+<h2>
+    <a href="{% url 'chapters:detail' chapter.id %}">
+        {{ chapter.title }}
+    </a>
+</h2>
+<p>{{ chapter.description }}</p>
+<p>{{ chapter.fraternity }}</p>
+    <p>{{ chapter.university }}</p>
+    <p>{{ chapter.awards }}</p>
+    <p>{{ chapter.philanthropy }}</p>
+    <p>{{ chapter.potential_new_members }}</p>
+    <p>{{ chapter.gpa }}</p>
+    <p>{{ chapter.cost }}</p>
+
+{% endblock content %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags staticfiles %}
+
+{% block content %}
+    <ul class="unstyled">
+    {% for chapter in chapter_list %}
+        <li>
+            <h2>
+                <a href="{% url 'chapters:detail' chapter.id %}">
+                    {{ chapter.title }}
+                </a>
+            </h2>
+            <p>{{ chapter.description }}</p>
+        </li>
+    {% endfor %}
+    </ul>
+    <form ng-controller="MyFormCtrl">
+    {% csrf_token %}
+    {% crispy chapter_form %}
+    <button ng-click="submit()">Submit</button>
+    </form>
+
+
+
+
+{% endblock content %}
+
+{% block angular_app_name %}chaptersApp{% endblock angular_app_name %}
+
+{% block angular_modules %}
+    <script src="{% static 'angularjs/app/lib/angular/angular-cookies.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
+{% endblock angular_modules %}
+{% block angular_app %}
+    <script src="{% static 'chapters/app/js/app.js' %}"></script>
+    <script src="{% static 'chapters/app/js/controllers.js' %}"></script>
+    <script src="{% static 'chapters/app/js/services.js' %}"></script>
+    <script src="{% static 'chapters/app/js/filters.js' %}"></script>
+{% endblock angular_app %}

@@ -32,6 +32,7 @@ urlpatterns = patterns('',
     url(r'^api/', include('apiroot.urls')),
     url(r'^comments/', include('comments.urls')),
     url(r'^events/', include('events.urls', namespace='events')),
+    url(r'^chapters/', include('chapters.urls', namespace='chapters')),
 
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -2,54 +2,71 @@
 {% load crispy_forms_tags staticfiles %}
 
 {% block content %}
-<div ng-view></div>
 
-<script type="text/ng-template" id="detail.html">
+<div ng-controller="EventListCtrl">
+    <accordion>
+        <accordion-group heading="Create New Event">
+                {% csrf_token %}
+                {% crispy event_form %}
+            <div class="form-actions">
+                <button ng-click="submit()">Submit</button>
+            </div>
+        </accordion-group>
+    </accordion>
+
+    <div class="row">
+        <div class="span3">
+
+
+    <form class="form-search">
+        <div class="controls">
+            <input type="text" id="event-filter" name="event-filter" class="search-query input-medium" placeholder="Search" ng-model="eventFilter" />
+        </div>
+    </form>
+        <ul class="nav nav-pills nav-stacked">
+            <li ng-repeat="event in events | filter:eventFilter | orderBy:'start'">
+                    <a href="#/events/{[{ event.id }]}">
+                        {[{ event.title }]}
+                        <br/>
+                <small>
+                    {[{ event.start | date }]} -
+                    {[{ event.end | date }]}
+                </small>
+                    </a>
+            </li>
+        </ul>
+
+
+        </div>
+
+        <div class="span9">
+            <div ng-view></div>
+        </div>
+    </div>
+
+    </div>
+    <script type="text/ng-template" id="detail.html">
 <h1>
+    <span contentEditable="true">
     {[{ event.title }]}
+    </span>
     <small>
-        {[{ event.start }]} -
-        {[{ event.end }]}
+    <span contentEditable="true">
+                {[{ event.start | date }]}
+    </span>
+    -
+    <span contentEditable="true">
+                {[{ event.end | date }]}
+    </span>
     </small>
 </h1>
 
-<p>
+<p contentEditable="true">
     {[{ event.description }]}
 </p>
-    <form ng-controller="MyFormCtrl">
-    {% csrf_token %}
-    {% crispy event_form %}
-    <button ng-click="submit()">Submit</button>
-    </form>
 
 </script>
 
-<script type="text/ng-template" id="list.html">
-    <form class="form-search">
-        <div class="controls">
-            <input type="text" id="event-filter" name="event-filter" class="search-query" placeholder="Search" ng-model="eventFilter" />
-        </div>
-    </form>
-    <ul class="unstyled">
-        <li ng-repeat="event in events | filter:eventFilter | orderBy:'start'">
-            <h2>
-                <a href="#/events/{[{ event.id }]}">
-                    {[{ event.title }]}
-                </a>
-            </h2>
-            <small>
-                {[{ event.start | date }]} -
-                {[{ event.end | date }]}
-            </small>
-            <p>{[{ event.description }]}</p>
-        </li>
-    </ul>
-    <form ng-controller="MyFormCtrl">
-    {% csrf_token %}
-    {% crispy event_form %}
-    <button ng-click="submit()">Submit</button>
-    </form>
-</script>
 
 
 

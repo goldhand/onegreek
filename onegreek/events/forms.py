@@ -50,11 +50,19 @@ class EventForm(NgModelFormMixin, forms.ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.layout = Layout(
             Div(
+                Div(
+                    Field('title', css_class="span4"),
+                    Field('description', css_class="span4"),
+                    css_class="span5"
+                ),
+                Div(
                 HTML(date_time_widget('event.start', 'Start')),
                 HTML(date_time_widget('event.end', 'End')),
-                'title',
-                'description',
                 'viewers',
-                'enable_comments'
+                'enable_comments',
+                css_class="span6"
+                ),
+                css_class="row"
+
             )
         )

@@ -1,19 +1,14 @@
-<form class="form-search">
-    <div class="controls">
-        <input type="text" id="event-filter" name="event-filter" class="search-query" placeholder="Search" ng-model="eventFilter" />
-    </div>
-</form>
 <ul class="unstyled">
     <li ng-repeat="event in events | filter:eventFilter | orderBy:'start'">
         <h2>
             <a href="#/events/{[{ event.id }]}">
                 {[{ event.title }]}
             </a>
+            <small>
+                {[{ event.start | date }]} -
+                {[{ event.end | date }]}
+            </small>
         </h2>
-        <small>
-            {[{ event.start | date }]} -
-            {[{ event.end | date }]}
-        </small>
         <p>{[{ event.description }]}</p>
     </li>
 </ul>

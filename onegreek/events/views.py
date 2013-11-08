@@ -17,7 +17,6 @@ class EventViewSet(viewsets.ModelViewSet):
         obj.owner = self.request.user
 
 
-
 class EventDetail(generic.DetailView):
     model = Event
 
