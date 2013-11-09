@@ -2,18 +2,113 @@
 {% load crispy_forms_tags staticfiles %}
 
 {% block content %}
-<h2>
-    <a href="{% url 'chapters:detail' chapter.id %}">
-        {{ chapter.title }}
-    </a>
-</h2>
-<p>{{ chapter.description }}</p>
-<p>{{ chapter.fraternity }}</p>
-    <p>{{ chapter.university }}</p>
-    <p>{{ chapter.awards }}</p>
-    <p>{{ chapter.philanthropy }}</p>
-    <p>{{ chapter.potential_new_members }}</p>
-    <p>{{ chapter.gpa }}</p>
-    <p>{{ chapter.cost }}</p>
+        <div class="span9">
+            <h1 class="page-header">
+                <a href="{% url 'chapters:detail' chapter.id %}">
+                    {{ chapter.fraternity }}
+                </a>
+                <br/>
+                <small>
+                    {{ chapter.title }} - {{ chapter.university }}
+                </small>
+            </h1>
+
+            <div class="row">
+
+                <div class="span5">
+                    <img src="holder.js/380x200">
+
+                    <dl>
+                        <dt>
+                            Description:
+                        </dt>
+                        <dd>
+                            <p>{{ chapter.description|truncatewords:80 }}</p>
+                            <a href="#" class="pull-right"><small>more...</small></a>
+                            <br/>
+                            <br/>
+                        </dd>
+                        <dt>
+                            Awards:
+                        </dt>
+                        <dd>
+                            <p>{{ chapter.awards|truncatewords:80 }}</p>
+                            <a href="#" class="pull-right"><small>more...</small></a>
+                            <br/>
+                            <br/>
+                        </dd>
+                        <dt>
+                            Philanthropy:
+                        </dt>
+                        <dd>
+                            <p>{{ chapter.philanthropy|truncatewords:80 }}</p>
+                            <a href="#" class="pull-right"><small>more...</small></a>
+                            <br/>
+                            <br/>
+                        </dd>
+                        <dt>
+                            Potential New Members:
+                        </dt>
+                        <dd>
+                            <p>{{ chapter.potential_new_members|truncatewords:80 }}</p>
+                            <a href="#" class="pull-right"><small>more...</small></a>
+                            <br/>
+                            <br/>
+                        </dd>
+                    </dl>
+
+                </div>
+                <div class="span4">
+                <div style="display: table; margin-left: auto; margin-right: auto; margin-bottom: 30px;">
+                    <a href="#" class="btn btn-primary btn-large">Rush {{ chapter.fraternity }}</a>
+                </div>
+
+                <h5>Status:</h5>
+                    <div class="well" style="text-align: center;">
+                        <p>{{ chapter.fb_status }}</p>
+                    </div>
+
+                    <ul class="nav nav-tabs" id="chapter-more-info">
+                        <li class="active"><a href="#members">Members <span class="badge badge-info">2</span></a></li>
+                        <li><a href="#info">Info</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="members">
+                            {% for member in chapter.user_set.all %}
+                                <div class="media">
+                                    <a class="pull-left" href="#">
+                                        <img class="media-object" data-src="holder.js/64x64/social">
+                                    </a>
+
+                                    <div class="media-body">
+                                        <h4 class="media-heading">
+                                            {{ member.get_full_name }}
+                                        </h4>
+                                        President
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="tab-pane" id="info">
+                            <dl>
+                                <dt>
+                                    GPA:
+                                </dt>
+                                <dd>
+                                    <p>{{ chapter.gpa }}</p>
+                                </dd>
+                                <dt>
+                                    Cost:
+                                </dt>
+                                <dd>
+                                    <p>{{ chapter.cost }}</p>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 {% endblock content %}

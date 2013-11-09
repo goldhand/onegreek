@@ -1,5 +1,5 @@
 {% load staticfiles i18n %}<!DOCTYPE html>
-<html lang="en" ng-app="{% block angular_app_name %}myApp{% endblock angular_app_name %}">
+<html lang="en" ng-app="{% block angular_app_name %}{% endblock angular_app_name %}">
   <head>
     <meta charset="utf-8">
     <title>{% block title %}onegreek{% endblock title %}</title>
@@ -40,10 +40,6 @@
             <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
         {% endblock angular_modules %}
         {% block angular_app %}
-            <script src="{% static 'angularjs/app/js/app.js' %}"></script>
-            <script src="{% static 'angularjs/app/js/controllers.js' %}"></script>
-            <script src="{% static 'angularjs/app/js/services.js' %}"></script>
-            <script src="{% static 'angularjs/app/js/filters.js' %}"></script>
         {% endblock angular_app %}
     {% endblock angular %}
 
@@ -56,7 +52,6 @@
         <a class="navbar-brand" href="/">onegreek</a>
         <ul class="nav navbar-nav">
           <li class="active"><a href="{% url 'home' %}">Home</a></li>
-          <li><a href="{% url 'about' %}">About</a></li>
             <li><a href="{% url 'events:list' %}">Events</a></li>
             <li><a href="{% url 'chapters:list' %}">Chapters</a></li>
 
@@ -72,9 +67,16 @@
     </div>
 
     <div class="container">
+    <div class="row">
+    {% block left_content %}
+        <div class="span3">
+        {% include 'proofs/left_side.html' %}
+        </div>
+    {% endblock left_content %}
 
       {% block content %}
       {% endblock content %}
+    </div>
 
     </div> <!-- /container -->
     
@@ -93,6 +95,7 @@
       <!-- Your stuff: Third-party javascript libraries go here -->
 
       <!-- place project specific Javascript in this file -->
+        <script src="{% static 'js/holder.js' %}"></script>
 
     {% endblock javascript %}
   </body>

@@ -14,11 +14,8 @@
         </li>
     {% endfor %}
     </ul>
-    <form ng-controller="MyFormCtrl">
     {% csrf_token %}
-    {% crispy chapter_form %}
-    <button ng-click="submit()">Submit</button>
-    </form>
+    {% crispy form %}
 
 
 

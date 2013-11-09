@@ -1,1 +1,6 @@
 /*! project specific CSS goes here. */
+.centered {
+    display: table;
+    margin-right: auto;
+    margin-left: auto;
+}

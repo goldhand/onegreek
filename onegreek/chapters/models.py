@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import Group, Permission
@@ -43,5 +44,7 @@ class Chapter(Slugged, StatusModel):
         except ObjectDoesNotExist:
             self.group = Group.objects.create(name="%s_%d" % ("chapter", self.id))
 
+    def get_absolute_url(self):
+        return reverse('chapters:detail', kwargs={'pk': self.pk})
 
 
