@@ -29,6 +29,9 @@ eventsApp.controller('EventListCtrl', ['$scope', '$http', '$timeout', function (
     $scope.hstep = 1;
     $scope.mstep = 15;
     $scope.ismeridian = true;
+
+    $scope.Search = undefined;
+
 }]);
 
 eventsApp.controller('EventDetailCtrl', ['$scope', '$http', '$routeParams', function ($scope, $http, $routeParams) {

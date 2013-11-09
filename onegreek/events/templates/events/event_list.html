@@ -17,11 +17,10 @@
 
     <div class="row">
         <div class="span3">
-
-
     <form class="form-search">
         <div class="controls">
-            <input type="text" id="event-filter" name="event-filter" class="search-query input-medium" placeholder="Search" ng-model="eventFilter" />
+            <input type="text" id="event-filter" name="event-filter" class="search-query input-medium"
+                   placeholder="Search" ng-model="eventFilter"  typeahead="event.title for event in events | filter:$viewValue | limitTo:8"/>
         </div>
     </form>
         <ul class="nav nav-pills nav-stacked">
