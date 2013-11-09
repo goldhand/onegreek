@@ -40,9 +40,10 @@ class Chapter(Slugged, StatusModel):
 
         super(Chapter, self).save(*args, **kwargs)
         try:
-            self.group = Group.objects.get(name="%s_%d" % ("chapter", self.id))
+            self.group = Group.objects.get(name="%s_%d" % ("chapter", self.pk))
         except ObjectDoesNotExist:
-            self.group = Group.objects.create(name="%s_%d" % ("chapter", self.id))
+            self.group = Group.objects.create(name="%s_%d" % ("chapter", self.pk))
+        super(Chapter, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse('chapters:detail', kwargs={'pk': self.pk})

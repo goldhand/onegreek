@@ -15,8 +15,7 @@ def date_time_widget(ng_model, ng_label):
     '<div class="span3" style="padding-top: 8px;">' \
     '<label class="control-label">%s</label>' \
     '<div class="controls">' \
-    '<input class="span2" type="text" datepicker-popup="yyyy-MM-dd" ng-model="%s" is-open="opened%s" min="minDate" max="\'2015-06-22\'" datepicker-options="dateOptions" ng-required="false" />' \
-    '<button class="btn" ng-click="open%s()"><i class="icon-calendar"></i></button>' \
+    '<input class="span3" type="text" datepicker-popup="yyyy-MM-dd" ng-model="%s" is-open="opened%s" min="minDate" max="\'2015-06-22\'" datepicker-options="dateOptions" ng-required="false" />' \
     '</div>' \
     '</div>' \
     '<div class="controls">' \
@@ -25,7 +24,7 @@ def date_time_widget(ng_model, ng_label):
     '</div>' \
     '</div>' \
     '</div>' \
-    % (ng_label, ng_model, ng_label, ng_label, ng_model)
+    % (ng_label, ng_label, ng_label, ng_model)
 
 class EventForm(NgModelFormMixin, forms.ModelForm):
     class Meta:

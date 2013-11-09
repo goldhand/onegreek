@@ -66,6 +66,11 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    def get_queryset(self):
+        if 'chapter' in self.request.GET:
+            return User.objects.filter(chapter_id=self.request.GET['chapter'])
+        else:
+            return User.objects.filter(chapter_id=self.request.user.chapter_id)
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()

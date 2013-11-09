@@ -5,30 +5,53 @@
 {% block title %}User: {{ object.username }}{% endblock %}
 
 {% block content %}
-<div class="container">
+    <div class="span9">
+    <div class="row">
 
-  <div class="row">
-    <div class="col-sm-12">
-
+    <div class="col-sm-9">
       <h2>{{ object.username }}</h2>
     </div>
-  </div>
 
 {% if object == request.user %}
 <!-- Action buttons -->     
-<div class="row">
 
-  <div class="col-sm-12 ">
+  <div class="col-sm-9 ">
     <a class="btn btn-primary" href="{% url 'users:update' %}">My Info</a>
     <a class="btn btn-primary" href="{% url 'account_email' %}">E-Mail</a>
     <a class="btn btn-info" href="{% url 'avatar_change' %}">Avatar</a>
     <!-- Your Stuff: Custom user template urls -->
   </div>
 
-</div>
 <!-- End Action buttons -->
 {% endif %}
 
 
-</div>
+    <div class="row">
+    <div class="span9">
+        <h3>
+            {% avatar user %}
+        {{ user.get_full_name }}
+        </h3>
+        <h4>
+            {{ user.chapter.fraternity }}
+            <small>
+                {{ user.chapter }} - {{ user.chapter.university }}
+            </small>
+        </h4>
+        <p>
+            {{ user.year }}
+        </p>
+        <p>
+            {{ user.major }}
+        </p>
+        <p>
+            {{ user.hometown }}
+        </p>
+    </div>
+
+    </div>
+    </div>
+    </div>
+
+
 {% endblock content %}
