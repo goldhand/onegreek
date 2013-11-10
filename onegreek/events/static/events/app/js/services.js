@@ -5,11 +5,12 @@
 var eventServices = angular.module('eventServices', ['ngResource']);
 
 
-eventServices.factory('Event', ['$resource', function( $resource ) {
-    return $resource('/api/events/:eventId/', {}, {
-        query: {method: 'GET', params:{ eventId:''}, isArray:true}
-    });
-}]);
+eventServices.factory('GlobalService', function () {
+    var vars = {
+        is_authenticated: false
+    }
+	return vars;
+});
 
 
 eventServices.factory('EventService', function ($http, $q) {
@@ -66,3 +67,15 @@ eventServices.factory('EventService', function ($http, $q) {
         }
     }
 });
+
+
+
+//eventServices.factory('Event', ['$resource', function( $resource ) {
+//    return $resource('/api/events/:eventId/', {}, {
+//        query: {method: 'GET', params:{ eventId:''}, isArray:true}
+//    });
+//}]);
+
+
+
+

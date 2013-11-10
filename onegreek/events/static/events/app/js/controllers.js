@@ -1,17 +1,40 @@
 'use strict';
 
 /* Controllers */
+
 var eventsControllers = angular.module('eventsControllers', []);
+
+eventsControllers.controller('AppController', function ($scope, $rootScope, $location, GlobalService) {
+    var failureCb = function (status) {
+        console.log(status);
+    };
+    $scope.globals = GlobalService;
+
+    $scope.initialize = function (is_authenticated) {
+        $scope.globals.is_authenticated = is_authenticated;
+    };
+});
+
 
 eventsControllers.controller('EventListCtrl', [
     '$scope',
     '$http',
     '$timeout',
     'EventService',
+    'GlobalService',
     'events',
-    function ($scope, $http, $timeout, EventService, events) {
+    function (
+        $scope,
+        $http,
+        $timeout,
+        EventService,
+        GlobalService,
+        events
+        ) {
         $scope.event = {};
         $scope.events = events;
+        $scope.globals = GlobalService;
+        $scope.globals.events = events;
 
         //$http.get('/api/events/').success(function(data) {
         //    $scope.events = data;

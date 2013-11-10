@@ -23,7 +23,7 @@ eventsApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $h
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $routeProvider.when('/events', {
-        templateUrl: '/static/events/app/partials/list.html',
+        templateUrl: 'list.html',
         controller: 'EventListCtrl',
         resolve: {
             events: function(EventService) {

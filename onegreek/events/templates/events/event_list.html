@@ -3,48 +3,72 @@
 {% block left_content %}{% endblock left_content %}
 
 {% block content %}
+    <div ng-controller="AppController">
+    <ul>
+        <li ng-repeat="event in globals.events">
+            {[{ event.title }]}
+        </li>
+    </ul>
+    <div ng-view></div>
 
-<div>
+    <script type="text/ng-template" id="list.html">
+    <div>
     <accordion>
         <accordion-group heading="Create New Event">
-                {% csrf_token %}
-                {% crispy event_form %}
+            {% csrf_token %}
+            {% crispy event_form %}
             <div class="form-actions">
                 <button ng-click="submit()">Submit</button>
             </div>
         </accordion-group>
     </accordion>
+    </div>
 
     <div class="row">
         <div class="span3">
-    <form class="form-search">
-        <div class="controls">
-            <input type="text" id="event-filter" name="event-filter" class="search-query input-medium"
-                   placeholder="Search" ng-model="eventFilter"  typeahead="event.title for event in events | filter:$viewValue | limitTo:8"/>
-        </div>
-    </form>
-        <ul class="nav nav-pills nav-stacked">
-            <li ng-repeat="event in events | filter:eventFilter | orderBy:'start'">
+            <form class="form-search">
+                <div class="controls">
+                    <input type="text" id="event-filter" name="event-filter" class="search-query input-medium"
+                           placeholder="Search" ng-model="eventFilter"
+                           typeahead="event.title for event in events | filter:$viewValue | limitTo:8"/>
+                </div>
+            </form>
+            <ul class="nav nav-pills nav-stacked">
+                <li ng-repeat="event in events | filter:eventFilter | orderBy:'start'">
                     <a href="#/events/{[{ event.id }]}">
                         {[{ event.title }]}
                         <br/>
-                <small>
-                    {[{ event.start | date }]} -
-                    {[{ event.end | date }]}
-                </small>
+                        <small>
+                            {[{ event.start | date }]} -
+                            {[{ event.end | date }]}
+                        </small>
                     </a>
-            </li>
-        </ul>
+                </li>
+            </ul>
 
 
         </div>
 
         <div class="span9">
-            <div ng-view></div>
+            <ul class="unstyled">
+                <li ng-repeat="event in events | filter:eventFilter | orderBy:'start'">
+                    <h2>
+                        <a href="#/events/{[{ event.id }]}">
+                            {[{ event.title }]}
+                            <small>
+                                {[{ event.start | date }]} -
+                                {[{ event.end | date }]}
+                            </small>
+                        </a>
+                    </h2>
+                    <p>{[{ event.description }]}
+                </li>
+            </ul>
         </div>
     </div>
 
-    </div>
+    </script>
+
     <script type="text/ng-template" id="detail.html">
 <h1>
     <span contentEditable="true">
@@ -66,6 +90,7 @@
 </p>
 
 </script>
+    </div>
 
 
 
