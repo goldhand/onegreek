@@ -4,24 +4,26 @@
 
 {% block content %}
     <div ng-controller="AppController">
-    <ul>
-        <li ng-repeat="event in globals.events">
-            {[{ event.title }]}
-        </li>
-    </ul>
-    <div ng-view></div>
 
-    <script type="text/ng-template" id="list.html">
-    <div>
-    <accordion>
-        <accordion-group heading="Create New Event">
-            {% csrf_token %}
-            {% crispy event_form %}
-            <div class="form-actions">
-                <button ng-click="submit()">Submit</button>
+    <div ng-controller="MyFormCtrl">
+        <button class="btn btn-primary btn-large pull-right" ng-click="openModal()">Create Event</button>
+        <script type="text/ng-template" id="newEventModal.html">
+
+            <div class="modal-header">
+                <h3 ng-model="event.title">Register New Event</h3>
             </div>
-        </accordion-group>
-    </accordion>
+            <div class="modal-body">
+                {% csrf_token %}
+                {% crispy event_form %}
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" ng-click="ok()">OK</button>
+                <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+            </div>
+
+            </script>
+
     </div>
 
     <div class="row">
@@ -30,11 +32,11 @@
                 <div class="controls">
                     <input type="text" id="event-filter" name="event-filter" class="search-query input-medium"
                            placeholder="Search" ng-model="eventFilter"
-                           typeahead="event.title for event in events | filter:$viewValue | limitTo:8"/>
+                           typeahead="event.title for event in globals.events | filter:$viewValue | limitTo:8"/>
                 </div>
             </form>
             <ul class="nav nav-pills nav-stacked">
-                <li ng-repeat="event in events | filter:eventFilter | orderBy:'start'">
+                <li ng-repeat="event in globals.events | filter:eventFilter | orderBy:'start'">
                     <a href="#/events/{[{ event.id }]}">
                         {[{ event.title }]}
                         <br/>
@@ -48,6 +50,12 @@
 
 
         </div>
+
+
+        <div ng-view></div>
+
+        <script type="text/ng-template" id="list.html">
+
 
         <div class="span9">
             <ul class="unstyled">
@@ -69,7 +77,7 @@
 
     </script>
 
-    <script type="text/ng-template" id="detail.html">
+        <script type="text/ng-template" id="detail.html">
 <h1>
     <span contentEditable="true">
     {[{ event.title }]}
@@ -90,6 +98,8 @@
 </p>
 
 </script>
+
+
     </div>
 
 

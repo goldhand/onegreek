@@ -4,3 +4,16 @@
     margin-right: auto;
     margin-left: auto;
 }
+
+.modal.full-screen-modal {
+    width: 970px;
+    margin-left: -485px;
+}
+.modal.full-screen-modal .modal-body {
+    overflow: hidden;
+}
+
+.time-picker-widget {
+    padding-left: 60px;
+    float: left;
+}

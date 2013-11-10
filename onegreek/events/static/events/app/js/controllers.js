@@ -19,14 +19,12 @@ eventsControllers.controller('AppController', function ($scope, $rootScope, $loc
 eventsControllers.controller('EventListCtrl', [
     '$scope',
     '$http',
-    '$timeout',
     'EventService',
     'GlobalService',
     'events',
     function (
         $scope,
         $http,
-        $timeout,
         EventService,
         GlobalService,
         events
@@ -50,24 +48,6 @@ eventsControllers.controller('EventListCtrl', [
         //        $scope.events.push(event_data);
         //    });
         };
-        $scope.openStart = function() {
-            $timeout(function() {
-                $scope.openedStart = true;
-            });
-        };
-        $scope.openEnd = function() {
-            $timeout(function() {
-                $scope.openedEnd = true;
-            });
-        };
-        $scope.dateOptions = {
-            'year-format': "'yyyy'",
-            'month-format': "'mm'",
-            'starting-day': 1
-        };
-        $scope.hstep = 1;
-        $scope.mstep = 15;
-        $scope.ismeridian = true;
 
         $scope.Search = undefined;
 
@@ -85,31 +65,86 @@ eventsApp.controller('EventDetailCtrl', ['$scope', '$http', '$routeParams', func
 }]);
 
 
-eventsApp.controller('MyFormCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
+eventsControllers.controller('MyFormCtrl', [
+    '$scope',
+    '$http',
+    '$modal',
+    'GlobalService',
+    'EventService',
+    function (
+        $scope,
+        $http,
+        $modal,
+        GlobalService,
+        EventService
+        ) {
     $scope.event = {};
+    $scope.globals = GlobalService;
     $scope.submit = function() {
-        $http.post('/api/events/', $scope.event).success(function(event_data) {
-            $scope.events.push(event_data);
+        EventService.save($scope.event).then(function(data) {
+            $scope.event = data;
+            $scope.globals.events.push(data);
+        }, function(status) {
+            console.log(status);
         });
     };
 
-    $scope.openStart = function() {
-        $timeout(function() {
-            $scope.openedStart = true;
-        });
-    };
-    $scope.openEnd = function() {
-        $timeout(function() {
-            $scope.openedEnd = true;
-        });
-    };
-    $scope.dateOptions = {
-        'year-format': "'yyyy'",
-        'month-format': "'mm'",
-        'starting-day': 1
-    };
-    $scope.hstep = 1;
-    $scope.mstep = 15;
-    $scope.ismeridian = true;
+        $scope.openModal = function () {
+            var modalInstance = $modal.open({
+                templateUrl: 'newEventModal.html',
+                controller: 'ModalInstanceCtrl',
+                windowClass: 'full-screen-modal',
+                resolve: {
+                    event: function () {
+                        return $scope.event;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (newEvent) {
+                $scope.event = newEvent;
+                $scope.submit();
+            }, function () {});
+        };
 }]);
 
+eventsControllers.controller('ModalInstanceCtrl', [
+    '$scope',
+    '$timeout',
+    '$modalInstance',
+    'event',
+    function (
+        $scope,
+        $timeout,
+        $modalInstance,
+        event
+        ) {
+        $scope.openStart = function() {
+            $timeout(function() {
+                $scope.openedStart = true;
+            });
+        };
+        $scope.openEnd = function() {
+            $timeout(function() {
+                $scope.openedEnd = true;
+            });
+        };
+        $scope.dateOptions = {
+            'year-format': "'yyyy'",
+            'month-format': "'mm'",
+            'starting-day': 1
+        };
+        $scope.hstep = 1;
+        $scope.mstep = 1;
+        $scope.ismeridian = true;
+
+        $scope.event = event;
+
+            $scope.ok = function () {
+                $modalInstance.close($scope.event);
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+    }]);

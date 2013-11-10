@@ -19,7 +19,7 @@ def date_time_widget(ng_model, ng_label):
     '</div>' \
     '</div>' \
     '<div class="controls">' \
-    '<div ng-model="%s" ng-change="changed()" class="span3">' \
+    '<div ng-model="%s" ng-change="changed()" class="time-picker-widget">' \
     '<timepicker hour-step="hstep" minute-step="mstep" show-meridian="ismeridian"></timepicker>' \
     '</div>' \
     '</div>' \
@@ -50,15 +50,15 @@ class EventForm(NgModelFormMixin, forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    Field('title', css_class="span4"),
-                    Field('description', css_class="span4"),
-                    css_class="span5"
+                    HTML(date_time_widget('event.start', 'Start')),
+                    Field('title', css_class="input-block-level"),
+                    Field('viewers', css_class="input-block-level"),
+                    Field('enable_comments'),
+                    css_class="span6"
                 ),
                 Div(
-                HTML(date_time_widget('event.start', 'Start')),
                 HTML(date_time_widget('event.end', 'End')),
-                'viewers',
-                'enable_comments',
+                Field('description', css_class="input-block-level"),
                 css_class="span6"
                 ),
                 css_class="row"
