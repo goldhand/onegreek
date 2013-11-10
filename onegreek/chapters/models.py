@@ -11,6 +11,7 @@ from model_utils import Choices, FieldTracker
 from core.models import Slugged, base_concrete_model, unique_slug
 
 
+#TODO: Need to send a signal when fraternity or university fields update. Equivalent user fields should update when siganled
 class Chapter(Slugged, StatusModel):
 
     STATUS = Choices('excellence', 'achievement', 'probation', 'inactive')

@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<div ng-controller="EventListCtrl">
+<div>
     <accordion>
         <accordion-group heading="Create New Event">
                 {% csrf_token %}
@@ -84,5 +84,6 @@
     <script src="{% static 'events/app/js/app.js' %}"></script>
     <script src="{% static 'events/app/js/controllers.js' %}"></script>
     <script src="{% static 'events/app/js/services.js' %}"></script>
+    <script src="{% static 'events/app/js/directives.js' %}"></script>
     <script src="{% static 'events/app/js/filters.js' %}"></script>
 {% endblock angular_app %}

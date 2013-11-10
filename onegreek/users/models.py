@@ -41,9 +41,17 @@ class User(AbstractUser):
     major = models.CharField(max_length=255, blank=True)
     hometown = models.CharField(max_length=255, blank=True)
     chapter = models.ForeignKey('chapters.Chapter', blank=True, null=True)
+    university = models.ForeignKey('universities.University', blank=True, null=True)
+    fraternity = models.ForeignKey('fraternities.Fraternity', blank=True, null=True)
 
     def __unicode__(self):
         return self.username
 
     def can_view_object(self, _object):
         return _object.user_can_view(self)
+
+    def save(self, *args, **kwargs):
+        if self.chapter:
+            self.university = self.chapter.university
+            self.fraternity = self.chapter.fraternity
+        super(User, self).save(*args, **kwargs)

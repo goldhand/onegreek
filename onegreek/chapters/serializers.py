@@ -11,4 +11,17 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Chapter
-        fields = ['url', 'title', 'awards', 'cost', 'description', 'gpa', 'philanthropy', 'potential_new_members', 'status', 'group']
+        fields = ['url',
+                  'title',
+                  'description',
+                  'awards',
+                  'philanthropy',
+                  'potential_new_members',
+                  'cost',
+                  'gpa',
+                  'status',
+                  'fraternity',
+                  'university',
+                  'group',
+        ]
+

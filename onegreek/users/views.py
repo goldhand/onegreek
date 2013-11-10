@@ -69,6 +69,10 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if 'chapter' in self.request.GET:
             return User.objects.filter(chapter_id=self.request.GET['chapter'])
+        elif 'fraternity' in self.request.GET:
+            return User.objects.filter(chapter_id=self.request.GET['fraternity'])
+        elif 'university' in self.request.GET:
+            return User.objects.filter(chapter_id=self.request.GET['university'])
         else:
             return User.objects.filter(chapter_id=self.request.user.chapter_id)
 

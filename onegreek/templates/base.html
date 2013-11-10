@@ -39,8 +39,6 @@
             <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
             <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
         {% endblock angular_modules %}
-        {% block angular_app %}
-        {% endblock angular_app %}
     {% endblock angular %}
 
   </head>
@@ -99,6 +97,9 @@
         <script src="{% static 'js/holder.js' %}"></script>
 
     {% endblock javascript %}
+
+    {% block angular_app %}
+    {% endblock angular_app %}
   </body>
 </html>
  
