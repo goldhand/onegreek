@@ -11,16 +11,10 @@
 
         <div>
             <ul class="nav nav-pills">
-            <li>
-                <a href="#/users/filter/chapter/{{ user.chapter_id }}">{{ user.chapter.title }}</a>
-            </li>
-            <li>
-                <a href="#/users/filter/university/{{ user.university_id }}">{{ user.university.title }}</a>
-            </li>
-            <li>
-                <a href="#/users/filter/fraternity/{{ user.fraternity_id }}">{{ user.fraternity.title }}</a>
-            </li>
-                {% for group in user.chapter.groups.all %}
+                <li>
+                    <a href="#/users">All</a>
+                </li>
+                {% for group in user.groups.all %}
                     <li>
                         <a href="#/users/filter/group/{{ group.id }}">{{ group.name }}</a>
                     </li>

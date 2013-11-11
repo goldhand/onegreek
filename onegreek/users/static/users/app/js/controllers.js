@@ -9,6 +9,7 @@ userControllers.controller('AppController', function ($scope, $rootScope, $locat
         console.log(status);
     };
     $scope.globals = GlobalService;
+    $scope.globals.users = undefined;
 
     $scope.initialize = function (is_authenticated) {
         $scope.globals.is_authenticated = is_authenticated;
@@ -20,25 +21,27 @@ userControllers.controller('UserListCtrl', [
     '$scope',
     '$http',
     'UserService',
-    'GroupService',
+    //'GroupService',
     'GlobalService',
     'users',
-    'groups',
+    //'groups',
     function (
         $scope,
         $http,
         UserService,
         GlobalService,
-        GroupService,
-        users,
-        groups
+        //GroupService,
+        users
+        //groups
         ) {
         $scope.user = {};
         $scope.users = users;
-        $scope.groups = groups;
+        //$scope.groups = groups;
 
         $scope.globals = GlobalService;
-        $scope.globals.users = users;
+        if($scope.globals.users == undefined) {
+            $scope.globals.users = users;
+        }
 
         $scope.submit = function() {
             UserService.save($scope.user).then(function(data) {

@@ -43,7 +43,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             return ''
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
-    user_set = serializers.HyperlinkedRelatedField(many=True, view_name='user-detail')
+    user_set = serializers.HyperlinkedRelatedField(many=True, view_name='user-detail', read_only=True)
 
     class Meta:
         model = Group

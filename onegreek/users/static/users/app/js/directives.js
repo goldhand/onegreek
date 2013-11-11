@@ -2,8 +2,9 @@
 
 /* Directives */
 
+var userDirectives = angular.module('userDirectives', []);
 
-userApp.directive('contenteditable', function() {
+userDirectives.directive('contenteditable', function() {
     return {
         require: 'ngModel',
         link: function(scope, elm, attrs, ctrl) {

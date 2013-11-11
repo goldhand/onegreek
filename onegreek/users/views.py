@@ -72,12 +72,8 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def get_queryset(self):
-        if 'chapter' in self.request.GET:
-            return User.objects.filter(chapter_id=self.request.GET['chapter'])
-        elif 'fraternity' in self.request.GET:
-            return User.objects.filter(fraternity_id=self.request.GET['fraternity'])
-        elif 'university' in self.request.GET:
-            return User.objects.filter(university_id=self.request.GET['university'])
+        if 'group' in self.request.GET:
+            return User.objects.filter(groups__id=self.request.GET['group'])
         else:
             return User.objects.filter(chapter_id=self.request.user.chapter_id)
 
