@@ -17,10 +17,10 @@ class ChapterForm(forms.ModelForm):
             'title', 'description', 'university', 'fraternity',
             'cost', 'gpa',
             'description', 'awards', 'philanthropy', 'potential_new_members',
-            'slug', 'group',
+            'slug', 'groups',
             ]
         widgets = {
-            'group': forms.HiddenInput(),
+            'groups': forms.HiddenInput(),
             'slug': forms.HiddenInput(),
         }
 
@@ -46,7 +46,7 @@ class ChapterForm(forms.ModelForm):
                     Field('awards', css_class="input-block-level", rows='6'),
                     Field('philanthropy', css_class="input-block-level", rows='6'),
                     Field('potential_new_members', css_class="input-block-level", rows='6'),
-                    'slug', 'group',
+                    'slug', 'groups',
                     css_class="span6"
                 ),
                 css_class='row',

@@ -1,28 +1,177 @@
 {% extends "base.html" %}
 {% load static %}{% load i18n %}
 {% load avatar_tags %}
+{% load crispy_forms_tags staticfiles %}
+{% block left_content %}{% endblock left_content %}
 
 {% block title %}Members{% endblock %}
 
 {% block content %}
+    <div ng-controller="AppController">
 
-    <div class="col-xs-9">
-      <h2>Users</h2>
+        <div>
+            <ul class="nav nav-pills">
+            <li>
+                <a href="#/users/filter/chapter/{{ user.chapter_id }}">{{ user.chapter.title }}</a>
+            </li>
+            <li>
+                <a href="#/users/filter/university/{{ user.university_id }}">{{ user.university.title }}</a>
+            </li>
+            <li>
+                <a href="#/users/filter/fraternity/{{ user.fraternity_id }}">{{ user.fraternity.title }}</a>
+            </li>
+                {% for group in user.chapter.groups.all %}
+                    <li>
+                        <a href="#/users/filter/group/{{ group.id }}">{{ group.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="span3">
+                <form class="form-search">
+                    <div class="controls">
+                        <input type="text" id="user-filter" name="user-filter" class="search-query input-medium"
+                               placeholder="Search" ng-model="userFilter"
+                               typeahead="user.first_name for user in globals.users | filter:$viewValue | limitTo:8"/>
+                    </div>
+                </form>
+                <ul class="nav nav-pills nav-stacked">
+                    <li ng-repeat="user in globals.users | filter:userFilter | orderBy:'start'">
+                        <a href="#/users/{[{ user.id }]}">
+                            <img src="{[{ user.avatar }]}">
+                            {[{ user.last_name }]}, {[{ user.first_name }]}
+                        </a>
+                    </li>
+                </ul>
+
+
+            </div>
+
+
+            <div ng-view></div>
+
+<script type="text/ng-template" id="list.html">
+
+<div class="span9">
+    <ul class="unstyled">
+        <li ng-repeat="user in users">
+            <h2>
+                <a href="#/users/{[{ user.id }]}">
+                    {[{ user.last_name }]}, {[{ user.first_name }]}
+                </a>
+            </h2>
+            <p>{[{ user.description }]}
+        </li>
+    </ul>
+</div>
+
+</script>
+
+<script type="text/ng-template" id="detail.html">
+
+<h1>
+                            <img class="pull-left" src="{[{ user.avatar }]}">
+    <span>
+                    {[{ user.last_name }]}, {[{ user.first_name }]}
+    </span>
+    <br/>
+<small>
+    {[{ user.chapter }]}
+    {[{ user.fraternity }]}
+    {[{ user.university }]}
+</small>
+</h1>
+
+<dl>
+<dt>
+Email:
+</dt>
+<dd>
+    {[{ user.email }]}
+</dd>
+<dt>
+Phone:
+</dt>
+<dd>
+    {[{ user.phone }]}
+</dd>
+<dt>
+Year:
+</dt>
+<dd>
+    {[{ user.year }]}
+</dd>
+<dt>
+Major:
+</dt>
+<dd>
+    {[{ user.major }]}
+</dd>
+<dt>
+Home Town:
+</dt>
+<dd>
+    {[{ user.hometown }]}
+</dd>
+<dt>
+Highschool GPA:
+</dt>
+<dd>
+    {[{ user.highschool_gpa }]}
+</dd>
+<dt>
+GPA:
+</dt>
+<dd>
+    {[{ user.gpa }]}
+</dd>
+</script>
+
+
+        </div>
     </div>
+
+{% endblock content %}
+
+
+{% block angular_app_name %}userApp{% endblock angular_app_name %}
+
+{% block angular_modules %}
+    <script src="{% static 'angularjs/app/lib/angular/angular-cookies.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
+{% endblock angular_modules %}
+{% block angular_app %}
+    <script src="{% static 'users/app/js/app.js' %}"></script>
+    <script src="{% static 'users/app/js/controllers.js' %}"></script>
+    <script src="{% static 'users/app/js/services.js' %}"></script>
+    <script src="{% static 'users/app/js/directives.js' %}"></script>
+    <script src="{% static 'users/app/js/filters.js' %}"></script>
+
+    <script src="{% static 'groups/app/js/controllers.js' %}"></script>
+    <script src="{% static 'groups/app/js/services.js' %}"></script>
+
+{% endblock angular_app %}
+
+
+
+<div class="col-xs-9">
+    <h2>Users</h2>
+</div>
 
 <div class="row">
     <div class="col-lg-9">
-      <div class="list-group">
-          {% for user in user_list %}
-            <a href="{% url 'users:detail' user.username %}" class="list-group-item">
-              <h4 class="list-group-item-heading">{% avatar user %} {{ user.username }}</h4>
-              <p class="list-group-item-text">{{ maker.tagline }}</p>
-            </a>
-          {% endfor %}
-        
-      </div>
+        <div class="list-group">
+            {% for user in user_list %}
+                <a href="{% url 'users:detail' user.username %}" class="list-group-item">
+                    <h4 class="list-group-item-heading">{% avatar user %} {{ user.username }}</h4>
+                    <p class="list-group-item-text">{{ maker.tagline }}</p>
+                </a>
+            {% endfor %}
+
+        </div>
     </div>
 </div>
-
-
-{% endblock content %}

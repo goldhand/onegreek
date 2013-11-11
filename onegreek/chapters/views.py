@@ -13,6 +13,7 @@ class ChapterViewSet(viewsets.ModelViewSet):
     serializer_class = ChapterSerializer
 
 
+
 class ChapterDetail(generic.DetailView):
     model = Chapter
 

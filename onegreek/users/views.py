@@ -56,6 +56,11 @@ class UserListView(LoginRequiredMixin, ListView):
     slug_field = "username"
     slug_url_kwarg = "username"
 
+    def get_context_data(self, **kwargs):
+        context = super(UserListView, self).get_context_data(**kwargs)
+        context.update(user_form=UserForm())
+        return context
+
 
 
 from rest_framework import viewsets
@@ -70,11 +75,12 @@ class UserViewSet(viewsets.ModelViewSet):
         if 'chapter' in self.request.GET:
             return User.objects.filter(chapter_id=self.request.GET['chapter'])
         elif 'fraternity' in self.request.GET:
-            return User.objects.filter(chapter_id=self.request.GET['fraternity'])
+            return User.objects.filter(fraternity_id=self.request.GET['fraternity'])
         elif 'university' in self.request.GET:
-            return User.objects.filter(chapter_id=self.request.GET['university'])
+            return User.objects.filter(university_id=self.request.GET['university'])
         else:
             return User.objects.filter(chapter_id=self.request.user.chapter_id)
+
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()

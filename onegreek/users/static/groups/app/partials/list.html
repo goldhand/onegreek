@@ -1,0 +1,14 @@
+<ul class="unstyled">
+    <li ng-repeat="event in events | filter:eventFilter | orderBy:'start'">
+        <h2>
+            <a href="#/events/{[{ event.id }]}">
+                {[{ event.title }]}
+            </a>
+            <small>
+                {[{ event.start | date }]} -
+                {[{ event.end | date }]}
+            </small>
+        </h2>
+        <p>{[{ event.description }]}</p>
+    </li>
+</ul>

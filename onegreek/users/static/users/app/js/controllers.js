@@ -1,76 +1,64 @@
 'use strict';
 
 /* Controllers */
-usersApp.controller('UserListCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
-    $scope.user = {};
-    $http.get('/api/users/').success(function(data) {
-        $scope.users = data;
-    });
-    $scope.submit = function() {
-        $http.post('/api/users/', $scope.user).success(function(user_data) {
-            $scope.users.push(user_data);
-        });
-    };
-    $scope.openStart = function() {
-        $timeout(function() {
-            $scope.openedStart = true;
-        });
-    };
-    $scope.openEnd = function() {
-        $timeout(function() {
-            $scope.openedEnd = true;
-        });
-    };
-    $scope.dateOptions = {
-        'year-format': "'yyyy'",
-        'month-format': "'mm'",
-        'starting-day': 1
-    };
-    $scope.hstep = 1;
-    $scope.mstep = 15;
-    $scope.ismeridian = true;
 
-    $scope.Search = undefined;
+var userControllers = angular.module('userControllers', []);
 
-}]);
+userControllers.controller('AppController', function ($scope, $rootScope, $location, GlobalService) {
+    var failureCb = function (status) {
+        console.log(status);
+    };
+    $scope.globals = GlobalService;
 
-usersApp.controller('UserDetailCtrl', ['$scope', '$http', '$routeParams', function ($scope, $http, $routeParams) {
-    $http.get('/api/users/' + $routeParams.userId + '/').success(function(data) {
-        $scope.user = data;
-    });
+    $scope.initialize = function (is_authenticated) {
+        $scope.globals.is_authenticated = is_authenticated;
+    };
+});
+
+
+userControllers.controller('UserListCtrl', [
+    '$scope',
+    '$http',
+    'UserService',
+    'GroupService',
+    'GlobalService',
+    'users',
+    'groups',
+    function (
+        $scope,
+        $http,
+        UserService,
+        GlobalService,
+        GroupService,
+        users,
+        groups
+        ) {
+        $scope.user = {};
+        $scope.users = users;
+        $scope.groups = groups;
+
+        $scope.globals = GlobalService;
+        $scope.globals.users = users;
+
+        $scope.submit = function() {
+            UserService.save($scope.user).then(function(data) {
+                $scope.user = data;
+                $scope.users.push(data);
+            }, function(status) {
+                console.log(status);
+            });
+        };
+
+        $scope.Search = undefined;
+
+    }]);
+
+userControllers.controller('UserDetailCtrl', ['$scope', '$http', '$routeParams', 'user', function ($scope, $http, $routeParams, user) {
+    $scope.user = user;
     $scope.submit = function() {
         $http.post('/api/users/' + $routeParams.userId + '/', $scope.user).success(function(user_data) {
             $scope.users.push(user_data);
         });
     };
-}]);
-
-
-usersApp.controller('MyFormCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
-    $scope.user = {};
-    $scope.submit = function() {
-        $http.post('/api/users/', $scope.user).success(function(user_data) {
-            $scope.users.push(user_data);
-        });
-    };
-
-    $scope.openStart = function() {
-        $timeout(function() {
-            $scope.openedStart = true;
-        });
-    };
-    $scope.openEnd = function() {
-        $timeout(function() {
-            $scope.openedEnd = true;
-        });
-    };
-    $scope.dateOptions = {
-        'year-format': "'yyyy'",
-        'month-format': "'mm'",
-        'starting-day': 1
-    };
-    $scope.hstep = 1;
-    $scope.mstep = 15;
-    $scope.ismeridian = true;
 }]);
 

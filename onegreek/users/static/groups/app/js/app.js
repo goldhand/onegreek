@@ -2,14 +2,12 @@
 
 
 // Declare app level module which depends on filters, and services
-var userApp = angular.module('userApp', [
+var groupApp = angular.module('groupApp', [
     'ui.bootstrap',
     'ngCookies',
     'ngRoute',
-    'userControllers',
-    'userServices',
     'groupControllers',
-    'groupServices'
+    'groupervices'
     //'myApp.filters',
     //'myApp.services',
     //'myApp.directives',
@@ -21,42 +19,39 @@ var userApp = angular.module('userApp', [
     }
 );
 
-userApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
+groupsApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-    $routeProvider.when('/users', {
+    $routeProvider.when('/groups', {
         templateUrl: 'list.html',
-        controller: 'UserListCtrl',
+        controller: 'GroupListCtrl',
         resolve: {
-            users: function(UserService) {
-                return UserService.list();
-            },
             groups: function(GroupService) {
                 return GroupService.list();
             }
         }
     });
-    $routeProvider.when('/users/filter/:query/:queryId', {
+    $routeProvider.when('/groups/filter/:query/:queryId', {
         templateUrl: 'list.html',
-        controller: 'UserListCtrl',
+        controller: 'GroupListCtrl',
         resolve: {
-            users: function($route, UserService) {
+            groups: function($route, GroupService) {
                 var q = $route.current.params.query;
                 var qId = $route.current.params.queryId;
-                return UserService.filter(q, qId);
+                return GroupService.filter(q, qId);
             }
         }
     });
-    $routeProvider.when('/users/:userId', {
+    $routeProvider.when('/groups/:groupId', {
         templateUrl: 'detail.html',
-        controller: 'UserDetailCtrl',
+        controller: 'GroupDetailCtrl',
         resolve: {
-            user: function($route, UserService) {
-                var userId = $route.current.params.userId;
-                return UserService.get(userId);
+            group: function($route, GroupService) {
+                var groupId = $route.current.params.groupId;
+                return GroupService.get(groupId);
             }
         }
 
     });
-    $routeProvider.otherwise({redirectTo: '/users'});
+    $routeProvider.otherwise({redirectTo: '/groups'});
 }]);

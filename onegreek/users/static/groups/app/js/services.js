@@ -2,10 +2,10 @@
 
 /* Services */
 
-var userServices = angular.module('userServices', ['ngResource']);
+var groupServices = angular.module('groupServices', ['ngResource']);
 
 
-userServices.factory('GlobalService', function () {
+groupServices.factory('GlobalService', function () {
     var vars = {
         is_authenticated: false
     }
@@ -13,11 +13,11 @@ userServices.factory('GlobalService', function () {
 });
 
 
-userServices.factory('UserService', function ($http, $q) {
-    var api_url = "/api/users/";
+groupServices.factory('GroupService', function ($http, $q) {
+    var api_url = "/api/groups/";
     return {
-        get: function (user_id) {
-            var url = api_url + user_id + "/";
+        get: function (group_id) {
+            var url = api_url + group_id + "/";
             var defer = $q.defer();
             $http({method: 'GET', url: url}).
                 success(function (data, status, headers, config) {
@@ -30,7 +30,7 @@ userServices.factory('UserService', function ($http, $q) {
         },
         list: function () {
             var defer = $q.defer();
-            $http({method: 'GET', url: api_url}).
+            $http({method: 'GET', url: api_url, isArray:true}).
                 success(function (data, status, headers, config) {
                     defer.resolve(data);
                     console.log(data);
@@ -51,12 +51,12 @@ userServices.factory('UserService', function ($http, $q) {
                 });
             return defer.promise;
         },
-        update: function (user) {
-            var url = api_url + user.id + "/";
+        update: function (group) {
+            var url = api_url + group.id + "/";
             var defer = $q.defer();
             $http({method: 'PUT',
                 url: url,
-                data: user}).
+                data: group}).
                 success(function (data, status, headers, config) {
                     defer.resolve(data);
                 }).error(function (data, status, headers, config) {
@@ -64,12 +64,12 @@ userServices.factory('UserService', function ($http, $q) {
                 });
             return defer.promise;
         },
-        save: function (user) {
+        save: function (group) {
             var url = api_url;
             var defer = $q.defer();
             $http({method: 'POST',
                 url: url,
-                data: user}).
+                data: group}).
                 success(function (data, status, headers, config) {
                     defer.resolve(data);
                 }).error(function (data, status, headers, config) {

@@ -22,6 +22,6 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
                   'status',
                   'fraternity',
                   'university',
-                  'group',
+                  'groups',
         ]
 

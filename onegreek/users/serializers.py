@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Group
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import serializers
 
@@ -7,15 +8,21 @@ from .models import User
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 
+    avatar = serializers.SerializerMethodField('get_avatar')
+    year_display = serializers.Field('get_year_display')
+
     class Meta:
         model = User
         fields = [
             'url',
+            'id',
             'first_name',
             'last_name',
+            'avatar',
             'email',
             'phone',
             'year',
+            'year_display',
             'major',
             'hometown',
             'highschool_gpa',
@@ -25,6 +32,15 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'university',
         ]
 
+    def get_avatar(self, obj):
+        if obj:
+            try:
+                avatar = obj.avatar_set.get(primary=True).get_absolute_url()
+            except ObjectDoesNotExist:
+                avatar = ''
+            return avatar
+        else:
+            return ''
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     user_set = serializers.HyperlinkedRelatedField(many=True, view_name='user-detail')
@@ -32,5 +48,5 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
         fields = [
-            'url', 'name', 'user_set'
+            'id', 'url', 'name', 'user_set'
         ]
