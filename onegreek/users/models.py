@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 # Import the AbstractUser model
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 
 # Import the basic Django ORM models library
 from django.db import models
+from django.db.models import signals
+from django.dispatch import receiver
 
 from django.utils.translation import ugettext_lazy as _
 from model_utils import Choices
@@ -55,4 +57,15 @@ class User(AbstractUser):
             self.university = self.chapter.university
             self.fraternity = self.chapter.fraternity
 
-        super(User, self).save(*args, **kwargs)
+        return super(User, self).save(*args, **kwargs)
+
+
+#TODO: this dont work
+@receiver(signals.post_save, sender=User)
+def set_groups(sender, **kwargs):
+    user = kwargs.get('instance')
+    if user.chapter:
+        group = Group.objects.get_or_create(name="%s_%d" % ("chapter", user.chapter_id))
+        if group not in user.groups.all():
+            print group[0].name
+            return user.groups.add(group[0].id)

@@ -5,14 +5,6 @@
 var groupServices = angular.module('groupServices', ['ngResource']);
 
 
-groupServices.factory('GlobalService', function () {
-    var vars = {
-        is_authenticated: false
-    }
-    return vars;
-});
-
-
 groupServices.factory('GroupService', function ($http, $q) {
     var api_url = "/api/groups/";
     return {

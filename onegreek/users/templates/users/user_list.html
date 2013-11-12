@@ -7,7 +7,7 @@
 {% block title %}Members{% endblock %}
 
 {% block content %}
-    <div ng-controller="AppController">
+    <div ng-controller="UserGlobalCtrl">
 
         <div>
             <ul class="nav nav-pills">
@@ -42,13 +42,25 @@
 
 
             </div>
+            <div class="span3">
+                <tabset vertical="true" type="tabs">
+                    <tab heading="Tab 1">
+                        blah blah blah
+                    </tab>
+                    <tab heading="Tab 2">
+                        Shimmy
+                    </tab>
+                </tabset>
 
+            </div>
+            <div class="span6">
 
-            <div ng-view></div>
+                <div ng-view></div>
+
+            </div>
 
 <script type="text/ng-template" id="list.html">
 
-<div class="span9">
     <ul class="unstyled">
         <li ng-repeat="user in users">
             <h2>
@@ -59,7 +71,6 @@
             <p>{[{ user.description }]}
         </li>
     </ul>
-</div>
 
 </script>
 

@@ -4,7 +4,7 @@
 
 var userControllers = angular.module('userControllers', []);
 
-userControllers.controller('AppController', function ($scope, $rootScope, $location, GlobalService) {
+userControllers.controller('UserGlobalCtrl', function ($scope, $rootScope, $location, GlobalService) {
     var failureCb = function (status) {
         console.log(status);
     };
@@ -24,19 +24,19 @@ userControllers.controller('UserListCtrl', [
     //'GroupService',
     'GlobalService',
     'users',
-    //'groups',
+    'groups',
     function (
         $scope,
         $http,
         UserService,
         GlobalService,
         //GroupService,
-        users
-        //groups
+        users,
+        groups
         ) {
         $scope.user = {};
         $scope.users = users;
-        //$scope.groups = groups;
+        $scope.groups = groups;
 
         $scope.globals = GlobalService;
         if($scope.globals.users == undefined) {

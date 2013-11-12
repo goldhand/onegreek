@@ -7,9 +7,9 @@ var userApp = angular.module('userApp', [
     'ngCookies',
     'ngRoute',
     'userControllers',
-    'userServices'
+    'userServices',
     //'groupControllers',
-    //'groupServices'
+    'groupServices'
     //'myApp.filters',
     //'myApp.services',
     //'myApp.directives',
@@ -30,10 +30,10 @@ userApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $htt
         resolve: {
             users: function(UserService) {
                 return UserService.list();
+            },
+            groups: function(GroupService) {
+                return GroupService.list();
             }
-            //groups: function(GroupService) {
-            //    return GroupService.list();
-            //}
         }
     });
     $routeProvider.when('/users/filter/:query/:queryId', {

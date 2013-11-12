@@ -4,7 +4,7 @@
 
 var groupControllers = angular.module('groupControllers', []);
 
-groupControllers.controller('AppController', function ($scope, $rootScope, $location, GlobalService) {
+groupControllers.controller('GroupGlobalCtrl', function ($scope, $rootScope, $location, GlobalService) {
     var failureCb = function (status) {
         console.log(status);
     };
@@ -21,7 +21,6 @@ groupControllers.controller('GroupListCtrl', [
     '$http',
     'GroupService',
     'GlobalService',
-    'groups',
     function (
         $scope,
         $http,
@@ -56,3 +55,18 @@ groupControllers.controller('GroupDetailCtrl', ['$scope', '$http', '$routeParams
     };
 }]);
 
+
+groupControllers.controller('GroupTabCtrl', ['$scope', function ($scope) {
+    $scope.tabs = [
+        { title:"Dynamic Title 1", content:"Dynamic content 1" },
+        { title:"Dynamic Title 2", content:"Dynamic content 2", disabled: true }
+    ];
+
+    $scope.alertMe = function() {
+        setTimeout(function() {
+            alert("You've selected the alert tab!");
+        });
+    };
+
+    $scope.navType = 'tabs';
+}]);
