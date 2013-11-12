@@ -1,18 +1,16 @@
 from rest_framework import permissions
 
 
-class IsOwnerOrViewer(permissions.BasePermission):
+class EventObjectPermissions(permissions.DjangoObjectPermissions):
     """
-    Custom permission to only allow owners of an object to edit it.
+    Similar to `DjangoObjectPermissions`, but adding 'view' permissions.
     """
-
-    def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request,
-        # so we'll always allow GET, HEAD or OPTIONS requests.
-        if request.method in permissions.SAFE_METHODS:
-            if request.user.chapter == obj.get_chapter or request.user.chapter in obj.viewers.all():
-                return True
-
-        # Write permissions are only allowed to the owner of the snippet
-        if obj.owner == request.user:
-            return True
+    perms_map = {
+        'GET': ['%(app_label)s.view_%(model_name)s'],
+        'OPTIONS': ['%(app_label)s.view_%(model_name)s'],
+        'HEAD': ['%(app_label)s.view_%(model_name)s'],
+        'POST': ['%(app_label)s.add_%(model_name)s'],
+        'PUT': ['%(app_label)s.change_%(model_name)s'],
+        'PATCH': ['%(app_label)s.change_%(model_name)s'],
+        'DELETE': ['%(app_label)s.delete_%(model_name)s'],
+    }

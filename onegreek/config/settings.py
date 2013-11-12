@@ -54,6 +54,7 @@ class Common(Configuration):
         'akismet',
         'guardian',
         'djangular',
+        'django_filters',
     )
 
     # Apps specific for this project go here.
@@ -241,7 +242,7 @@ class Common(Configuration):
     # Some really nice defaults
     ACCOUNT_AUTHENTICATION_METHOD = "username"
     ACCOUNT_EMAIL_REQUIRED = True
-    ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+    ACCOUNT_EMAIL_VERIFICATION = "false"
     ########## END AUTHENTICATION CONFIGURATION
 
     ########## Custom user app defaults
@@ -299,6 +300,13 @@ class Common(Configuration):
     ANONYMOUS_DEFAULT_USERNAME_VALUE = "ANON"
 
     ########## END DJANGO_GUARDIAN CONFIGURATION
+
+    ########## DJANGO_REST_FRAMEWORK CONFIGURATION
+    REST_FRAMEWORK = {
+        'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',)
+    }
+
+    ########## END DJANGO_REST_FRAMEWORK CONFIGURATION
 
     ########## Your common stuff: Below this line define 3rd party libary settings
 

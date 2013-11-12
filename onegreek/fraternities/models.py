@@ -1,6 +1,8 @@
 from django.db import models
 
 from django.db import models
+from django.db.models import signals
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ObjectDoesNotExist
@@ -18,7 +20,7 @@ class Fraternity(Slugged):
     facebook = models.URLField(blank=True)
     fb_status = models.TextField(blank=True)
     gpa = models.FloatField()
-    group = models.ForeignKey(Group, null=True, blank=True)
+    group = models.OneToOneField(Group, null=True, blank=True)
 
     _tracker = FieldTracker()
 
@@ -26,19 +28,11 @@ class Fraternity(Slugged):
         verbose_name = "Fraternity"
         verbose_name_plural = "Fraternities"
 
-    def save(self, *args, **kwargs):
-        """
-        Create a unique slug by appending an index.
-        """
-        if not self.slug:
-            self.slug = self.get_slug()
-        concrete_model = base_concrete_model(Slugged, self)
-        slug_qs = concrete_model.objects.exclude(id=self.id)
-        self.slug = unique_slug(slug_qs, "slug", self.slug)
 
-        super(Fraternity, self).save(*args, **kwargs)
-        try:
-            self.group = Group.objects.get(name="%s_%d" % ("fraternity", self.id))
-        except ObjectDoesNotExist:
-            self.group = Group.objects.create(name="%s_%d" % ("fraternity", self.id))
-
+@receiver(signals.post_save, sender=Fraternity)
+def set_group(sender, **kwargs):
+    fraternity = kwargs.get('instance')
+    if not fraternity.group:
+        group = Group.objects.get_or_create(name="%s_%d" % ("fraternity", fraternity.id))
+        fraternity.group = group[0]
+        fraternity.save()

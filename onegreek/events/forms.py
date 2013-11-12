@@ -30,14 +30,12 @@ class EventForm(NgModelFormMixin, forms.ModelForm):
     class Meta:
         model = Event
         fields = [
-            'title', 'description', 'viewers', 'enable_comments',
+            'title', 'description', 'enable_comments',
             'owner', 'slug',
         ]
         widgets = {
             'owner': forms.HiddenInput(),
             'slug': forms.HiddenInput(),
-            #'start': forms.SplitDateTimeWidget(),
-            #'end': forms.SplitDateTimeWidget(),
         }
 
 
@@ -52,7 +50,7 @@ class EventForm(NgModelFormMixin, forms.ModelForm):
                 Div(
                     HTML(date_time_widget('event.start', 'Start')),
                     Field('title', css_class="input-block-level"),
-                    Field('viewers', css_class="input-block-level"),
+                    #Field('viewers', css_class="input-block-level"),
                     Field('enable_comments'),
                     css_class="span6"
                 ),

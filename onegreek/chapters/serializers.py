@@ -13,6 +13,7 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
         model = Chapter
         fields = ['url',
                   'title',
+                  'slug',
                   'description',
                   'awards',
                   'philanthropy',
@@ -23,5 +24,6 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
                   'fraternity',
                   'university',
                   'groups',
+                  'linked_group',
         ]
 

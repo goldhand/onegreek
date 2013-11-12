@@ -1,6 +1,10 @@
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import signals
+from django.dispatch import receiver
+from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import Group, Permission
 
 from model_utils.fields import SplitField, StatusField
 from model_utils.models import TimeFramedModel
@@ -8,7 +12,10 @@ from model_utils import Choices, FieldTracker
 
 #from comments.utils import CommentsRelation
 
+from guardian.shortcuts import assign_perm, get_perms
+
 from core.models import Slugged
+from core.models import unique_slug, base_concrete_model
 
 
 class Event(TimeFramedModel, Slugged):
@@ -17,7 +24,8 @@ class Event(TimeFramedModel, Slugged):
                      ('private', 'Share with members of your chapter'),
                      ('custom', 'Share with other chapters'))
     description = SplitField()
-    viewers = models.ManyToManyField('chapters.Chapter', null=True, blank=True)
+    #viewers = models.ManyToManyField('chapters.Chapter', null=True, blank=True)
+    #No longer needed, will instead add view_event permissions to groups selected in form
     attendees = models.ManyToManyField('users.User', null=True, blank=True, related_name='attending')
 
     enable_comments = models.BooleanField("Enable comments", default=True)
@@ -28,6 +36,9 @@ class Event(TimeFramedModel, Slugged):
     class Meta:
         verbose_name = "Event"
         verbose_name_plural = "Events"
+        permissions = (
+            ('view_event', 'view_event'),
+        )
 
     def get_absolute_url(self):
         return reverse('events:detail', kwargs={'pk': self.pk})
@@ -38,9 +49,13 @@ class Event(TimeFramedModel, Slugged):
         else:
             return None
 
-    def user_can_view(self, _user):
-        if _user.chapter in self.viewers.all() or self.owner == _user:
-            return True
-        else:
-            return False
 
+@receiver(signals.post_save, sender=Event)
+def set_group(sender, **kwargs):
+    event = kwargs.get('instance')
+    chapter_group = event.owner.chapter.linked_group
+
+    if chapter_group:
+        if not 'view_event' in get_perms(chapter_group, event):
+            print 'adding permissions'
+            assign_perm('view_event', chapter_group, event)

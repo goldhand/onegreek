@@ -54,4 +54,5 @@ class User(AbstractUser):
         if self.chapter:
             self.university = self.chapter.university
             self.fraternity = self.chapter.fraternity
+
         super(User, self).save(*args, **kwargs)
