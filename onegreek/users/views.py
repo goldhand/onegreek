@@ -65,7 +65,7 @@ class UserListView(LoginRequiredMixin, ListView):
 
 from rest_framework import viewsets
 
-from .serializers import UserSerializer, GroupSerializer
+from .serializers import UserSerializer, GroupSerializer, GroupUpdateSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -81,3 +81,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+
+    def update(self, request, *args, **kwargs):
+        self.serializer_class = GroupUpdateSerializer
+        return super(GroupViewSet, self).update(request, *args, **kwargs)

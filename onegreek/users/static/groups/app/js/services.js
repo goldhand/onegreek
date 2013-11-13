@@ -25,7 +25,6 @@ groupServices.factory('GroupService', function ($http, $q) {
             $http({method: 'GET', url: api_url, isArray:true}).
                 success(function (data, status, headers, config) {
                     defer.resolve(data);
-                    console.log(data);
                 }).error(function (data, status, headers, config) {
                     defer.reject(status);
                 });
@@ -37,7 +36,6 @@ groupServices.factory('GroupService', function ($http, $q) {
             $http({method: 'GET', url: url, isArray:true}).
                 success(function (data, status, headers, config) {
                     defer.resolve(data);
-                    console.log(data);
                 }).error(function (data, status, headers, config) {
                     defer.reject(status);
                 });
@@ -50,6 +48,7 @@ groupServices.factory('GroupService', function ($http, $q) {
                 url: url,
                 data: group}).
                 success(function (data, status, headers, config) {
+                    console.log(data);
                     defer.resolve(data);
                 }).error(function (data, status, headers, config) {
                     defer.reject(status);

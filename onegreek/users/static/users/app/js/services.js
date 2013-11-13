@@ -33,7 +33,6 @@ userServices.factory('UserService', function ($http, $q) {
             $http({method: 'GET', url: api_url}).
                 success(function (data, status, headers, config) {
                     defer.resolve(data);
-                    console.log(data);
                 }).error(function (data, status, headers, config) {
                     defer.reject(status);
                 });
@@ -45,7 +44,6 @@ userServices.factory('UserService', function ($http, $q) {
             $http({method: 'GET', url: url, isArray:true}).
                 success(function (data, status, headers, config) {
                     defer.resolve(data);
-                    console.log(data);
                 }).error(function (data, status, headers, config) {
                     defer.reject(status);
                 });

@@ -9,18 +9,6 @@
 {% block content %}
     <div ng-controller="UserGlobalCtrl">
 
-        <div>
-            <ul class="nav nav-pills">
-                <li>
-                    <a href="#/users">All</a>
-                </li>
-                {% for group in user.groups.all %}
-                    <li>
-                        <a href="#/users/filter/group/{{ group.id }}">{{ group.name }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
 
         <div class="row">
             <div class="span3">
@@ -32,7 +20,12 @@
                     </div>
                 </form>
                 <ul class="nav nav-pills nav-stacked">
-                    <li ng-repeat="user in globals.users | filter:userFilter | orderBy:'start'">
+
+                    <li ng-repeat="user in globals.users | filter:userFilter | orderBy:'start'"
+                        ng-model="globals.users" data-drag="true"
+                        data-jqyoui-options="{revert: 'invalid', helper: 'clone'}"
+                        jqyoui-draggable="{index: {[{$index}]}, animate:true, placeholder: 'keep'}">
+
                         <a href="#/users/{[{ user.id }]}">
                             <img src="{[{ user.avatar }]}">
                             {[{ user.last_name }]}, {[{ user.first_name }]}
@@ -42,35 +35,39 @@
 
 
             </div>
-            <div class="span3">
-                <tabset vertical="true" type="tabs">
-                    <tab heading="Tab 1">
-                        blah blah blah
-                    </tab>
-                    <tab heading="Tab 2">
-                        Shimmy
-                    </tab>
-                </tabset>
 
-            </div>
-            <div class="span6">
+            <div ng-view></div>
 
-                <div ng-view></div>
-
-            </div>
 
 <script type="text/ng-template" id="list.html">
+<div class="span3">
 
-    <ul class="unstyled">
-        <li ng-repeat="user in users">
-            <h2>
-                <a href="#/users/{[{ user.id }]}">
-                    {[{ user.last_name }]}, {[{ user.first_name }]}
-                </a>
-            </h2>
-            <p>{[{ user.description }]}
-        </li>
-    </ul>
+
+<div ng-controller="GroupListCtrl">
+    <tabset vertical="true" direction="left">
+        <tab ng-repeat="group in groups" heading="{[{ group.name }]}" data-drop="true" ng-model='group.user_set'
+        jqyoui-droppable="{multiple:true}">
+        {[{ group.user_set | json }]}
+        <a href="#" ng-click="submitGroup2(group)">Save</a>
+        </tab>
+    </tabset>
+</div>
+
+</div>
+<div class="span6">
+
+<ul class="unstyled" data-drop="true" ng-model='users' jqyoui-droppable="{multiple:true}">
+    <li ng-repeat="user in users" data-drag="true" data-jqyoui-options="{revert: 'invalid', helper: 'clone'}" ng-model="globals.users" jqyoui-draggable="{index: {[{$index}]},animate:true, placeholder: 'keep'}">
+        <h2>
+            <a href="#/users/{[{ user.id }]}">
+                {[{ user.last_name }]}, {[{ user.first_name }]}
+            </a>
+        </h2>
+    <p>{[{ user.description }]}
+    </li>
+</ul>
+
+</div>
 
 </script>
 
@@ -148,6 +145,8 @@ GPA:
     <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
     <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
     <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
+
+    <script src="{% static 'users/app/lib/angular/angular-dragdrop.min.js' %}"></script>
 {% endblock angular_modules %}
 {% block angular_app %}
     <script src="{% static 'users/app/js/app.js' %}"></script>
@@ -159,8 +158,14 @@ GPA:
     <script src="{% static 'groups/app/js/controllers.js' %}"></script>
     <script src="{% static 'groups/app/js/services.js' %}"></script>
 
+
 {% endblock angular_app %}
 
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'users/app/lib/jquery-ui/ui/minified/jquery-ui.min.js' %}"></script>
+
+{% endblock javascript %}
 
 
 <div class="col-xs-9">

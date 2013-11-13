@@ -6,8 +6,10 @@ var userApp = angular.module('userApp', [
     'ui.bootstrap',
     'ngCookies',
     'ngRoute',
+    'ngDragDrop',
     'userControllers',
     'userServices',
+    'userDirectives',
     //'groupControllers',
     'groupServices'
     //'myApp.filters',

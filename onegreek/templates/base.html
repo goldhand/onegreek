@@ -24,6 +24,14 @@
     <!-- This file store project specific CSS -->
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
     {% endblock %}
+      {% block javascript %}
+          <!-- Latest JQuery -->
+          <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+          <!-- Latest compiled and minified JavaScript -->
+          <!--script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script-->
+          <script src="{% static 'js/holder.js' %}"></script>
+
+      {% endblock javascript %}
 
     {% block angular %}
         {% block angular_core %}
@@ -84,19 +92,6 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    {% block javascript %}
-      <!-- Latest JQuery -->
-      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-
-      <!-- Latest compiled and minified JavaScript -->
-      <!--script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script-->
-
-      <!-- Your stuff: Third-party javascript libraries go here -->
-
-      <!-- place project specific Javascript in this file -->
-        <script src="{% static 'js/holder.js' %}"></script>
-
-    {% endblock javascript %}
 
     {% block angular_app %}
     {% endblock angular_app %}

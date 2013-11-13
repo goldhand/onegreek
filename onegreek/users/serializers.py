@@ -30,6 +30,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'chapter',
             'fraternity',
             'university',
+            #'groups',
         ]
 
     def get_avatar(self, obj):
@@ -42,8 +43,18 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         else:
             return ''
 
+
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
-    user_set = serializers.HyperlinkedRelatedField(many=True, view_name='user-detail', read_only=True)
+    user_set = UserSerializer(many=True)
+
+    class Meta:
+        model = Group
+        fields = [
+            'id', 'url', 'name', 'user_set'
+        ]
+
+
+class GroupUpdateSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Group
