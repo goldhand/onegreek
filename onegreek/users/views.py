@@ -75,7 +75,9 @@ class UserViewSet(viewsets.ModelViewSet):
         if 'group' in self.request.GET:
             return User.objects.filter(groups__id=self.request.GET['group'])
         else:
-            return User.objects.filter(chapter_id=self.request.user.chapter_id)
+            #return User.objects.filter(chapter_id=self.request.user.chapter_id)
+            #for debugging
+            return User.objects.all()
 
 
 class GroupViewSet(viewsets.ModelViewSet):

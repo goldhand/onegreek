@@ -22,8 +22,8 @@
                 <ul class="nav nav-pills nav-stacked">
 
                     <li ng-repeat="user in globals.users | filter:userFilter | orderBy:'start'"
-                        ng-model="globals.users" data-drag="true"
-                        data-jqyoui-options="{revert: 'invalid', helper: 'clone'}"
+                        ng-model="globals.users"
+                        data-drag="true" data-jqyoui-options="{revert: 'invalid', helper: 'clone'}"
                         jqyoui-draggable="{index: {[{$index}]}, animate:true, placeholder: 'keep'}">
 
                         <a href="#/users/{[{ user.id }]}">
@@ -40,32 +40,41 @@
 
 
 <script type="text/ng-template" id="list.html">
-<div class="span3">
 
 
+    <div class="span9">
 <div ng-controller="GroupListCtrl">
-    <tabset vertical="true" direction="left">
-        <tab ng-repeat="group in groups" heading="{[{ group.name }]}" data-drop="true" ng-model='group.user_set'
-        jqyoui-droppable="{multiple:true}">
-        {[{ group.user_set | json }]}
-        <a href="#" ng-click="submitGroup2(group)">Save</a>
+    <tabset class="tabs-left">
+        <tab ng-repeat="group in groups"
+        data-drop="true" ng-model='group.user_set'
+        jqyoui-droppable="{multiple:true}"
+        jqyoui-options="{accept:'[ng-model=globals.users]'}"
+        >
+        <tab-heading>
+         {[{ group.name }]}
+        </tab-heading>
+        <tab-content>
+        <ul class="nav nav-pills nav-stacked">
+            <li ng-repeat="user in group.user_set"
+                        data-drag="true"
+                        jqyoui-draggable="{index: {[{$index}]}, animate:true, placeholder: 'keep', onStart: 'startDragUser(user)'}"
+                        data-jqyoui-options="{revert: 'invalid', helper: 'clone'}"
+                        >
+                <a href="#/users/{[{ user.id }]}">
+                {[{ user.last_name }]}, {[{ user.first_name }]}
+                </a>
+            </li>
+        </ul>
+        <a ng-click="submitGroup2(group)">Save</a>
+        </tab-content>
         </tab>
     </tabset>
+        </div>
 </div>
 
 </div>
 <div class="span6">
 
-<ul class="unstyled" data-drop="true" ng-model='users' jqyoui-droppable="{multiple:true}">
-    <li ng-repeat="user in users" data-drag="true" data-jqyoui-options="{revert: 'invalid', helper: 'clone'}" ng-model="globals.users" jqyoui-draggable="{index: {[{$index}]},animate:true, placeholder: 'keep'}">
-        <h2>
-            <a href="#/users/{[{ user.id }]}">
-                {[{ user.last_name }]}, {[{ user.first_name }]}
-            </a>
-        </h2>
-    <p>{[{ user.description }]}
-    </li>
-</ul>
 
 </div>
 
