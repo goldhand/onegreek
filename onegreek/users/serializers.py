@@ -38,7 +38,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             try:
                 avatar = obj.avatar_set.get(primary=True).get_absolute_url()
             except ObjectDoesNotExist:
-                avatar = ''
+                avatar = '/static/img/holderjs-40x40.png'
             return avatar
         else:
             return ''
