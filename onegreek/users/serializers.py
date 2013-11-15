@@ -10,6 +10,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     avatar = serializers.SerializerMethodField('get_avatar')
     year_display = serializers.Field('get_year_display')
+    get_full_name = serializers.Field('get_full_name')
 
     class Meta:
         model = User
@@ -18,6 +19,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'first_name',
             'last_name',
+            'get_full_name',
             'avatar',
             'email',
             'phone',
@@ -60,4 +62,12 @@ class GroupUpdateSerializer(serializers.HyperlinkedModelSerializer):
         model = Group
         fields = [
             'id', 'url', 'name', 'user_set'
+        ]
+
+class GroupCreateSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Group
+        fields = [
+            'id', 'url', 'name'
         ]

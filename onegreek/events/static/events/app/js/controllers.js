@@ -89,23 +89,23 @@ eventsControllers.controller('MyFormCtrl', [
         });
     };
 
-        $scope.openModal = function () {
-            var modalInstance = $modal.open({
-                templateUrl: 'newEventModal.html',
-                controller: 'ModalInstanceCtrl',
-                windowClass: 'full-screen-modal',
-                resolve: {
-                    event: function () {
-                        return $scope.event;
-                    }
+    $scope.openModal = function () {
+        var modalInstance = $modal.open({
+            templateUrl: 'newEventModal.html',
+            controller: 'ModalInstanceCtrl',
+            windowClass: 'full-screen-modal',
+            resolve: {
+                event: function () {
+                    return $scope.event;
                 }
-            });
+            }
+        });
 
-            modalInstance.result.then(function (newEvent) {
-                $scope.event = newEvent;
-                $scope.submit();
-            }, function () {});
-        };
+        modalInstance.result.then(function (newEvent) {
+            $scope.event = newEvent;
+            $scope.submit();
+        }, function () {});
+    };
 }]);
 
 eventsControllers.controller('ModalInstanceCtrl', [

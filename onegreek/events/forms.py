@@ -24,7 +24,7 @@ def date_time_widget(ng_model, ng_label):
     '</div>' \
     '</div>' \
     '</div>' \
-    % (ng_label, ng_label, ng_label, ng_model)
+    % (ng_label, ng_model, ng_label, ng_model)
 
 class EventForm(NgModelFormMixin, forms.ModelForm):
     class Meta:

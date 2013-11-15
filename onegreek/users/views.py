@@ -65,7 +65,7 @@ class UserListView(LoginRequiredMixin, ListView):
 
 from rest_framework import viewsets
 
-from .serializers import UserSerializer, GroupSerializer, GroupUpdateSerializer
+from .serializers import UserSerializer, GroupSerializer, GroupUpdateSerializer, GroupCreateSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -75,15 +75,24 @@ class UserViewSet(viewsets.ModelViewSet):
         if 'group' in self.request.GET:
             return User.objects.filter(groups__id=self.request.GET['group'])
         else:
-            #return User.objects.filter(chapter_id=self.request.user.chapter_id)
+            return User.objects.filter(chapter_id=self.request.user.chapter_id)
             #for debugging
-            return User.objects.all()
+            #return User.objects.all()
 
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
+    def create(self, request, *args, **kwargs):
+        self.serializer_class = GroupCreateSerializer
+        return super(GroupViewSet, self).create(request, *args, **kwargs)
+
     def update(self, request, *args, **kwargs):
         self.serializer_class = GroupUpdateSerializer
         return super(GroupViewSet, self).update(request, *args, **kwargs)
+
+    def get_queryset(self):
+        #return Group.objects.filter(user__id=self.request.user.id)
+        #for debugging
+        return Group.objects.all()

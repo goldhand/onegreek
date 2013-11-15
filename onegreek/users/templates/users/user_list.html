@@ -10,13 +10,14 @@
     <div ng-controller="UserGlobalCtrl">
 
 
+
         <div class="row">
             <div class="span3">
                 <form class="form-search">
                     <div class="controls">
                         <input type="text" id="user-filter" name="user-filter" class="search-query input-medium"
                                placeholder="Search" ng-model="userFilter"
-                               typeahead="user.first_name for user in globals.users | filter:$viewValue | limitTo:8"/>
+                               typeahead="user.get_full_name for user in globals.users | filter:$viewValue | limitTo:8"/>
                     </div>
                 </form>
                 <ul class="nav nav-pills nav-stacked">
@@ -33,22 +34,10 @@
                                 {[{ user.year_display }]}
                                 {[{ user.major }]}
                                 "
-                                data-popover-html-unsafe="
-<dl>
-    <dt>Phone:</dt>
-    <dd>{[{ user.phone }]}</dd>
-    <dt>Email:</dt>
-    <dd>{[{ user.email }]}</dd>
-    <dt>Year:</dt>
-    <dd>{[{ user.year_display }]}</dd>
-    <dt>Major:</dt>
-    <dd>{[{ user.major }]}</dd>
-</dl>
-                                "
                                 data-popover-title="{[{ user.last_name }]}, {[{ user.first_name }]}"
                                 data-popover-placement="right"
                                 data-popover-trigger="mouseenter"
-                                data-popover-popup-delay="100"
+                                data-popover-popup-delay="500"
                                 >
                             <img src="{[{ user.avatar }]}">
                             {[{ user.last_name }]}, {[{ user.first_name }]}
@@ -65,10 +54,11 @@
 <script type="text/ng-template" id="list.html">
 
 
-    <div class="span9">
+            <div class="span9">
 <div ng-controller="GroupListCtrl">
     <tabset class="tabs-left">
-        <tab ng-repeat="group in groups"
+        <tab ng-repeat="group in globals.groups"
+        active="group.tab.active"
         data-drop="true" ng-model='group.user_set'
         jqyoui-droppable="{multiple:false}"
         jqyoui-options="{accept:'[ng-model=globals.users]'}"
@@ -89,9 +79,15 @@
                 </a>
             </li>
         </ul>
-        <a ng-click="submitGroup2(group)">Save</a>
+        <a class="btn btn-smal btn-info" ng-click="submitGroup2(group)">Save</a>
         </tab-content>
         </tab>
+        <tab ng-controller="MyFormCtrl" select="openModal()">
+        <tab-heading>
+            <a>+ Create Group</button>
+        </tab-heading>
+        </tab>
+
     </tabset>
         </div>
 </div>
@@ -106,20 +102,17 @@
 
 <script type="text/ng-template" id="detail.html">
 
+            <div class="span9">
 <h1>
                             <img class="pull-left" src="{[{ user.avatar }]}">
     <span>
                     {[{ user.last_name }]}, {[{ user.first_name }]}
     </span>
-    <br/>
-<small>
-    {[{ user.chapter }]}
-    {[{ user.fraternity }]}
-    {[{ user.university }]}
-</small>
 </h1>
 
-<dl>
+    <br/>
+    <br/>
+<dl class="dl-horizontal">
 <dt>
 Email:
 </dt>
@@ -162,8 +155,31 @@ GPA:
 <dd>
     {[{ user.gpa }]}
 </dd>
+</div>
 </script>
 
+        <script type="text/ng-template" id="newGroupModal.html">
+            <div class="modal-header">
+                <h3>Create New Group</h3>
+            </div>
+            <div class="modal-body">
+                <form class="form">
+                    {% csrf_token %}
+                    <div class="control-group">
+                        <label class="control-label" for="group-name">Title</label>
+                        <div class="controls">
+                            <input id="group-name" class="input-block-level" ng-model="group.name"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" ng-click="ok()">OK</button>
+                <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+            </div>
+
+            </script>
 
         </div>
     </div>
@@ -200,6 +216,17 @@ GPA:
 
 {% endblock javascript %}
 
+{% block css %}
+    {{ block.super }}
+<style>
+    .tabs-left>.nav-tabs>li>a {
+        line-height: 40px;
+    }
+    .nav>li>a>img {
+        max-width: 40px;
+    }
+</style>
+{% endblock css %}
 
 <div class="col-xs-9">
     <h2>Users</h2>

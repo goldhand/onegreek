@@ -45,8 +45,19 @@ userControllers.controller('UserListCtrl', [
         $scope.globals = GlobalService;
         $scope.groups = groups;
 
+        angular.forEach($scope.groups, function(group) {
+            group.tab = {
+                active: false,
+                disabled: false
+            };
+        });
+        $scope.groups[0].tab.active = true;
+
         if($scope.globals.users == undefined) {
             $scope.globals.users = users;
+        }
+        if($scope.globals.groups == undefined) {
+            $scope.globals.groups = groups;
         }
 
         $scope.Search = undefined;
@@ -154,5 +165,75 @@ userControllers.controller('GroupListCtrl', [
 
 
     }]);
+
+userControllers.controller('MyFormCtrl', [
+    '$scope',
+    '$http',
+    '$modal',
+    'GlobalService',
+    'GroupService',
+    function (
+        $scope,
+        $http,
+        $modal,
+        GlobalService,
+        GroupService
+        ) {
+        $scope.group = {};
+        $scope.globals = GlobalService;
+        $scope.submit = function() {
+            GroupService.save($scope.group).then(function(data) {
+                $scope.group = data;
+                $scope.group.user_set = [];
+                $scope.globals.groups.push(data);
+            }, function(status) {
+                console.log(status);
+            });
+        };
+
+        $scope.openModal = function () {
+            var modalInstance = $modal.open({
+                templateUrl: 'newGroupModal.html',
+                controller: 'ModalInstanceCtrl',
+                resolve: {
+                    group: function () {
+                        return $scope.group;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (newGroup) {
+                $scope.group = newGroup;
+                $scope.submit();
+            }, function () {});
+        };
+    }]);
+
+
+
+userControllers.controller('ModalInstanceCtrl', [
+    '$scope',
+    '$timeout',
+    '$modalInstance',
+    'group',
+    function (
+        $scope,
+        $timeout,
+        $modalInstance,
+        group
+        ) {
+
+        $scope.group = group;
+
+        $scope.ok = function () {
+            $modalInstance.close($scope.group);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
+
+
 
 
