@@ -51,13 +51,16 @@ userControllers.controller('UserListCtrl', [
 
         $scope.Search = undefined;
 
-        $scope.filterForGroup = function(group) {
-            //return filterFilter($scope.globals.users, {groups: group.url});
+        //$scope.filterForGroup = function(group) {
+        //    return filterFilter($scope.globals.users, {groups: group.url});
             //$scope.users = filterFilter($scope.globals.users, {groups: group.url});
-            UserService.filter('group', group.id).then(function(data) {
-                $scope.users = data;
-            });
-        };
+            //UserService.filter('group', group.id).then(function(data) {
+            //    $scope.users = data;
+            //});
+        //};
+        //angular.forEach($scope.groups, function(group) {
+        //    group.user_set = $scope.filterForGroup(group);
+        //});
 
         $scope.startDragUser = function(user) {
             $scope.draggedUser = user;
@@ -134,8 +137,6 @@ userControllers.controller('GroupListCtrl', [
             angular.forEach(group.user_set, function(user) {
                 if(user.url){
                     this.push(user.url.toString());
-                } else {
-                    this.push(user);
                 }
             }, user_set);
             $http.put(group.url,

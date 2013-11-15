@@ -47,7 +47,7 @@
     <tabset class="tabs-left">
         <tab ng-repeat="group in groups"
         data-drop="true" ng-model='group.user_set'
-        jqyoui-droppable="{multiple:true}"
+        jqyoui-droppable="{multiple:false}"
         jqyoui-options="{accept:'[ng-model=globals.users]'}"
         >
         <tab-heading>
