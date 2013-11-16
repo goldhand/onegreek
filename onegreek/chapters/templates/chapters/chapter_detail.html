@@ -60,7 +60,10 @@
                 </div>
                 <div class="span4">
                 <div style="display: table; margin-left: auto; margin-right: auto; margin-bottom: 30px;">
-                    <a href="#" class="btn btn-primary btn-large">Rush {{ chapter.fraternity }}</a>
+                    <form method="post" action="{% url 'chapters:rush' chapter.id %}">
+                        {% csrf_token %}
+                    <input type="submit" class="btn btn-primary btn-large" value="Rush {{ chapter.fraternity }}">
+                    </form>
                 </div>
 
                 <h5>Status:</h5>

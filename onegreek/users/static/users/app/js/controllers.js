@@ -63,6 +63,9 @@ userControllers.controller('UserListCtrl', [
         if($scope.globals.groups == undefined) {
             $scope.globals.groups = groups;
         }
+        if($scope.globals.user == undefined) {
+            $scope.globals.user = filterFilter($scope.globals.users, {id: $scope.globals.user_id})[0];
+        }
 
         $scope.Search = undefined;
 
@@ -188,21 +191,23 @@ userControllers.controller('MyFormCtrl', [
         $scope.globals = GlobalService;
         $scope.submit = function() {
             GroupService.save($scope.group).then(function(data) {
-                $scope.group = data;
-                $scope.group.user_set = [
-                    ('http://' + $scope.globals.host + '/api/users/' + $scope.globals.user_id + '/').toString()
+               data.user_set = [
+                    $scope.globals.user.url
                 ];
-                $scope.submitGroup($scope.group);
+                $scope.submitGroup(data);
 
-                console.log($scope.group.user_set);
-                $scope.globals.groups.push($scope.group);
             }, function(status) {
                 console.log(status);
             });
         };
         $scope.submitGroup = function(group) {
             GroupService.update(group).then(function(data) {
-                console.log(data);
+                $scope.group = data;
+                $scope.group.user_set = [
+                    $scope.globals.user
+                ];
+                $scope.group.tab = { active: true, disabled: false};
+                $scope.globals.groups.push(data);
             }, function(status) {
                 console.log(status);
             });
