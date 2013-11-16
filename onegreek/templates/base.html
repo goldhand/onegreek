@@ -1,6 +1,8 @@
 {% load staticfiles i18n %}<!DOCTYPE html>
-<html lang="en" ng-app="{% block angular_app_name %}{% endblock angular_app_name %}">
-  <head>
+<html lang="en" ng-app="{% block angular_app_name %}{% endblock angular_app_name %}"
+      {% block extra_html_tag_data %}{% endblock extra_html_tag_data %}>
+
+<head>
     <meta charset="utf-8">
     <title>{% block title %}onegreek{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,8 +53,7 @@
 
   </head>
 
-  <body>
-
+  <body {% block extra_body_tag_data %}{% endblock extra_body_tag_data %}>
     <div class="header navbar">
       <div class="container">
         <a class="navbar-brand" href="/">onegreek</a>

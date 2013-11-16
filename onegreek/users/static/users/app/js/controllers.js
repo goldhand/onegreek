@@ -7,15 +7,17 @@ var userControllers = angular.module('userControllers', []);
 userControllers.controller('UserGlobalCtrl', [
     '$scope', '$rootScope', '$location', '$timeout', 'GlobalService',
     function ($scope, $rootScope, $location, $timeout, GlobalService) {
-    var failureCb = function (status) {
-        console.log(status);
-    };
-    $scope.globals = GlobalService;
-    $scope.globals.users = undefined;
 
-    $scope.initialize = function (is_authenticated) {
-        $scope.globals.is_authenticated = is_authenticated;
-    };
+        $scope.globals = GlobalService;
+        $scope.globals.users = undefined;
+        var failureCb = function (status) {
+            console.log(status);
+        };
+        $scope.initialize = function (is_authenticated, user_id, chapter_id) {
+            $scope.globals.is_authenticated = is_authenticated;
+            $scope.globals.user_id = user_id;
+            $scope.globals.chapter_id = chapter_id;
+        };
 
 }]);
 
@@ -197,6 +199,7 @@ userControllers.controller('MyFormCtrl', [
                 controller: 'ModalInstanceCtrl',
                 resolve: {
                     group: function () {
+                        console.log('myformctrl.openModal');
                         return $scope.group;
                     }
                 }
@@ -204,6 +207,9 @@ userControllers.controller('MyFormCtrl', [
 
             modalInstance.result.then(function (newGroup) {
                 $scope.group = newGroup;
+                console.log('myformctrl.openModal.result');
+                console.log($scope.group);
+                $scope.group.name = 'chapter_' + $scope.globals.chapter_id + ' ' + newGroup.name;
                 $scope.submit();
             }, function () {});
         };
@@ -226,6 +232,8 @@ userControllers.controller('ModalInstanceCtrl', [
         $scope.group = group;
 
         $scope.ok = function () {
+            console.log('myModalInstance.ok');
+            console.log($scope.group);
             $modalInstance.close($scope.group);
         };
 

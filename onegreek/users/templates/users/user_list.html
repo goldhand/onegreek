@@ -4,12 +4,17 @@
 {% load crispy_forms_tags staticfiles %}
 {% block left_content %}{% endblock left_content %}
 
+{% comment %}For getting request data into angular app{% endcomment %}
+{% block extra_body_tag_data %} ng-controller="UserGlobalCtrl"
+    ng-init="initialize(
+    '{{ user.is_authenticated }}', '{{ user.id }}', '{{ user.chapter_id }}'
+    )"{% endblock extra_body_tag_data %}
+
 {% block title %}Members{% endblock %}
 
 {% block content %}
-    <div ng-controller="UserGlobalCtrl">
-
-
+    <group-display></group-display>
+    <div>
 
         <div class="row">
             <div class="span3">
@@ -64,7 +69,7 @@
         jqyoui-options="{accept:'[ng-model=globals.users]'}"
         >
         <tab-heading>
-         {[{ group.name }]}
+        <group-display group="group"></group-diplay>
         </tab-heading>
         <tab-content>
         <ul class="nav nav-pills nav-stacked">
@@ -164,11 +169,10 @@ GPA:
             </div>
             <div class="modal-body">
                 <form class="form">
-                    {% csrf_token %}
                     <div class="control-group">
-                        <label class="control-label" for="group-name">Title</label>
+                        <label class="control-label" for="group.name">Title</label>
                         <div class="controls">
-                            <input id="group-name" class="input-block-level" ng-model="group.name"/>
+                            <input id="group.name" class="input-block-level" ng-model="group.name"/>
                         </div>
                     </div>
                 </form>
@@ -179,6 +183,9 @@ GPA:
                 <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
             </div>
 
+            </script>
+            <script type="text/ng-template" id="group-display.html">
+            <span>{[{ groupName }]}</span>
             </script>
 
         </div>

@@ -8,8 +8,9 @@ from .models import User
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 
-    avatar = serializers.SerializerMethodField('get_avatar')
+    #avatar = serializers.SerializerMethodField('get_avatar')
     year_display = serializers.Field('get_year_display')
+    chapter_id = serializers.Field('chapter_id')
     get_full_name = serializers.Field('get_full_name')
 
     class Meta:
@@ -20,7 +21,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'first_name',
             'last_name',
             'get_full_name',
-            'avatar',
+            #'avatar',
             'email',
             'phone',
             'year',
@@ -29,9 +30,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'hometown',
             'highschool_gpa',
             'gpa',
-            'chapter',
-            'fraternity',
-            'university',
+            'chapter_id',
+            #'fraternity',
+            #'university',
             #'groups',
         ]
 

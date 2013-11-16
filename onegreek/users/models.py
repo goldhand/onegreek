@@ -60,12 +60,3 @@ class User(AbstractUser):
         return super(User, self).save(*args, **kwargs)
 
 
-#TODO: this dont work
-@receiver(signals.post_save, sender=User)
-def set_groups(sender, **kwargs):
-    user = kwargs.get('instance')
-    if user.chapter:
-        group = Group.objects.get_or_create(name="%s_%d" % ("chapter", user.chapter_id))
-        if group not in user.groups.all():
-            print group[0].name
-            return user.groups.add(group[0].id)

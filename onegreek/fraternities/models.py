@@ -33,6 +33,6 @@ class Fraternity(Slugged):
 def set_group(sender, **kwargs):
     fraternity = kwargs.get('instance')
     if not fraternity.group:
-        group = Group.objects.get_or_create(name="%s_%d" % ("fraternity", fraternity.id))
+        group = Group.objects.get_or_create(name="%s_%d %s" % ("fraternity", fraternity.id, fraternity.title))
         fraternity.group = group[0]
         fraternity.save()

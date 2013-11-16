@@ -19,7 +19,7 @@ class Chapter(Slugged, StatusModel):
     fraternity = models.ForeignKey('fraternities.Fraternity', null=True, blank=True)
     university = models.ForeignKey('universities.University', null=True, blank=True)
     description = SplitField(blank=True)
-    #location = models.TextField(blank=True)
+    location = models.TextField(blank=True)
     awards = SplitField(blank=True)
     philanthropy = SplitField(blank=True)
     potential_new_members = SplitField(blank=True)
@@ -29,6 +29,7 @@ class Chapter(Slugged, StatusModel):
     gpa = models.FloatField(blank=True, null=True)
     groups = models.ManyToManyField(Group, null=True, blank=True)
     linked_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter')
+    linked_rush_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_rush')
 
     _tracker = FieldTracker()
 
@@ -48,8 +49,10 @@ class Chapter(Slugged, StatusModel):
 def set_group(sender, **kwargs):
     chapter = kwargs.get('instance')
     if not chapter.linked_group:
-        group = Group.objects.get_or_create(name="%s_%d" % ("chapter", chapter.id))
+        group = Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, chapter.title))
+        rush_group = Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, 'Rush'))
         chapter.linked_group = group[0]
+        chapter.linked_rush_group = rush_group[0]
         chapter.save()
 
 

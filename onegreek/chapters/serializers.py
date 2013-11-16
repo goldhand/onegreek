@@ -8,6 +8,10 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     description = serializers.WritableField(source='description')
     philanthropy = serializers.WritableField(source='philanthropy')
     potential_new_members = serializers.WritableField(source='potential_new_members')
+    university_id = serializers.Field('university_id')
+    fraternity_id = serializers.Field('fraternity_id')
+    linked_group_id = serializers.Field('linked_group_id')
+    linked_rush_group_id = serializers.Field('linked_rush_group_id')
 
     class Meta:
         model = Chapter
@@ -21,9 +25,12 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
                   'cost',
                   'gpa',
                   'status',
-                  'fraternity',
-                  'university',
-                  'groups',
-                  'linked_group',
+                  #'fraternity',
+                  #'university',
+                  'fraternity_id',
+                  'university_id',
+                  #'groups',
+                  'linked_group_id',
+                  'linked_rush_group_id',
         ]
 

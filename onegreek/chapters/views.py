@@ -22,6 +22,11 @@ class ChapterCreate(generic.CreateView):
     model = Chapter
     form_class = ChapterForm
 
+class ChapterUpdate(generic.UpdateView):
+    model = Chapter
+    form_class = ChapterForm
+
+
 class ChapterList(generic.ListView):
     model = Chapter
 

@@ -72,12 +72,13 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def get_queryset(self):
+        q = super(UserViewSet, self).get_queryset()
         if 'group' in self.request.GET:
-            return User.objects.filter(groups__id=self.request.GET['group'])
+            return q.filter(groups__id=self.request.GET['group'])
         else:
-            return User.objects.filter(chapter_id=self.request.user.chapter_id)
+            #return q.filter(chapter_id=self.request.user.chapter_id)
             #for debugging
-            #return User.objects.all()
+            return q
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -93,6 +94,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         return super(GroupViewSet, self).update(request, *args, **kwargs)
 
     def get_queryset(self):
-        #return Group.objects.filter(user__id=self.request.user.id)
+        q = super(GroupViewSet, self).get_queryset()
+        #return q.filter(user__id=self.request.user.id)
         #for debugging
-        return Group.objects.all()
+        return q

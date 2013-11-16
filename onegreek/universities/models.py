@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import signals
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ObjectDoesNotExist
@@ -23,10 +25,13 @@ class University(Slugged):
         slug_qs = concrete_model.objects.exclude(id=self.id)
         self.slug = unique_slug(slug_qs, "slug", self.slug)
 
-        try:
-            self.group = Group.objects.get(name="%s_%s" % ("university", self.slug))
-        except ObjectDoesNotExist:
-            self.group = Group.objects.create(name="%s_%s" % ("university", self.slug))
-
         super(University, self).save(*args, **kwargs)
 
+
+@receiver(signals.post_save, sender=University)
+def set_group(sender, **kwargs):
+    university = kwargs.get('instance')
+    if not university.group:
+        group = Group.objects.get_or_create(name="%s_%d %s" % ("university", university.id, university.title))
+        university.group = group[0]
+        university.save()
