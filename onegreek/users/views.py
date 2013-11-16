@@ -2,6 +2,7 @@
 from django.core.urlresolvers import reverse
 
 # view imports
+from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
@@ -62,10 +63,10 @@ class UserListView(LoginRequiredMixin, ListView):
         return context
 
 
-
 from rest_framework import viewsets
 
 from .serializers import UserSerializer, GroupSerializer, GroupUpdateSerializer, GroupCreateSerializer
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -77,8 +78,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return q.filter(groups__id=self.request.GET['group'])
         else:
             #return q.filter(chapter_id=self.request.user.chapter_id)
-            #for debugging
-            return q
+            return q.filter(groups__name__istartswith='chapter_%d' % self.request.user.chapter_id).distinct()
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -95,6 +95,4 @@ class GroupViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         q = super(GroupViewSet, self).get_queryset()
-        #return q.filter(user__id=self.request.user.id)
-        #for debugging
-        return q
+        return q.filter(chapter__id=self.request.user.chapter_id)
