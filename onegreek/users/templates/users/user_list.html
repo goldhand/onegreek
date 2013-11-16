@@ -7,13 +7,13 @@
 {% comment %}For getting request data into angular app{% endcomment %}
 {% block extra_body_tag_data %} ng-controller="UserGlobalCtrl"
     ng-init="initialize(
-    '{{ user.is_authenticated }}', '{{ user.id }}', '{{ user.chapter_id }}'
+    '{{ user.is_authenticated }}', '{{ user.id }}', '{{ user.chapter_id }}', '{{ request.get_host }}'
     )"{% endblock extra_body_tag_data %}
 
 {% block title %}Members{% endblock %}
 
 {% block content %}
-    <group-display></group-display>
+    {{ request.get_host }}
     <div>
 
         <div class="row">
@@ -44,7 +44,7 @@
                                 data-popover-trigger="mouseenter"
                                 data-popover-popup-delay="500"
                                 >
-                            <img src="{[{ user.avatar }]}">
+                            <img ng-src="/static/img/holderjs-40x40.png">
                             {[{ user.last_name }]}, {[{ user.first_name }]}
                         </a>
                     </li>
@@ -79,7 +79,7 @@
                         data-jqyoui-options="{revert: 'invalid', helper: 'clone'}"
                         >
                 <a href="#/users/{[{ user.id }]}">
-                            <img src="{[{ user.avatar }]}">
+                            <img ng-src="/static/img/holderjs-40x40.png">
                 {[{ user.last_name }]}, {[{ user.first_name }]}
                 </a>
             </li>

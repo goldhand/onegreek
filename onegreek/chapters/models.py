@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ObjectDoesNotExist
@@ -56,3 +57,14 @@ def set_group(sender, **kwargs):
         chapter.save()
 
 
+@receiver(signals.post_save, sender=Group)
+def set_group_after_group_save(sender, **kwargs):
+    group = kwargs.get('instance')
+    if group.name[:7] == 'chapter':
+        print 'chapter group saved: %s' % group.name
+        chapter_id = int(group.name.split(' ')[0].split('_')[1])
+        chapter = get_object_or_404(Chapter, id=chapter_id)
+        chapter.groups.add(group.id)
+        print 'groups:%s' % str(chapter.groups.all())
+    else:
+        print 'group saved: %s' % group.name

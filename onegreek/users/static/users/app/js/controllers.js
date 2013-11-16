@@ -13,10 +13,12 @@ userControllers.controller('UserGlobalCtrl', [
         var failureCb = function (status) {
             console.log(status);
         };
-        $scope.initialize = function (is_authenticated, user_id, chapter_id) {
+        $scope.initialize = function (is_authenticated, user_id, chapter_id, host) {
             $scope.globals.is_authenticated = is_authenticated;
             $scope.globals.user_id = user_id;
             $scope.globals.chapter_id = chapter_id;
+            $scope.globals.host = host;
+            console.log(host);
         };
 
 }]);
@@ -147,6 +149,7 @@ userControllers.controller('GroupListCtrl', [
         };
         $scope.submitGroup2 = function(group) {
             var user_set = [];
+            // convert user objects into urls for server
             angular.forEach(group.user_set, function(user) {
                 if(user.url){
                     this.push(user.url.toString());
@@ -186,8 +189,20 @@ userControllers.controller('MyFormCtrl', [
         $scope.submit = function() {
             GroupService.save($scope.group).then(function(data) {
                 $scope.group = data;
-                $scope.group.user_set = [];
-                $scope.globals.groups.push(data);
+                $scope.group.user_set = [
+                    ('http://' + $scope.globals.host + '/api/users/' + $scope.globals.user_id + '/').toString()
+                ];
+                $scope.submitGroup($scope.group);
+
+                console.log($scope.group.user_set);
+                $scope.globals.groups.push($scope.group);
+            }, function(status) {
+                console.log(status);
+            });
+        };
+        $scope.submitGroup = function(group) {
+            GroupService.update(group).then(function(data) {
+                console.log(data);
             }, function(status) {
                 console.log(status);
             });

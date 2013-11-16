@@ -29,7 +29,7 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
                   #'university',
                   'fraternity_id',
                   'university_id',
-                  #'groups',
+                  'groups',
                   'linked_group_id',
                   'linked_rush_group_id',
         ]
