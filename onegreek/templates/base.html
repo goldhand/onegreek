@@ -78,6 +78,15 @@
     </div>
 
     <div class="container">
+        {% if messages %}
+            <div class="row">
+                {% for message in messages %}
+                    <div data-alert class="alert-box radius {{ message.tags }}">
+                        {{ message }}
+                    </div><!-- .alert-box -->
+                {% endfor %}
+            </div><!-- .row -->
+        {% endif %}
     <div class="row">
     {% block left_content %}
         <div class="span3">

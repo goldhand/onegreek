@@ -1,73 +1,101 @@
 'use strict';
 
 /* Controllers */
-eventsApp.controller('EventListCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
-    $scope.event = {};
-    $http.get('/api/events/').success(function(data) {
-        $scope.events = data;
-    });
-    $scope.submit = function() {
-        $http.post('/api/events/', $scope.event).success(function(event_data) {
-            $scope.events.push(event_data);
-        });
-    };
-    $scope.openStart = function() {
-        $timeout(function() {
-            $scope.openedStart = true;
-        });
-    };
-    $scope.openEnd = function() {
-        $timeout(function() {
-            $scope.openedEnd = true;
-        });
-    };
-    $scope.dateOptions = {
-        'year-format': "'yyyy'",
-        'month-format': "'mm'",
-        'starting-day': 1
-    };
-    $scope.hstep = 1;
-    $scope.mstep = 15;
-    $scope.ismeridian = true;
-}]);
 
-eventsApp.controller('EventDetailCtrl', ['$scope', '$http', '$routeParams', function ($scope, $http, $routeParams) {
-    $http.get('/api/events/' + $routeParams.eventId + '/').success(function(data) {
-        $scope.event = data;
-    });
-    $scope.submit = function() {
-        $http.post('/api/events/' + $routeParams.eventId + '/', $scope.event).success(function(event_data) {
-            $scope.events.push(event_data);
-        });
-    };
+var chapterControllers = angular.module('chapterControllers', []);
+
+chapterControllers.controller('ChapterGlobalCtrl', [
+    '$scope', '$rootScope', '$location', '$timeout', 'GlobalService',
+    function ($scope, $rootScope, $location, $timeout, GlobalService) {
+
+        $scope.globals = GlobalService;
+        $scope.globals.chapters = undefined;
+        var failureCb = function (status) {
+            console.log(status);
+        };
+        $scope.initialize = function (is_authenticated, user_id, chapter_id, host) {
+            $scope.globals.is_authenticated = is_authenticated;
+            $scope.globals.chapter_id = user_id;
+            $scope.globals.chapter_id = chapter_id;
+            $scope.globals.host = host;
+            console.log(host);
+        };
+
 }]);
 
 
-eventsApp.controller('MyFormCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
-    $scope.event = {};
+chapterControllers.controller('ChapterListCtrl', [
+    '$scope',
+    '$http',
+    'filterFilter',
+    'ChapterService',
+    'GlobalService',
+    'chapters',
+    function (
+        $scope,
+        $http,
+        filterFilter,
+        ChapterService,
+        GlobalService,
+        chapters
+        ) {
+
+        $scope.chapter = {};
+        $scope.chapters = chapters;
+        $scope.globals = GlobalService;
+
+
+        if($scope.globals.chapters == undefined) {
+            $scope.globals.chapters = chapters;
+        }
+        if($scope.globals.chapter == undefined) {
+            $scope.globals.chapter = filterFilter($scope.globals.chapters, {id: $scope.globals.chapter_id})[0];
+        }
+
+        $scope.Search = undefined;
+
+        $scope.submitChapter = function() {
+            ChapterService.save($scope.chapter).then(function(data) {
+                $scope.chapter = data;
+                $scope.chapters.push(data);
+            }, function(status) {
+                console.log(status);
+            });
+        };
+
+
+
+    }]);
+
+chapterControllers.controller('ChapterDetailCtrl', ['$scope', '$http', '$routeParams', 'chapter', function ($scope, $http, $routeParams, chapter) {
+    $scope.chapter = chapter;
+    $scope.chapter.rush = {
+        title: 'Rush ' + $scope.chapter.fraternity_title,
+        hide: false,
+        message: {
+            hide: true,
+            text: ''
+        }
+    };
+
+
     $scope.submit = function() {
-        $http.post('/api/events/', $scope.event).success(function(event_data) {
-            $scope.events.push(event_data);
+        $http.post('/api/chapters/' + $routeParams.chapterId + '/', $scope.chapter).success(function(chapter_data) {
+            $scope.chapters.push(chapter_data);
+        });
+    };
+    $http.get($scope.chapter.rush_url).success(function(data) {
+        $scope.chapter.rush.title = data.title;
+        $scope.chapter.rush.message.hide = true;
+    });
+    $scope.rushSubmit = function() {
+        $http.post($scope.chapter.rush_url).success(function(data) {
+            //$scope.chapter.rush.hide = true;
+            $scope.chapter.rush.title = data.title;
+            $scope.chapter.rush.message.text = data.message;
+            $scope.chapter.rush.message.hide = false;
         });
     };
 
-    $scope.openStart = function() {
-        $timeout(function() {
-            $scope.openedStart = true;
-        });
-    };
-    $scope.openEnd = function() {
-        $timeout(function() {
-            $scope.openedEnd = true;
-        });
-    };
-    $scope.dateOptions = {
-        'year-format': "'yyyy'",
-        'month-format': "'mm'",
-        'starting-day': 1
-    };
-    $scope.hstep = 1;
-    $scope.mstep = 15;
-    $scope.ismeridian = true;
 }]);
 

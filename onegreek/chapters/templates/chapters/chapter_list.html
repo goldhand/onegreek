@@ -1,19 +1,15 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags staticfiles %}
+{% comment %}For getting request data into angular app{% endcomment %}
+{% block extra_body_tag_data %} ng-controller="ChapterGlobalCtrl"
+    ng-init="initialize(
+    '{{ user.is_authenticated }}', '{{ user.id }}', '{{ user.chapter_id }}', '{{ request.get_host }}'
+    )"{% endblock extra_body_tag_data %}
+
+{% block title %}Chapters{% endblock %}
 
 {% block content %}
-    <ul class="unstyled">
-    {% for chapter in chapter_list %}
-        <li>
-            <h2>
-                <a href="{% url 'chapters:detail' chapter.id %}">
-                    {{ chapter.title }}
-                </a>
-            </h2>
-            <p>{{ chapter.description }}</p>
-        </li>
-    {% endfor %}
-    </ul>
+    <div ng-view></div>
     {% csrf_token %}
     {% crispy form %}
 
@@ -21,8 +17,43 @@
 
 
 {% endblock content %}
+{% block left_content %}
+<div class="span3">
+    <form class="form-search">
+        <div class="controls">
+            <input type="text" id="chapter-filter" name="chapter-filter" class="search-query input-medium"
+                   placeholder="Search" ng-model="chapterFilter"
+                   typeahead="chapter.fraternity_title for chapter in globals.chapters | filter:$viewValue | limitTo:8"/>
+        </div>
+    </form>
+    <ul class="nav nav-pills nav-stacked">
 
-{% block angular_app_name %}chaptersApp{% endblock angular_app_name %}
+        <li ng-repeat="chapter in globals.chapters | filter:chapterFilter | orderBy:'start'"
+            ng-model="globals.chapters"
+            >
+
+            <a href="{[{ chapter.api_url }]}"
+               data-popover="
+                                {[{ chapter.university_title }]}
+                                <br/>
+                                {[{ chapter.fraternity_title }]}
+                                "
+               data-popover-title="{[{ chapter.fraternity_title }]}"
+               data-popover-placement="right"
+               data-popover-trigger="mouseenter"
+               data-popover-popup-delay="500"
+                    >
+                {[{ chapter.fraternity_title }]}
+            </a>
+        </li>
+    </ul>
+</div>
+
+{% endblock left_content %}
+
+
+
+{% block angular_app_name %}chapterApp{% endblock angular_app_name %}
 
 {% block angular_modules %}
     <script src="{% static 'angularjs/app/lib/angular/angular-cookies.js' %}"></script>
@@ -34,5 +65,6 @@
     <script src="{% static 'chapters/app/js/app.js' %}"></script>
     <script src="{% static 'chapters/app/js/controllers.js' %}"></script>
     <script src="{% static 'chapters/app/js/services.js' %}"></script>
+    <script src="{% static 'chapters/app/js/directives.js' %}"></script>
     <script src="{% static 'chapters/app/js/filters.js' %}"></script>
 {% endblock angular_app %}

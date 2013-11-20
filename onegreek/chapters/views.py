@@ -1,18 +1,25 @@
+import logging
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.views import generic
 from django.views.generic import edit
+from django.contrib import messages
 
 from rest_framework import viewsets
+from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer, YAMLRenderer
 
 from .models import Chapter
 from .serializers import ChapterSerializer
 from .forms import ChapterForm
 
+logger = logging.getLogger(__name__)
+
 
 class ChapterViewSet(viewsets.ModelViewSet):
     queryset = Chapter.objects.all()
     serializer_class = ChapterSerializer
-
 
 
 class ChapterDetail(generic.DetailView):
@@ -22,6 +29,7 @@ class ChapterDetail(generic.DetailView):
 class ChapterCreate(generic.CreateView):
     model = Chapter
     form_class = ChapterForm
+
 
 class ChapterUpdate(generic.UpdateView):
     model = Chapter
@@ -40,14 +48,30 @@ class ChapterList(generic.ListView):
         view = ChapterCreate.as_view()
         return view(request, *args, **kwargs)
 
-from django.shortcuts import redirect
 
-
-def rush_chapter_view(request, pk):
+@api_view(['GET', 'POST'])
+@login_required()
+@renderer_classes((JSONRenderer,))
+def rush_chapter_view(request, pk, format=None):
     chapter = get_object_or_404(Chapter, pk=pk)
     rush_group = chapter.linked_rush_group
+    message = ''
+    success = 'false'
+    title = 'Rush %s' % chapter.fraternity_title
     if rush_group:
-        rush_group.user_set.add(request.user.id)
-        print rush_group.user_set.all()
-    return redirect(chapter)
+        if request.user in rush_group.user_set.all():
+            if request.method == "POST":
+                rush_group.user_set.remove(request.user.id)
+                message = 'You no longer Rushing %s, %s chapter' % (chapter.fraternity_title, chapter.title)
+            else:
+                title = 'Stop Rushing %s' % chapter.fraternity_title
+        else:
+            if request.method == "POST":
+                rush_group.user_set.add(request.user.id)
+                message = 'You are now Rushing %s, %s chapter' % (chapter.fraternity_title, chapter.title)
+                title = 'Stop Rushing %s' % chapter.fraternity_title
+                #messages.success(request, message)
+        success = 'true'
+
+    return Response({'success': success, 'title': title, 'message': message})
 

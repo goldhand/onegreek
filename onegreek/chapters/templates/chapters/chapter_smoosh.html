@@ -1,0 +1,376 @@
+
+chapterControllers.controller('GroupListCtrl', [
+'$scope',
+'$http',
+'GroupService',
+'GlobalService',
+function (
+$scope,
+$http,
+GlobalService,
+GroupService
+) {
+
+
+$scope.submitGroup = function(group) {
+GroupService.update(group).then(function(data) {
+console.log(data);
+}, function(status) {
+console.log(status);
+});
+};
+$scope.submitGroup2 = function(group) {
+var chapter_set = [];
+// convert chapter objects into urls for server
+angular.forEach(group.chapter_set, function(chapter) {
+if(chapter.url){
+this.push(chapter.url.toString());
+}
+}, chapter_set);
+$http.put(group.url,
+{
+'id': group.id,
+'name': group.name,
+'url': group.url,
+'chapter_set':chapter_set
+}
+).success(function(data) {
+console.log(data);
+});
+};
+
+
+
+}]);
+
+chapterControllers.controller('MyFormCtrl', [
+'$scope',
+'$http',
+'$modal',
+'GlobalService',
+'GroupService',
+function (
+$scope,
+$http,
+$modal,
+GlobalService,
+GroupService
+) {
+$scope.group = {};
+$scope.globals = GlobalService;
+$scope.submit = function() {
+GroupService.save($scope.group).then(function(data) {
+data.chapter_set = [
+$scope.globals.chapter.url
+];
+$scope.submitGroup(data);
+
+}, function(status) {
+console.log(status);
+});
+};
+$scope.submitGroup = function(group) {
+GroupService.update(group).then(function(data) {
+$scope.group = data;
+$scope.group.chapter_set = [
+$scope.globals.chapter
+];
+$scope.group.tab = { active: true, disabled: false};
+$scope.globals.groups.push(data);
+}, function(status) {
+console.log(status);
+});
+};
+
+$scope.openModal = function () {
+var modalInstance = $modal.open({
+templateUrl: 'newGroupModal.html',
+controller: 'ModalInstanceCtrl',
+resolve: {
+group: function () {
+console.log('myformctrl.openModal');
+return $scope.group;
+}
+}
+});
+
+modalInstance.result.then(function (newGroup) {
+$scope.group = newGroup;
+console.log('myformctrl.openModal.result');
+console.log($scope.group);
+$scope.group.name = 'chapter_' + $scope.globals.chapter_id + ' ' + newGroup.name;
+$scope.submit();
+}, function () {});
+};
+}]);
+
+
+
+chapterControllers.controller('ModalInstanceCtrl', [
+'$scope',
+'$timeout',
+'$modalInstance',
+'group',
+function (
+$scope,
+$timeout,
+$modalInstance,
+group
+) {
+
+$scope.group = group;
+
+$scope.ok = function () {
+console.log('myModalInstance.ok');
+console.log($scope.group);
+$modalInstance.close($scope.group);
+};
+
+$scope.cancel = function () {
+$modalInstance.dismiss('cancel');
+};
+}]);
+
+{% block content %}
+    <div>
+
+        <div class="row">
+            <div class="span3">
+                <form class="form-search">
+                    <div class="controls">
+                        <input type="text" id="user-filter" name="user-filter" class="search-query input-medium"
+                               placeholder="Search" ng-model="userFilter"
+                               typeahead="user.get_full_name for user in globals.users | filter:$viewValue | limitTo:8"/>
+                    </div>
+                </form>
+                <ul class="nav nav-pills nav-stacked">
+
+                    <li ng-repeat="user in globals.users | filter:userFilter | orderBy:'start'"
+                        ng-model="globals.users"
+                        data-drag="true" data-jqyoui-options="{revert: 'invalid', helper: 'clone'}"
+                        jqyoui-draggable="{index: {[{$index}]}, animate:true, placeholder: 'keep'}">
+
+                        <a href="#/users/{[{ user.id }]}"
+                           data-popover="
+                                {[{ user.phone }]}
+                                {[{ user.email }]}
+                                {[{ user.year_display }]}
+                                {[{ user.major }]}
+                                "
+                           data-popover-title="{[{ user.last_name }]}, {[{ user.first_name }]}"
+                           data-popover-placement="right"
+                           data-popover-trigger="mouseenter"
+                           data-popover-popup-delay="500"
+                                >
+                            <img ng-src="/static/img/holderjs-40x40.png">
+                            {[{ user.last_name }]}, {[{ user.first_name }]}
+                        </a>
+                    </li>
+                </ul>
+
+
+            </div>
+
+            <div ng-view></div>
+
+
+            <script type="text/ng-template" id="list.html">
+
+
+                <div class="span9">
+                    <div ng-controller="GroupListCtrl">
+                        <tabset class="tabs-left">
+                            <tab ng-repeat="group in globals.groups"
+                            active="group.tab.active"
+                            data-drop="true" ng-model='group.user_set'
+                            jqyoui-droppable="{multiple:false}"
+                            jqyoui-options="{accept:'[ng-model=globals.users]'}"
+                            >
+                                <tab-heading>
+                                    <group-display group="group"></group-diplay>
+                                </tab-heading>
+                                <tab-content>
+                                    <ul class="nav nav-pills nav-stacked">
+                                        <li ng-repeat="user in group.user_set"
+                                        data-drag="true"
+                                        jqyoui-draggable="{index: {[{$index}]}, animate:true, placeholder: 'keep', onStart: 'startDragUser(user)'}"
+                                        data-jqyoui-options="{revert: 'invalid', helper: 'clone'}"
+                                        >
+                                            <a href="#/users/{[{ user.id }]}">
+                                                <img ng-src="/static/img/holderjs-40x40.png">
+                {[{ user.last_name }]}, {[{ user.first_name }]}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <a class="btn btn-smal btn-info" ng-click="submitGroup2(group)">Save</a>
+                                    </tab-content>
+                                </tab>
+                                <tab ng-controller="MyFormCtrl" select="openModal()">
+                                    <tab-heading>
+                                        <a>+ Create Group</button>
+                                    </tab-heading>
+                                </tab>
+
+                            </tabset>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="span6">
+
+
+                </div>
+
+            </script>
+
+            <script type="text/ng-template" id="detail.html">
+
+                <div class="span9">
+                    <h1>
+                        <img class="pull-left" src="{[{ user.avatar }]}">
+                            <span>
+                    {[{ user.last_name }]}, {[{ user.first_name }]}
+                            </span>
+                        </h1>
+
+                        <br/>
+                        <br/>
+                        <dl class="dl-horizontal">
+                            <dt>
+                            Email:
+                            </dt>
+                            <dd>
+    {[{ user.email }]}
+                            </dd>
+                            <dt>
+                            Phone:
+                            </dt>
+                            <dd>
+    {[{ user.phone }]}
+                            </dd>
+                            <dt>
+                            Year:
+                            </dt>
+                            <dd>
+    {[{ user.year }]}
+                            </dd>
+                            <dt>
+                            Major:
+                            </dt>
+                            <dd>
+    {[{ user.major }]}
+                            </dd>
+                            <dt>
+                            Home Town:
+                            </dt>
+                            <dd>
+    {[{ user.hometown }]}
+                            </dd>
+                            <dt>
+                            Highschool GPA:
+                            </dt>
+                            <dd>
+    {[{ user.highschool_gpa }]}
+                            </dd>
+                            <dt>
+                            GPA:
+                            </dt>
+                            <dd>
+    {[{ user.gpa }]}
+                            </dd>
+                        </div>
+                    </script>
+
+            <script type="text/ng-template" id="newGroupModal.html">
+                        <div class="modal-header">
+                            <h3>Create New Group</h3>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form">
+                                <div class="control-group">
+                                    <label class="control-label" for="group.name">Title</label>
+                                    <div class="controls">
+                                        <input id="group.name" class="input-block-level" ng-model="group.name"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" ng-click="ok()">OK</button>
+                            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+                        </div>
+
+                    </script>
+            <script type="text/ng-template" id="group-display.html">
+                        <span>{[{ groupName }]}</span>
+                    </script>
+
+        </div>
+    </div>
+
+{% endblock content %}
+
+
+{% block angular_app_name %}userApp{% endblock angular_app_name %}
+
+{% block angular_modules %}
+    <script src="{% static 'angularjs/app/lib/angular/angular-cookies.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
+
+    <script src="{% static 'users/app/lib/angular/angular-dragdrop.min.js' %}"></script>
+{% endblock angular_modules %}
+{% block angular_app %}
+    <script src="{% static 'users/app/js/app.js' %}"></script>
+    <script src="{% static 'users/app/js/controllers.js' %}"></script>
+    <script src="{% static 'users/app/js/services.js' %}"></script>
+    <script src="{% static 'users/app/js/directives.js' %}"></script>
+    <script src="{% static 'users/app/js/filters.js' %}"></script>
+
+    <script src="{% static 'groups/app/js/controllers.js' %}"></script>
+    <script src="{% static 'groups/app/js/services.js' %}"></script>
+
+
+{% endblock angular_app %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'users/app/lib/jquery-ui/ui/minified/jquery-ui.min.js' %}"></script>
+
+{% endblock javascript %}
+
+{% block css %}
+    {{ block.super }}
+    <style>
+        .tabs-left>.nav-tabs>li>a {
+            line-height: 40px;
+        }
+        .nav>li>a>img {
+            max-width: 40px;
+        }
+    </style>
+{% endblock css %}
+
+<div class="col-xs-9">
+    <h2>Users</h2>
+</div>
+
+<div class="row">
+    <div class="col-lg-9">
+        <div class="list-group">
+            {% for user in user_list %}
+                <a href="{% url 'users:detail' user.username %}" class="list-group-item">
+                    <h4 class="list-group-item-heading">{% avatar user %} {{ user.username }}</h4>
+                    <p class="list-group-item-text">{{ maker.tagline }}</p>
+                </a>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+
+
+
