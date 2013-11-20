@@ -123,3 +123,38 @@
         </div>
 
 {% endblock content %}
+
+{% block javascript %}
+{{ block.super }}
+    <script type="text/javascript">
+
+
+$(function() {
+    var example_form = '#restcomment-form';
+    $(example_form).on('submit', function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: "{% url 'restcomment-list' %}",
+            type: "POST",
+            data: $(example_form).serialize(),
+            success: function(data) {
+                if (!(data['success'])) {
+                    $(example_form).replaceWith(data['form_html']);
+                }
+                else {
+                    $(example_form).find('.success-message').show();
+                }
+            },
+            error: function () {
+                $(example_form).find('.error-message').show()
+            }
+        });
+    });
+});
+    </script>
+{% endblock javascript %}
+
+
+{% block angular %}
+{% endblock angular %}

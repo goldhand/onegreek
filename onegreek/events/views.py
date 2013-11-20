@@ -2,7 +2,6 @@ from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework import viewsets, filters
-from rest_framework import permissions
 
 from .serializers import EventSerializer
 from .models import Event

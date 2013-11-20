@@ -27,6 +27,7 @@ class RestCommentForm(NgModelFormMixin, CommentSecurityForm):
     viewers = forms.ModelMultipleChoiceField(required=False,
                                              widget=forms.SelectMultiple(),
                                              queryset=Chapter.objects.all())
+    site = forms.HiddenInput()
 
     class Meta:
         fields = [
@@ -44,6 +45,8 @@ class RestCommentForm(NgModelFormMixin, CommentSecurityForm):
         self.helper = FormHelper()
         #self.helper.form_tag = False
         #self.helper.form_class = 'form-horizontal'
+        #self.helper.form_action = 'restcomment-list'
+        self.helper.form_id = 'restcomment-form'
         self.helper.layout = Layout(
             Div(
                 Field('comment', css_class="input-block-level"),

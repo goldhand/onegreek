@@ -26,21 +26,22 @@ class ContentObjectRelatedField(serializers.RelatedField):
 class RestCommentSerializer(serializers.HyperlinkedModelSerializer):
     #viewers = serializers.PrimaryKeyRelatedField(many=True)
     #content_object = ContentObjectRelatedField()
-    content_type = serializers.SlugRelatedField(slug_field="name")
-    site = serializers.PrimaryKeyRelatedField()
+    content_type = serializers.Field(source='content_type')
+    #site = serializers.PrimaryKeyRelatedField()
     content_object_url = serializers.Field(source='get_content_object_url')
+    content_object = serializers.Field(source='content_object')
 
     class Meta:
         model = RestComment
         fields = [
+            'user',
             'comment',
             'url',
             'submit_date',
             'content_type',
             'object_pk',
-            'site',
             'content_object_url',
-            #'content_object',
+            'content_object',
             #'timestamp',
             #'security_hash',
         ]
