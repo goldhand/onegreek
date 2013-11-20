@@ -2,7 +2,7 @@ from django import forms
 
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Field, Submit, Button, Fieldset, HTML
+from crispy_forms.layout import Layout, Div, Field, Submit, Button, Fieldset, HTML, ButtonHolder
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -25,19 +25,32 @@ class RestCommentForm(NgModelFormMixin, CommentSecurityForm):
     comment = forms.CharField(label=_('Comment'), widget=forms.Textarea,
                               max_length=COMMENT_MAX_LENGTH)
     viewers = forms.ModelMultipleChoiceField(required=False,
-                                             widget=forms.CheckboxSelectMultiple(),
+                                             widget=forms.SelectMultiple(),
                                              queryset=Chapter.objects.all())
+
+    class Meta:
+        fields = [
+            'comment',
+            'viewers',
+            'content_type',
+            'object_pk',
+            'timestamp',
+            'security_hash',
+        ]
 
     def __init__(self, *args, **kwargs):
         kwargs.update(scope_prefix='comment')
         super(RestCommentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.form_class = 'form-horizontal'
+        #self.helper.form_tag = False
+        #self.helper.form_class = 'form-horizontal'
         self.helper.layout = Layout(
             Div(
                 Field('comment', css_class="input-block-level"),
                 Field('viewers', css_class="input-block-level"),
+            ),
+            ButtonHolder(
+                Submit('submit', 'Submit', css_class='button white')
             )
         )
 
@@ -48,17 +61,14 @@ class RestCommentForm(NgModelFormMixin, CommentSecurityForm):
     def get_comment_create_data(self):
         # Use the data of the superclass, and add in the title field
         return dict(
-            content_type = ContentType.objects.get_for_model(self.target_object),
-            object_pk    = force_text(self.target_object._get_pk_val()),
-            #user_name    = self.cleaned_data["name"],
-            #user_email   = self.cleaned_data["email"],
-            #user_url     = self.cleaned_data["url"],
-            comment      = self.cleaned_data["comment"],
-            submit_date  = timezone.now(),
-            site_id      = settings.SITE_ID,
-            is_public    = True,
-            is_removed   = False,
-            )
+            content_type=ContentType.objects.get_for_model(self.target_object),
+            object_pk=force_text(self.target_object._get_pk_val()),
+            comment=self.cleaned_data["comment"],
+            submit_date=timezone.now(),
+            site_id=settings.SITE_ID,
+            is_public=True,
+            is_removed=False,
+        )
 
 
     def get_comment_object(self):
@@ -88,11 +98,11 @@ class RestCommentForm(NgModelFormMixin, CommentSecurityForm):
         possible_duplicates = self.get_comment_model()._default_manager.using(
             self.target_object._state.db
         ).filter(
-            content_type = new.content_type,
-            object_pk = new.object_pk,
-            user_name = new.user_name,
-            user_email = new.user_email,
-            user_url = new.user_url,
+            content_type=new.content_type,
+            object_pk=new.object_pk,
+            user_name=new.user_name,
+            user_email=new.user_email,
+            user_url=new.user_url,
         )
         for old in possible_duplicates:
             if old.submit_date.date() == new.submit_date.date() and old.comment == new.comment:
@@ -113,6 +123,6 @@ class RestCommentForm(NgModelFormMixin, CommentSecurityForm):
                     "Watch your mouth! The word %s is not allowed here.",
                     "Watch your mouth! The words %s are not allowed here.",
                     len(bad_words)) % get_text_list(
-                        ['"%s%s%s"' % (i[0], '-'*(len(i)-2), i[-1])
-                         for i in bad_words], ugettext('and')))
+                    ['"%s%s%s"' % (i[0], '-' * (len(i) - 2), i[-1])
+                     for i in bad_words], ugettext('and')))
         return comment

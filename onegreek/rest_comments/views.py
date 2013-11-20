@@ -2,17 +2,13 @@
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 
-import comments
-from comments import signals
-from comments.utils import next_redirect, confirmation_view
-
-from comments.serializers import CommentSerializer
-from comments.models import Comment
+from .serializers import RestCommentSerializer
+from .models import RestComment
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+    queryset = RestComment.objects.all()
+    serializer_class = RestCommentSerializer
 
     def create(self, request, *args, **kwargs):
         if not 'content_type_id' in request.POST:
