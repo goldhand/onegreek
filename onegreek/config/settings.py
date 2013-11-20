@@ -55,6 +55,8 @@ class Common(Configuration):
         'guardian',
         'djangular',
         'django_filters',
+        'django_comments',
+        'rest_comments',
     )
 
     # Apps specific for this project go here.
@@ -69,7 +71,7 @@ class Common(Configuration):
         'chapters',
         'users',  # custom users app
         'events',
-        'comments',
+        #'comments',
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -289,7 +291,7 @@ class Common(Configuration):
 
     ########## COMMENTS CONFIGURATION
 
-    COMMENTS_APP = 'comments'
+    COMMENTS_APP = 'rest_comments'
     COMMENTS_USE_EMAIL_NOTIFICATION = False
     COMMENTS_EXCLUDE_FIELDS = ('url', 'name', 'email')
 

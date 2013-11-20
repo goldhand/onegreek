@@ -60,3 +60,16 @@ class User(AbstractUser):
         return super(User, self).save(*args, **kwargs)
 
 
+#class UserPosition(models.Model):
+
+# home page
+        #register
+            #active
+                #added to "pending actives" group
+            #rushee
+                #fills out custom form for rushing chapter
+
+
+
+#check in users
+#

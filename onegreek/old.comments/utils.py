@@ -1,83 +1,71 @@
-from django.conf import settings
-from django.contrib import comments
-from django.contrib.contenttypes.generic import GenericRelation
-from django.contrib.sites.models import get_current_site
-from django.core.mail import send_mail
-from django.dispatch import receiver
-from django.contrib.comments import signals
-from django.shortcuts import render
-from comments import settings as comment_settings
-from django.db import models
+"""
+A few bits of helper functions for comment views.
+"""
 
+import textwrap
+try:
+    from urllib.parse import urlencode
+except ImportError:     # Python 2
+    from urllib import urlencode
 
-@receiver(signals.comment_was_posted)
-def on_comment_posted(sender, comment, request, **kwargs):
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response, resolve_url
+from django.template import RequestContext
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils.http import is_safe_url
+
+import comments
+
+def next_redirect(request, fallback, **get_kwargs):
     """
-    Send email notification of a new comment to site staff when email notifications have been requested.
+    Handle the "where should I go next?" part of comment views.
+
+    The next value could be a
+    ``?next=...`` GET arg or the URL of a given view (``fallback``). See
+    the view modules for examples.
+
+    Returns an ``HttpResponseRedirect``.
     """
-    # This code is copied from django.contrib.comments.moderation.
-    # That code doesn't offer a RequestContext, which makes it really
-    # hard to generate proper URL's with FQDN in the email
-    #
-    # Instead of implementing this feature in the moderator class, the signal is used instead
-    # so the notification feature works regardless of a manual moderator.register() call in the project.
-    if not comment_settings.COMMENTS_USE_EMAIL_NOTIFICATION:
-        return
+    next = request.POST.get('next')
+    if not is_safe_url(url=next, host=request.get_host()):
+        next = resolve_url(fallback)
 
-    recipient_list = [manager_tuple[1] for manager_tuple in settings.MANAGERS]
-    site = get_current_site(request)
-    content_object = comment.content_object
+    if get_kwargs:
+        if '#' in next:
+            tmp = next.rsplit('#', 1)
+            next = tmp[0]
+            anchor = '#' + tmp[1]
+        else:
+            anchor = ''
 
-    subject = '[{0}] New comment posted on "{1}"'.format(site.name, content_object)
-    context = {
-        'site': site,
-        'comment': comment,
-        'content_object': content_object
-    }
+        joiner = ('?' in next) and '&' or '?'
+        next += joiner + urlencode(get_kwargs) + anchor
+    return HttpResponseRedirect(next)
 
-    message = render(request, "comments/comment_notification_email.txt", context)
-    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient_list, fail_silently=True)
-
-
-def get_comments_for_model(content_object, include_moderated=False):
+def confirmation_view(template, doc="Display a confirmation view."):
     """
-    Return the QuerySet with all comments for a given model.
+    Confirmation view generator for the "comment was
+    posted/flagged/deleted/approved" views.
     """
-    qs = comments.get_model().objects.for_model(content_object)
-
-    if not include_moderated:
-        qs = qs.filter(is_public=True, is_removed=False)
-
-    return qs
-
-
-class CommentsRelation(GenericRelation):
-    """
-    A :class:`~django.contrib.contenttypes.generic.GenericRelation` which can be applied to a parent model that
-    is expected to have comments. For example:
-
-    .. code-block:: python
-
-        class Article(models.Model):
-            comments_set = CommentsRelation()
-    """
-    def __init__(self, *args, **kwargs):
-        super(CommentsRelation, self).__init__(
-            to=comments.get_model(),
-            content_type_field='content_type',
-            object_id_field='object_pk',
-            **kwargs
+    def confirmed(request):
+        comment = None
+        if 'c' in request.GET:
+            try:
+                comment = comments.get_model().objects.get(pk=request.GET['c'])
+            except (ObjectDoesNotExist, ValueError):
+                pass
+        return render_to_response(template,
+            {'comment': comment},
+            context_instance=RequestContext(request)
         )
 
+    confirmed.__doc__ = textwrap.dedent("""\
+        %s
 
-try:
-    from south.modelsinspector import add_ignored_fields
-except ImportError:
-    pass
-else:
-    # South 0.7.x ignores GenericRelation fields but doesn't ignore subclasses.
-    # Taking the same fix as applied in http://south.aeracode.org/ticket/414
-    _name_re = "^" + __name__.replace(".", "\.")
-    add_ignored_fields((
-        _name_re + "\.CommentsRelation",
-    ))
+        Templates: :template:`%s``
+        Context:
+            comment
+                The posted comment
+        """ % (doc, template)
+    )
+    return confirmed

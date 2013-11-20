@@ -28,9 +28,11 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable avatars
     url(r'^avatar/', include('avatar.urls')),
 
+    # Comments
+    url(r'^comments/', include('django_comments.urls')),
+
     # Your stuff: custom urls go here
     url(r'^api/', include('apiroot.urls')),
-    url(r'^comments/', include('comments.urls')),
     url(r'^events/', include('events.urls', namespace='events')),
     url(r'^chapters/', include('chapters.urls', namespace='chapters')),
 

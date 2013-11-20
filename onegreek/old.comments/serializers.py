@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import PComment as Comment
+from .models import Comment
 from events.models import Event
 
 class ContentObjectRelatedField(serializers.RelatedField):
@@ -19,7 +19,7 @@ class ContentObjectRelatedField(serializers.RelatedField):
         raise Exception('Unexpected type of content object')
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
-    viewers = serializers.PrimaryKeyRelatedField(many=True)
+    #viewers = serializers.PrimaryKeyRelatedField(many=True)
     content_object = ContentObjectRelatedField()
 
     class Meta:
@@ -27,7 +27,6 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
         fields = [
             'url', 'comment',
             'submit_date',
-            'viewers',
             'content_object',
         ]
         read_only_fields = [

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags staticfiles %}
+{% load crispy_forms_tags staticfiles comments %}
 
 {% block content %}
         <div class="span9">
@@ -110,6 +110,13 @@
                             </dl>
                         </div>
                     </div>
+                <div class="span4">
+                    {% get_comment_count for chapter as comment_count %}
+                    {{ comment_count }}
+
+                    {% render_comment_form for chapter %}
+                    {% render_comment_list for chapter %}
+                </div>
                 </div>
             </div>
         </div>

@@ -8,7 +8,7 @@ from rest_framework.routers import DefaultRouter
 from chapters.views import ChapterViewSet
 from fraternities.views import FraternityViewSet
 from users.views import UserViewSet, GroupViewSet
-from comments.views import CommentViewSet
+#from comments.views import CommentViewSet
 from events.views import EventViewSet
 from universities.views import UniversityViewSet
 
@@ -17,7 +17,7 @@ router.register(r'chapters', ChapterViewSet)
 router.register(r'fraternities', FraternityViewSet)
 router.register(r'users', UserViewSet)
 router.register(r'groups', GroupViewSet)
-router.register(r'comments', CommentViewSet)
+#router.register(r'comments', CommentViewSet)
 router.register(r'events', EventViewSet)
 router.register(r'universities', UniversityViewSet)
 
