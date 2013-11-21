@@ -9,9 +9,11 @@
 {% block title %}Chapters{% endblock %}
 
 {% block content %}
-    <div ng-view></div>
-    {% csrf_token %}
-    {% crispy form %}
+    <div class="span9">
+        <div ng-view></div>
+        {% csrf_token %}
+        {% crispy form %}
+    </div>
 
 
 
@@ -67,4 +69,7 @@
     <script src="{% static 'chapters/app/js/services.js' %}"></script>
     <script src="{% static 'chapters/app/js/directives.js' %}"></script>
     <script src="{% static 'chapters/app/js/filters.js' %}"></script>
+
+
+    <script src="{% static 'users/app/js/services.js' %}"></script>
 {% endblock angular_app %}

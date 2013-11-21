@@ -1,6 +1,6 @@
 <div class="span9">
     <h1 class="page-header">
-        <a href="#">
+        <a href="{[{ chapter.api_url }]}">
             {[{ chapter.fraternity_title }]}
         </a>
         <br/>
@@ -56,7 +56,7 @@
         </div>
         <div class="span4">
             <div ng-hide="chapter.rush.hide" style="display: table; margin-left: auto; margin-right: auto; margin-bottom: 30px;">
-                <a ng-click="rushSubmit()" class="btn btn-primary btn-large" > {[{ chapter.rush.title }]} </a>
+                <a ng-disabled="chapter.rush.disabled" ng-click="rushSubmit()" class="btn btn-primary btn-large" > {[{ chapter.rush.title }]} </a>
             </div>
             <p ng-hide="chapter.rush.message.hide">{[{ chapter.rush.message.text }]}</p>
 
@@ -66,26 +66,24 @@
             </div>
 
             <ul class="nav nav-tabs" id="chapter-more-info">
-                <li class="active"><a href="#members">Members <span class="badge badge-info">{[{ chapter.user_set.count }]}</span></a></li>
+                <li class="active"><a href="#members">Members <span class="badge badge-info">{[{ chapter.user_count }]}</span></a></li>
                 <li><a href="#info">Info</a></li>
             </ul>
 
             <div class="tab-content">
                 <div class="tab-pane active" id="members">
-                    {% for member in chapter.user_set.all %}
-                        <div class="media">
+                        <div class="media" ng-repeat="user in users">
                             <a class="pull-left" href="#">
                                 <img class="media-object" data-src="holder.js/64x64/social">
                             </a>
 
                             <div class="media-body">
                                 <h4 class="media-heading">
-                                    {[{ member.get_full_name }]}
+                                    {[{ user.get_full_name }]}
                                 </h4>
-                                President
+                                {[{ user.position }]}
                             </div>
                         </div>
-                    {% endfor %}
                 </div>
                 <div class="tab-pane" id="info">
                     <dl>

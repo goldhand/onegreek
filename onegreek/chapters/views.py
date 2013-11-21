@@ -50,28 +50,44 @@ class ChapterList(generic.ListView):
 
 
 @api_view(['GET', 'POST'])
-@login_required()
 @renderer_classes((JSONRenderer,))
 def rush_chapter_view(request, pk, format=None):
     chapter = get_object_or_404(Chapter, pk=pk)
-    rush_group = chapter.linked_rush_group
+    hide = True
+    success = False
+    title = 'Sign up to rush %s' % chapter.fraternity_title
+    disabled = True
     message = ''
-    success = 'false'
-    title = 'Rush %s' % chapter.fraternity_title
-    if rush_group:
-        if request.user in rush_group.user_set.all():
-            if request.method == "POST":
-                rush_group.user_set.remove(request.user.id)
-                message = 'You no longer Rushing %s, %s chapter' % (chapter.fraternity_title, chapter.title)
+    if request.user.is_authenticated() and not request.user.chapter:
+        rush_group = chapter.linked_rush_group
+        hide = False
+        disabled = False
+        title = 'Rush %s' % chapter.fraternity_title
+        if rush_group:
+            if request.user in rush_group.user_set.all():
+                if request.method == "POST":
+                    rush_group.user_set.remove(request.user.id)
+                    message = 'You no longer Rushing %s, %s chapter' % (chapter.fraternity_title, chapter.title)
+                else:
+                    title = 'Stop Rushing %s' % chapter.fraternity_title
             else:
-                title = 'Stop Rushing %s' % chapter.fraternity_title
-        else:
-            if request.method == "POST":
-                rush_group.user_set.add(request.user.id)
-                message = 'You are now Rushing %s, %s chapter' % (chapter.fraternity_title, chapter.title)
-                title = 'Stop Rushing %s' % chapter.fraternity_title
-                #messages.success(request, message)
+                if request.method == "POST":
+                    rush_group.user_set.add(request.user.id)
+                    message = 'You are now Rushing %s, %s chapter' % (chapter.fraternity_title, chapter.title)
+                    title = 'Stop Rushing %s' % chapter.fraternity_title
+                    #messages.success(request, message)
+            success = 'true'
+    else:
+        if not request.user.is_authenticated():
+            hide = False
+            message = ''
         success = 'true'
 
-    return Response({'success': success, 'title': title, 'message': message})
+    return Response({
+        'success': success,
+        'title': title,
+        'message': message,
+        'hide': hide,
+        'disabled': disabled
+    })
 

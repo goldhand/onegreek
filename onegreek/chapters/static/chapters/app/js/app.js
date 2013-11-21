@@ -9,6 +9,7 @@ var chapterApp = angular.module('chapterApp', [
     //'ngDragDrop',
     'chapterControllers',
     'chapterServices',
+    'userServices',
     'chapterDirectives'
     //'groupControllers',
     //'groupServices'
@@ -53,6 +54,11 @@ chapterApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $
             chapter: function($route, ChapterService) {
                 var chapterId = $route.current.params.chapterId;
                 return ChapterService.get(chapterId);
+            },
+            users: function($route, UserService) {
+                var q = 'chapter';
+                var qId = $route.current.params.chapterId;
+                return UserService.filter(q, qId);
             }
         }
 

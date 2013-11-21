@@ -1,6 +1,12 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
-    <a href="#/demo">Demo</a>
-    <div ng-view></div>
+    <ul class="unstyled">
+    {% if not request.user.is_authenticated %}
+    <li><a href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a></li>
+    <li><a href="{% url 'account_login' %}">{% trans "Log In" %}</a></li>
+    <li><a href="{% url 'chapters:list' %}">{% trans "Continue as Guest" %}</a></li>
+    {% endif %}
+    </ul>
 {% endblock content %}

@@ -6,7 +6,6 @@
 
 {% block content %}
     <div class="span9">
-    <div class="row">
 
     <div class="col-sm-9">
       <h2>{{ object.username }}</h2>
@@ -25,9 +24,6 @@
 <!-- End Action buttons -->
 {% endif %}
 
-
-    <div class="row">
-    <div class="span9">
         <h3>
             {% avatar user %}
         {{ user.get_full_name }}
@@ -47,10 +43,6 @@
         <p>
             {{ user.hometown }}
         </p>
-    </div>
-
-    </div>
-    </div>
     </div>
 
 

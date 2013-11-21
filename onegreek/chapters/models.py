@@ -55,9 +55,6 @@ class Chapter(Slugged, StatusModel):
         return super(Chapter, self).save(*args, **kwargs)
 
 
-
-
-
 @receiver(signals.post_save, sender=Chapter)
 def set_group(sender, **kwargs):
     if kwargs.get('created'):
@@ -79,3 +76,7 @@ def set_group_after_group_save(sender, **kwargs):
             chapter_id = int(group.name.split(' ')[0].split('_')[1])
             chapter = get_object_or_404(Chapter, id=chapter_id)
             chapter.groups.add(group.id)
+
+
+class Position(Slugged):
+    chapter = models.ForeignKey(Chapter)

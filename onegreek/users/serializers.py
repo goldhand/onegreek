@@ -11,16 +11,20 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     #avatar = serializers.SerializerMethodField('get_avatar')
     year_display = serializers.Field('get_year_display')
     chapter_id = serializers.Field('chapter_id')
+    position = serializers.Field('position.title')
+    api_url = serializers.SerializerMethodField('get_api_url')
     get_full_name = serializers.Field('get_full_name')
 
     class Meta:
         model = User
         fields = [
             'url',
+            'api_url',
             'id',
             'first_name',
             'last_name',
             'get_full_name',
+            'position',
             #'avatar',
             'email',
             'phone',
@@ -45,6 +49,12 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             return avatar
         else:
             return ''
+
+    def get_api_url(self, obj):
+        if obj:
+            return "#/users/%s" % obj.id
+        else:
+            return "#/users/"
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

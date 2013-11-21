@@ -16,6 +16,7 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     linked_pending_group_id = serializers.Field('linked_pending_group_id')
     api_url = serializers.SerializerMethodField('get_api_url')
     rush_url = serializers.SerializerMethodField('get_rush_url')
+    user_count = serializers.SerializerMethodField('get_user_count')
 
     class Meta:
         model = Chapter
@@ -26,6 +27,7 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
             'rush_url',
             'title',
             'slug',
+            'user_count',
             'description',
             'awards',
             'philanthropy',
@@ -56,3 +58,9 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
             return reverse('chapters:rush', kwargs={'pk': obj.id})
         else:
             return "/chapters/rush/"
+
+    def get_user_count(self, obj):
+        if obj:
+            return obj.user_set.count()
+        else:
+            return 0

@@ -76,9 +76,18 @@ class UserViewSet(viewsets.ModelViewSet):
         q = super(UserViewSet, self).get_queryset()
         if 'group' in self.request.GET:
             return q.filter(groups__id=self.request.GET['group'])
+        elif 'chapter' in self.request.GET:
+            chapter_id = self.request.GET['chapter']
+            if 'rush' in self.request.GET:
+                return q.filter(groups__name__istartswith='chapter_%s' % chapter_id).distinct()
+            else:
+                return q.filter(chapter_id=chapter_id)
         else:
-            #return q.filter(chapter_id=self.request.user.chapter_id)
-            return q.filter(groups__name__istartswith='chapter_%d' % self.request.user.chapter_id).distinct()
+            chapter_id = self.request.user.chapter_id
+            if chapter_id:
+                return q.filter(groups__name__istartswith='chapter_%d' % chapter_id).distinct()
+            else:
+                return q
 
 
 class GroupViewSet(viewsets.ModelViewSet):

@@ -1,5 +1,48 @@
 <ul class="nav nav-tabs nav-stacked">
     <li ng-repeat="chapter in globals.chapters">
-        {[{ chapter.title }]}
+        <table class="table table-bordered table-condensed">
+            <caption>
+                <h3 class="left-align">
+                    <a href="{[{ chapter.api_url }]}">
+                        {[{ chapter.fraternity_title }]}
+                    </a>
+                    <small>
+                        {[{ chapter.title }]} chapter
+                    </small>
+                </h3>
+            </caption>
+            <thead>
+            <tr>
+                <th class="span2">
+                    Members:
+                </th>
+                <th class="span2">
+                    Status:
+                </th>
+                <th class="span2">
+                    GPA:
+                </th>
+                <th class="span2">
+                    Cost:
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    {[{ chapter.user_count }]}
+                </td>
+                <td>
+                    {[{ chapter.status }]}
+                </td>
+                <td>
+                    {[{ chapter.gpa }]}
+                </td>
+                <td>
+                    $ {[{ chapter.cost }]}
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </li>
 </ul>

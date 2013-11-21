@@ -67,17 +67,11 @@ chapterControllers.controller('ChapterListCtrl', [
 
     }]);
 
-chapterControllers.controller('ChapterDetailCtrl', ['$scope', '$http', '$routeParams', 'chapter', function ($scope, $http, $routeParams, chapter) {
+chapterControllers.controller('ChapterDetailCtrl', ['$scope', '$http', '$routeParams', 'chapter', 'users', function ($scope, $http, $routeParams, chapter, users) {
     $scope.chapter = chapter;
-    $scope.chapter.rush = {
-        title: 'Rush ' + $scope.chapter.fraternity_title,
-        hide: false,
-        message: {
-            hide: true,
-            text: ''
-        }
-    };
+    $scope.users = users;
 
+    $scope.chapter.rush = {hide: true};
 
     $scope.submit = function() {
         $http.post('/api/chapters/' + $routeParams.chapterId + '/', $scope.chapter).success(function(chapter_data) {
@@ -85,8 +79,15 @@ chapterControllers.controller('ChapterDetailCtrl', ['$scope', '$http', '$routePa
         });
     };
     $http.get($scope.chapter.rush_url).success(function(data) {
-        $scope.chapter.rush.title = data.title;
-        $scope.chapter.rush.message.hide = true;
+        $scope.chapter.rush = {
+            title: data.title,
+            hide: data.hide,
+            disabled: data.disabled,
+            message: {
+                hide: true,
+                text: data.message
+            }
+        };
     });
     $scope.rushSubmit = function() {
         $http.post($scope.chapter.rush_url).success(function(data) {
