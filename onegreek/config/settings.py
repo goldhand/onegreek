@@ -55,8 +55,6 @@ class Common(Configuration):
         'guardian',
         'djangular',
         'django_filters',
-        'django_comments',
-        'rest_comments',
     )
 
     # Apps specific for this project go here.
@@ -71,7 +69,8 @@ class Common(Configuration):
         'chapters',
         'users',  # custom users app
         'events',
-        #'comments',
+        'django_comments',
+        'rest_comments',
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
