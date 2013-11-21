@@ -1,6 +1,6 @@
 # Bleeding edge Django
 #https://github.com/django/django/archive/1.6b4.tar.gz
-django==1.5.4
+django==1.6
 
 # Configuration
 django-configurations==0.5.1
@@ -40,4 +40,10 @@ django-avatar==2.0
 
 # Your custom requirements go here
 djangorestframework==2.3.8
+
 akismet>=0.2
+django-angular==0.3.0
+django-filter==0.7
+django-guardian==1.1.1
+django-model-utils==1.5.0
+djangorestframework==2.3.8
