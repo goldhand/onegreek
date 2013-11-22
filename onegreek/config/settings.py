@@ -402,14 +402,14 @@ class Production(Common):
     INSTALLED_APPS += ("djangosecure", )
 
     # set this to 60 seconds and then to 518400 when you can prove it works
-    SECURE_HSTS_SECONDS = 60
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = values.BooleanValue(True)
-    SECURE_FRAME_DENY = values.BooleanValue(True)
-    SECURE_CONTENT_TYPE_NOSNIFF = values.BooleanValue(True)
-    SECURE_BROWSER_XSS_FILTER = values.BooleanValue(True)
-    SESSION_COOKIE_SECURE = values.BooleanValue(True)
-    SESSION_COOKIE_HTTPONLY = values.BooleanValue(True)
-    SECURE_SSL_REDIRECT = values.BooleanValue(True)
+    #SECURE_HSTS_SECONDS = 60
+    #SECURE_HSTS_INCLUDE_SUBDOMAINS = values.BooleanValue(True)
+    #SECURE_FRAME_DENY = values.BooleanValue(True)
+    #SECURE_CONTENT_TYPE_NOSNIFF = values.BooleanValue(True)
+    #SECURE_BROWSER_XSS_FILTER = values.BooleanValue(True)
+    #SESSION_COOKIE_SECURE = values.BooleanValue(True)
+    #SESSION_COOKIE_HTTPONLY = values.BooleanValue(True)
+    #SECURE_SSL_REDIRECT = values.BooleanValue(True)
     ########## end django-secure
 
     ########## SITE CONFIGURATION
