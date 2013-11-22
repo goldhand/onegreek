@@ -270,7 +270,7 @@ class Common(Configuration):
         { 'facebook':
               { 'SCOPE': ['email', 'publish_stream'],
                 'AUTH_PARAMS': { 'auth_type': 'reauthenticate' },
-                'METHOD': 'o'}
+                'METHOD': 'js_sdk'}
         }
 
     ########## END AUTHENTICATION PROVIDERS
