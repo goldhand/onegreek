@@ -28,7 +28,7 @@ chapterApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $routeProvider.when('/chapters', {
-        templateUrl: '/static/chapters/app/partials/list.html',
+        templateUrl: 'https://djangonu-onegreek.s3.amazonaws.com/chapters/app/partials/list.html',
         controller: 'ChapterListCtrl',
         resolve: {
             chapters: function(ChapterService) {
@@ -48,7 +48,7 @@ chapterApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $
         }
     });
     $routeProvider.when('/chapters/:chapterId', {
-        templateUrl: '/static/chapters/app/partials/detail.html',
+        templateUrl: 'https://djangonu-onegreek.s3.amazonaws.com/chapters/app/partials/detail.html',
         controller: 'ChapterDetailCtrl',
         resolve: {
             chapter: function($route, ChapterService) {
