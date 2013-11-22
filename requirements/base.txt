@@ -16,7 +16,6 @@ django-floppyforms==1.1
 # Models
 South==0.8.2
 # hack so django-model-utils doesn't override Django 1.6b4 install
-#git+git://github.com/pydanny/django-model-utils@d71bf2db7581d91dcc8e0a66fd4859eb8969d256
 django-model-utils==1.5.0
 
 
@@ -45,5 +44,4 @@ akismet>=0.2
 django-angular==0.3.0
 django-filter==0.7
 django-guardian==1.1.1
-django-model-utils==1.5.0
 djangorestframework==2.3.8
