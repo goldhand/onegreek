@@ -240,10 +240,41 @@ class Common(Configuration):
     )
 
     # Some really nice defaults
-    ACCOUNT_AUTHENTICATION_METHOD = "username"
+    ACCOUNT_AUTHENTICATION_METHOD = "email"
     ACCOUNT_EMAIL_REQUIRED = True
     ACCOUNT_EMAIL_VERIFICATION = "false"
     ########## END AUTHENTICATION CONFIGURATION
+
+
+    ########## AUTHENTICATION PROVIDERS
+
+    INSTALLED_APPS += (
+        #'allauth.socialaccount.providers.bitly',
+        #'allauth.socialaccount.providers.dropbox',
+        'allauth.socialaccount.providers.facebook',
+        #'allauth.socialaccount.providers.github',
+        #'allauth.socialaccount.providers.google',
+        #'allauth.socialaccount.providers.linkedin',
+        #'allauth.socialaccount.providers.openid',
+        #'allauth.socialaccount.providers.persona',
+        #'allauth.socialaccount.providers.soundcloud',
+        #'allauth.socialaccount.providers.stackexchange',
+        #'allauth.socialaccount.providers.twitch',
+        #'allauth.socialaccount.providers.twitter',
+        #'allauth.socialaccount.providers.vimeo',
+        #'allauth.socialaccount.providers.vk',
+        #'allauth.socialaccount.providers.weibo',
+    )
+
+    SOCIALACCOUNT_PROVIDERS = \
+        { 'facebook':
+              { 'SCOPE': ['email', 'publish_stream'],
+                'AUTH_PARAMS': { 'auth_type': 'reauthenticate' },
+                'METHOD': 'o'}
+        }
+
+    ########## END AUTHENTICATION PROVIDERS
+
 
     ########## Custom user app defaults
     # Select the correct user model
@@ -441,7 +472,21 @@ class Production(Common):
 
     ########## CACHING
     # Only do this here because thanks to django-pylibmc-sasl and pylibmc memcacheify is painful to install on windows.
-    CACHES = values.CacheURLValue(default="memcached://127.0.0.1:11211")
+    #CACHES = values.CacheURLValue(default="memcached://127.0.0.1:11211")
+
+    os.environ['MEMCACHE_SERVERS'] = os.environ.get('MEMCACHIER_SERVERS', '').replace(',', ';')
+    os.environ['MEMCACHE_USERNAME'] = os.environ.get('MEMCACHIER_USERNAME', '')
+    os.environ['MEMCACHE_PASSWORD'] = os.environ.get('MEMCACHIER_PASSWORD', '')
+
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
+            'TIMEOUT': 500,
+            'BINARY': True,
+            'OPTIONS': { 'tcp_nodelay': True }
+        }
+    }
     ########## END CACHING
+
 
     ########## Your production stuff: Below this line define 3rd party libary settings
