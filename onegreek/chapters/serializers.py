@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 from django.core.urlresolvers import reverse_lazy, reverse
 
@@ -19,11 +20,13 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     rush_form_url = serializers.SerializerMethodField('get_rush_form_url')
     absolute_url = serializers.Field('get_absolute_url')
     user_count = serializers.SerializerMethodField('get_user_count')
+    ctype_id = serializers.SerializerMethodField('get_content_type_id')
 
     class Meta:
         model = Chapter
         fields = [
             'id',
+            'ctype_id',
             'url',
             'api_url',
             'rush_url',
@@ -69,9 +72,11 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
         else:
             return "/chapters/rush/"
 
-
     def get_user_count(self, obj):
         if obj:
             return obj.user_set.count()
         else:
             return 0
+
+    def get_content_type_id(self, obj):
+        return ContentType.objects.get_for_model(Chapter).id

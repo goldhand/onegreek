@@ -27,6 +27,7 @@ class RestCommentSerializer(serializers.HyperlinkedModelSerializer):
     #viewers = serializers.PrimaryKeyRelatedField(many=True)
     #content_object = ContentObjectRelatedField()
     content_type = serializers.Field(source='content_type')
+    name = serializers.Field(source='name')
     #site = serializers.PrimaryKeyRelatedField()
     content_object_url = serializers.Field(source='get_content_object_url')
     content_object = serializers.Field(source='content_object')
@@ -35,6 +36,7 @@ class RestCommentSerializer(serializers.HyperlinkedModelSerializer):
         model = RestComment
         fields = [
             'user',
+            'name',
             'comment',
             'url',
             'submit_date',

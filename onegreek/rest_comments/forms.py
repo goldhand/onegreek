@@ -32,7 +32,7 @@ class RestCommentForm(NgModelFormMixin, CommentSecurityForm):
     class Meta:
         fields = [
             'comment',
-            'viewers',
+            #'viewers',
             'content_type',
             'object_pk',
             'timestamp',
@@ -49,11 +49,8 @@ class RestCommentForm(NgModelFormMixin, CommentSecurityForm):
         self.helper.form_id = 'restcomment-form'
         self.helper.layout = Layout(
             Div(
-                Field('comment', css_class="input-block-level"),
-                Field('viewers', css_class="input-block-level"),
-            ),
-            ButtonHolder(
-                Submit('submit', 'Submit', css_class='button white')
+                Field('comment', css_class="input-block-level", rows=5),
+                #Field('viewers', css_class="input-block-level"),
             )
         )
 

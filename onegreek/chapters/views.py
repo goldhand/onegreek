@@ -31,8 +31,7 @@ class ChapterDetail(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(ChapterDetail, self).get_context_data(**kwargs)
         object = super(ChapterDetail, self).get_object()
-        form = FormForForm(object.rush_form, RequestContext(self.request),
-                           self.request.POST or None, self.request.FILES or None)
+        form = FormForForm(object.rush_form, self.request.POST or None, self.request.FILES or None)
         context['rush_form'] = form
         context.update(**kwargs)
         return context

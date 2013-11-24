@@ -7,7 +7,7 @@
     <div ng-controller="ChapterDetailCtrl">
     <div class="span9">
         <h1 class="page-header">
-            </a>
+            {[{ chapter.fraternity_title }]}
             <br/>
             <small>
                 {[{ chapter.title }]} - {[{ chapter.university_title }]}
@@ -136,12 +136,23 @@
                     </div>
                 </div>
 
-                {% get_comment_form for chapter as form %}
-                {% get_comment_count for chapter as comment_count %}
-                {{ comment_count }}
+                <div ng-repeat="comment in comments" class="media">
 
-                {% crispy form %}
-                {% render_comment_list for chapter %}
+                  <a class="pull-left" href="#">
+                    <img class="media-object" src="/static/img/holderjs-40x40.png">
+                  </a>
+
+                  <div class="media-body">
+                    <h4 class="media-heading">
+                        {[{ comment.submit_date|date }]} - {[{ comment.name }]}
+                    </h4>
+                      <p>{[{ comment.comment }]}</p>
+                  </div>
+                </div>
+
+                {% get_comment_form for chapter as comment_form %}
+                {% crispy comment_form %}
+                <a class="btn btn-small btn-primary" ng-click="commentSubmit()">Submit</a>
 
             </div>
         </div>
@@ -149,6 +160,4 @@
     </div>
 
 {% endblock content %}
-
-
 

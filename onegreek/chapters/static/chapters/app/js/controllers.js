@@ -84,6 +84,9 @@ chapterControllers.controller('ChapterDetailCtrl', [
                 if(data.rush_url) {
                     $scope.getChapterRush(data.rush_url);
                 }
+                if(data.ctype_id) {
+                    $scope.getComments(data.ctype_id, data.id);
+                }
             });
         };
 
@@ -93,9 +96,9 @@ chapterControllers.controller('ChapterDetailCtrl', [
             });
         };
 
-        $scope.submit = function() {
-            $http.post().success(function(chapter_data) {
-                $scope.chapters.push(chapter_data);
+        $scope.getComments = function(ctype, obj) {
+            $http.get('/api/comments/?ctype=' + ctype + '$obj=' + obj).success(function(data) {
+                $scope.comments = data;
             });
         };
 
@@ -110,6 +113,18 @@ chapterControllers.controller('ChapterDetailCtrl', [
         $scope.rushFormSubmit = function() {
             $http.post($scope.chapter.rush_form_url, $scope.rush_form).success(function(data) {
                 console.log(data);
+            });
+        };
+        $scope.commentSubmit = function() {
+
+            $.ajax({
+                url: "/api/comments/",
+                type: "POST",
+                data: $('#restcomment-form').serialize(),
+                success: function(data) {
+                    $scope.getComments($scope.chapter.ctype_id, $scope.chapter.id);
+
+                }
             });
         };
 

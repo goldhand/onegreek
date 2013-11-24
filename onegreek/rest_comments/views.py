@@ -117,3 +117,13 @@ class CommentViewSet(viewsets.ModelViewSet):
         #return super(CommentViewSet, self).create(request, *args, **kwargs)
 
 
+    def get_queryset(self):
+        q = super(CommentViewSet, self).get_queryset()
+        if 'ctype' in self.request.GET and'obj' in self.request.GET:
+            return q.filter(content_type_id=self.request.GET['ctype'], object_pk=self.request.GET['obj'])
+
+        elif 'user' in self.request.GET:
+                return q.filter(user_id=self.request.GET['user'])
+        else:
+            return q
+
