@@ -97,7 +97,7 @@ chapterControllers.controller('ChapterDetailCtrl', [
         };
 
         $scope.getComments = function(ctype, obj) {
-            $http.get('/api/comments/?ctype=' + ctype + '$obj=' + obj).success(function(data) {
+            $http.get('/api/comments/?ctype=' + ctype + '&obj=' + obj).success(function(data) {
                 $scope.comments = data;
             });
         };
