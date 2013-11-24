@@ -31,11 +31,10 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
     def get_redirect_url(self):
         return reverse("users:detail",
-            kwargs={"id": self.request.user.id})
+                       kwargs={"id": self.request.user.id})
 
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
-
     form_class = UserForm
 
     # we already imported User in the view code above, remember?
@@ -44,11 +43,11 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     # send the user back to their own page after a successful update
     def get_success_url(self):
         return reverse("users:detail",
-                    kwargs={"id": self.request.user.id})
+                       kwargs={"id": self.request.user.id})
 
     def get_object(self):
         # Only get the User record for the user making the request
-        return User.objects.get(username=self.request.user.id)
+        return User.objects.get(id=self.request.user.id)
 
 
 class UserListView(LoginRequiredMixin, ListView):
