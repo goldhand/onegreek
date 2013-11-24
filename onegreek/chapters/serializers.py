@@ -57,20 +57,15 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     def get_api_url(self, obj):
         if obj:
             return "#/chapters/%s" % obj.id
-        else:
-            return "#/chapters/"
 
     def get_rush_url(self, obj):
         if obj:
             return reverse('chapters:rush', kwargs={'pk': obj.id})
-        else:
-            return "/chapters/rush/"
 
     def get_rush_form_url(self, obj):
         if obj:
-            return reverse('rush-forms:detail', kwargs={'pk': obj.rush_form.id})
-        else:
-            return "/chapters/rush/"
+            if obj.rush_form:
+                return reverse('rush-forms:detail', kwargs={'pk': obj.rush_form.id})
 
     def get_user_count(self, obj):
         if obj:

@@ -30,7 +30,6 @@ class Chapter(Slugged, StatusModel):
     fb_status = models.TextField(blank=True)
     cost = models.IntegerField(blank=True, null=True)
     gpa = models.FloatField(blank=True, null=True)
-    rush_form = models.OneToOneField('rush_forms.Form', null=True, blank=True)
     groups = models.ManyToManyField(Group, null=True, blank=True)
     linked_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter')
     linked_rush_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_rush')

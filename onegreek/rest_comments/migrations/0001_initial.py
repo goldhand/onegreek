@@ -58,6 +58,7 @@ class Migration(SchemaMigration):
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'philanthropy': ('model_utils.fields.SplitField', [], {u'no_excerpt_field': 'True', 'blank': 'True'}),
             'potential_new_members': ('model_utils.fields.SplitField', [], {u'no_excerpt_field': 'True', 'blank': 'True'}),
+            'rush_form': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['rush_forms.Form']", 'unique': 'True', 'null': 'True', 'blank': 'True'}),
             'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
             'status': ('model_utils.fields.StatusField', [], {'default': "'excellence'", 'max_length': '100', u'no_check_for_status': 'True'}),
             'status_changed': ('model_utils.fields.MonitorField', [], {'default': 'datetime.datetime.now', u'monitor': "u'status'"}),
@@ -114,6 +115,23 @@ class Migration(SchemaMigration):
         u'rest_comments.restcomment': {
             'Meta': {'ordering': "('submit_date',)", 'object_name': 'RestComment', '_ormbases': [u'django_comments.Comment']},
             u'comment_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['django_comments.Comment']", 'unique': 'True', 'primary_key': 'True'})
+        },
+        u'rush_forms.form': {
+            'Meta': {'object_name': 'Form'},
+            'button_text': ('django.db.models.fields.CharField', [], {'default': "u'Submit'", 'max_length': '50'}),
+            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
+            'email_copies': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            'email_from': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
+            'email_message': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'email_subject': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
+            'response': ('django.db.models.fields.TextField', [], {}),
+            'send_email': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
+            'status': ('model_utils.fields.StatusField', [], {'default': "u'draft'", 'max_length': '100', u'no_check_for_status': 'True'}),
+            'status_changed': ('model_utils.fields.MonitorField', [], {'default': 'datetime.datetime.now', u'monitor': "u'status'"}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '500'})
         },
         u'sites.site': {
             'Meta': {'ordering': "(u'domain',)", 'object_name': 'Site', 'db_table': "u'django_site'"},

@@ -36,6 +36,7 @@ class Form(Slugged, StatusModel):
         help_text=_("Emails sent based on the above options will contain "
                     "each of the form fields entered. You can also enter "
                     "a message here that will be included in the email."))
+    chapter = models.OneToOneField('chapters.Chapter', null=True, blank=True, related_name="rush_form")
 
     class Meta:
         verbose_name = _("Form")
@@ -143,3 +144,5 @@ class FieldEntry(models.Model):
     class Meta:
         verbose_name = _("Form field entry")
         verbose_name_plural = _("Form field entries")
+
+
