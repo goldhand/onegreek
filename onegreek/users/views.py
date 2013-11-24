@@ -22,8 +22,8 @@ from django.contrib.auth.models import Group
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
     # These next two lines tell the view to index lookups by username
-    slug_field = "username"
-    slug_url_kwarg = "username"
+    slug_field = "id"
+    slug_url_kwarg = "id"
 
 
 class UserRedirectView(LoginRequiredMixin, RedirectView):
@@ -54,8 +54,8 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 class UserListView(LoginRequiredMixin, ListView):
     model = User
     # These next two lines tell the view to index lookups by username
-    slug_field = "username"
-    slug_url_kwarg = "username"
+    slug_field = "id"
+    slug_url_kwarg = "id"
 
     def get_context_data(self, **kwargs):
         context = super(UserListView, self).get_context_data(**kwargs)
