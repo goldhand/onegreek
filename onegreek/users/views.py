@@ -31,7 +31,7 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
     def get_redirect_url(self):
         return reverse("users:detail",
-            kwargs={"username": self.request.user.username})
+            kwargs={"username": self.request.user.id})
 
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
