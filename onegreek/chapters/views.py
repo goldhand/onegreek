@@ -1,6 +1,7 @@
 import logging
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.template import RequestContext
 from django.views import generic
 from django.views.generic import edit
 from django.contrib import messages
@@ -11,6 +12,8 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer, YAMLRenderer
 
 from .models import Chapter
+from rush_forms.forms import FormForForm
+from rush_forms.models import Form
 from .serializers import ChapterSerializer
 from .forms import ChapterForm
 
@@ -24,6 +27,15 @@ class ChapterViewSet(viewsets.ModelViewSet):
 
 class ChapterDetail(generic.DetailView):
     model = Chapter
+
+    def get_context_data(self, **kwargs):
+        context = super(ChapterDetail, self).get_context_data(**kwargs)
+        object = super(ChapterDetail, self).get_object()
+        form = FormForForm(object.rush_form, RequestContext(self.request),
+                           self.request.POST or None, self.request.FILES or None)
+        context['rush_form'] = form
+        context.update(**kwargs)
+        return context
 
 
 class ChapterCreate(generic.CreateView):
@@ -58,6 +70,7 @@ def rush_chapter_view(request, pk, format=None):
     title = 'Sign up to rush %s' % chapter.fraternity_title
     disabled = True
     message = ''
+    rushing = False
     if request.user.is_authenticated() and not request.user.chapter:
         rush_group = chapter.linked_rush_group
         hide = False
@@ -65,29 +78,33 @@ def rush_chapter_view(request, pk, format=None):
         title = 'Rush %s' % chapter.fraternity_title
         if rush_group:
             if request.user in rush_group.user_set.all():
+
                 if request.method == "POST":
                     rush_group.user_set.remove(request.user.id)
                     message = 'You no longer Rushing %s, %s chapter' % (chapter.fraternity_title, chapter.title)
                 else:
                     title = 'Stop Rushing %s' % chapter.fraternity_title
+                    rushing = True
             else:
                 if request.method == "POST":
                     rush_group.user_set.add(request.user.id)
                     message = 'You are now Rushing %s, %s chapter' % (chapter.fraternity_title, chapter.title)
                     title = 'Stop Rushing %s' % chapter.fraternity_title
+                    rushing = True
                     #messages.success(request, message)
-            success = 'true'
+            success = True
     else:
         if not request.user.is_authenticated():
             hide = False
             message = ''
-        success = 'true'
+        success = True
 
     return Response({
         'success': success,
         'title': title,
         'message': message,
         'hide': hide,
-        'disabled': disabled
+        'disabled': disabled,
+        'rushing': rushing
     })
 

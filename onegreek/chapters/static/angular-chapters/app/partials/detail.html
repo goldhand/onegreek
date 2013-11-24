@@ -1,0 +1,117 @@
+<div class="span9">
+    <h1 class="page-header">
+        <a href="{[{ chapter.api_url }]}">
+            {[{ chapter.fraternity_title }]}
+        </a>
+        <br/>
+        <small>
+            {[{ chapter.title }]} - {[{ chapter.university_title }]}
+        </small>
+    </h1>
+
+    <div class="row">
+
+        <div class="span5">
+            <img src="holder.js/380x200">
+
+            <dl>
+                <dt>
+                    Description:
+                </dt>
+                <dd>
+                    <p>{[{ chapter.description }]}</p>
+                    <a href="#" class="pull-right"><small>more...</small></a>
+                    <br/>
+                    <br/>
+                </dd>
+                <dt>
+                    Awards:
+                </dt>
+                <dd>
+                    <p>{[{ chapter.awards }]}</p>
+                    <a href="#" class="pull-right"><small>more...</small></a>
+                    <br/>
+                    <br/>
+                </dd>
+                <dt>
+                    Philanthropy:
+                </dt>
+                <dd>
+                    <p>{[{ chapter.philanthropy }]}</p>
+                    <a href="#" class="pull-right"><small>more...</small></a>
+                    <br/>
+                    <br/>
+                </dd>
+                <dt>
+                    Potential New Members:
+                </dt>
+                <dd>
+                    <p>{[{ chapter.potential_new_members }]}</p>
+                    <a href="#" class="pull-right"><small>more...</small></a>
+                    <br/>
+                    <br/>
+                </dd>
+            </dl>
+
+        </div>
+        <div class="span4">
+            <div ng-hide="chapter.rush.hide" style="display: table; margin-left: auto; margin-right: auto; margin-bottom: 30px;">
+                <a ng-disabled="chapter.rush.disabled" ng-click="rushSubmit()" class="btn btn-primary btn-large" > {[{ chapter.rush.title }]} </a>
+            </div>
+            <p ng-hide="chapter.rush.message.hide">{[{ chapter.rush.message.text }]}</p>
+
+            <h5>Status:</h5>
+            <div class="well" style="text-align: center;">
+                <p>{[{ chapter.fb_status }]}</p>
+            </div>
+
+            <ul class="nav nav-tabs" id="chapter-more-info">
+                <li class="active"><a href="#members">Members <span class="badge badge-info">{[{ chapter.user_count }]}</span></a></li>
+                <li><a href="#info">Info</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="members">
+                        <div class="media" ng-repeat="user in users">
+                            <a class="pull-left" href="#">
+                                <img class="media-object" data-src="holder.js/64x64/social">
+                            </a>
+
+                            <div class="media-body">
+                                <h4 class="media-heading">
+                                    {[{ user.get_full_name }]}
+                                </h4>
+                                {[{ user.position }]}
+                            </div>
+                        </div>
+                </div>
+                <div class="tab-pane" id="info">
+                    <dl>
+                        <dt>
+                            GPA:
+                        </dt>
+                        <dd>
+                            <p>{[{ chapter.gpa }]}</p>
+                        </dd>
+                        <dt>
+                            Cost:
+                        </dt>
+                        <dd>
+                            <p>{[{ chapter.cost }]}</p>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            {% get_comment_form for chapter as form %}
+            {% get_comment_count for chapter as comment_count %}
+            {[{ comment_count }]}
+
+            {% crispy form %}
+            {% render_comment_list for chapter %}
+
+        </div>
+    </div>
+</div>
+
+

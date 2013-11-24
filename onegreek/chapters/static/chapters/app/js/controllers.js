@@ -5,7 +5,11 @@
 var chapterControllers = angular.module('chapterControllers', []);
 
 chapterControllers.controller('ChapterGlobalCtrl', [
-    '$scope', '$rootScope', '$location', '$timeout', 'GlobalService',
+    '$scope',
+    '$rootScope',
+    '$location',
+    '$timeout',
+    'GlobalService',
     function ($scope, $rootScope, $location, $timeout, GlobalService) {
 
         $scope.globals = GlobalService;
@@ -13,12 +17,12 @@ chapterControllers.controller('ChapterGlobalCtrl', [
         var failureCb = function (status) {
             console.log(status);
         };
-        $scope.initialize = function (is_authenticated, user_id, chapter_id, host) {
+        $scope.initialize = function (is_authenticated, user_id, user_chapter_id, chapter_id, host) {
             $scope.globals.is_authenticated = is_authenticated;
-            $scope.globals.chapter_id = user_id;
+            $scope.globals.user_id = user_id;
+            $scope.globals.user_chapter_id = user_chapter_id;
             $scope.globals.chapter_id = chapter_id;
             $scope.globals.host = host;
-            console.log(host);
         };
 
 }]);
@@ -27,76 +31,147 @@ chapterControllers.controller('ChapterGlobalCtrl', [
 chapterControllers.controller('ChapterListCtrl', [
     '$scope',
     '$http',
-    'filterFilter',
-    'ChapterService',
     'GlobalService',
-    'chapters',
     function (
         $scope,
         $http,
-        filterFilter,
-        ChapterService,
-        GlobalService,
-        chapters
+        GlobalService
         ) {
 
-        $scope.chapter = {};
-        $scope.chapters = chapters;
         $scope.globals = GlobalService;
-
-
-        if($scope.globals.chapters == undefined) {
-            $scope.globals.chapters = chapters;
-        }
-        if($scope.globals.chapter == undefined) {
-            $scope.globals.chapter = filterFilter($scope.globals.chapters, {id: $scope.globals.chapter_id})[0];
-        }
+        $scope.getChapters = function() {
+            $http.get('/api/chapters/').success(function(data) {
+                $scope.chapters = data;
+            });
+        };
+        $scope.getChapters();
 
         $scope.Search = undefined;
 
-        $scope.submitChapter = function() {
-            ChapterService.save($scope.chapter).then(function(data) {
-                $scope.chapter = data;
-                $scope.chapters.push(data);
-            }, function(status) {
-                console.log(status);
+    }]);
+
+chapterControllers.controller('ChapterDetailCtrl', [
+    '$scope',
+    '$http',
+    '$modal',
+    '$routeParams',
+    'GlobalService',
+    function (
+        $scope,
+        $http,
+        $modal,
+        $routeParams,
+        GlobalService
+        ) {
+        $scope.globals = GlobalService;
+
+        $scope.getChapterRush = function(rush_url) {
+            $http.get(rush_url).success(function(data) {
+                console.log(data);
+                $scope.chapter.rush = {
+                    title: data.title,
+                    hide: data.hide,
+                    disabled: data.disabled,
+                    message: { hide: true, text: data.message },
+                    rushing: data.rushing
+                };
             });
         };
 
+        $scope.getChapter = function(chapter_id) {
+            $http.get('/api/chapters/' + chapter_id + '/').success(function(data) {
+                $scope.chapter = data;
+                if(data.rush_url) {
+                    $scope.getChapterRush(data.rush_url);
+                }
+            });
+        };
 
+        $scope.getUsers = function(chapter_id) {
+            $http.get('/api/users/?chapter=' + chapter_id).success(function(data) {
+                $scope.users = data;
+            });
+        };
 
-    }]);
+        $scope.submit = function() {
+            $http.post().success(function(chapter_data) {
+                $scope.chapters.push(chapter_data);
+            });
+        };
 
-chapterControllers.controller('ChapterDetailCtrl', ['$scope', '$http', '$routeParams', 'chapter', 'users', function ($scope, $http, $routeParams, chapter, users) {
-    $scope.chapter = chapter;
-    $scope.users = users;
+        $scope.rushSubmit = function() {
+            $http.post($scope.chapter.rush_url).success(function(data) {
+                $scope.chapter.rush.title = data.title;
+                $scope.chapter.rush.message.text = data.message;
+                $scope.chapter.rush.message.hide = false;
+                $scope.chapter.rush.rushing = data.rushing;
+            });
+        };
+        $scope.rushFormSubmit = function() {
+            $http.post($scope.chapter.rush_form_url, $scope.rush_form).success(function(data) {
+                console.log(data);
+            });
+        };
 
-    $scope.chapter.rush = {hide: true};
+        $scope.getChapter($scope.globals.chapter_id);
+        $scope.getUsers($scope.globals.chapter_id);
 
-    $scope.submit = function() {
-        $http.post('/api/chapters/' + $routeParams.chapterId + '/', $scope.chapter).success(function(chapter_data) {
-            $scope.chapters.push(chapter_data);
-        });
-    };
-    $http.get($scope.chapter.rush_url).success(function(data) {
-        $scope.chapter.rush = {
-            title: data.title,
-            hide: data.hide,
-            disabled: data.disabled,
-            message: {
-                hide: true,
-                text: data.message
+        $scope.rush_form = {};
+
+        $scope.openModal = function () {
+            if(!($scope.chapter.rush.rushing)) {
+
+                var modalInstance = $modal.open({
+                    templateUrl: 'RushFormModal.html',
+                    controller: 'ModalInstanceCtrl',
+                    resolve: {
+                        rush_form: function () {
+                            return $scope.rush_form;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function (rush_form) {
+                    $scope.rush_form = rush_form;
+                    $scope.rushFormSubmit();
+                    $scope.rushSubmit();
+                }, function () {});
+            } else {
+                $scope.rushSubmit();
             }
         };
-    });
-    $scope.rushSubmit = function() {
-        $http.post($scope.chapter.rush_url).success(function(data) {
-            //$scope.chapter.rush.hide = true;
-            $scope.chapter.rush.title = data.title;
-            $scope.chapter.rush.message.text = data.message;
-            $scope.chapter.rush.message.hide = false;
-        });
-    };
-
 }]);
 
+
+chapterControllers.controller('ModalInstanceCtrl', [
+    '$scope',
+    '$timeout',
+    '$modalInstance',
+    'rush_form',
+    function (
+        $scope,
+        $timeout,
+        $modalInstance,
+        rush_form
+        ) {
+        $scope.openStart = function() {
+            $timeout(function() {
+                $scope.openedStart = true;
+            });
+        };
+        $scope.openEnd = function() {
+            $timeout(function() {
+                $scope.openedEnd = true;
+            });
+        };
+        $scope.rush_form = rush_form;
+
+        $scope.ok = function () {
+            console.log($scope.rush_form);
+            $modalInstance.close($scope.rush_form);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);

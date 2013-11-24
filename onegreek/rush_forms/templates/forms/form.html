@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+{{ block.super }}
+{% if request.GET.sent %}
+
+{% else %}
+    {% with form as form_form %}
+    {{ form_form.content }}
+    <form method="post"{% if form.is_multipart %} enctype="multipart/form-data"{% endif %}>
+    {% csrf_token %}
+    {{ form }}
+        <div class="form-actions">
+            <input class="btn btn-primary btn-large" type="submit" value="{{ form_form.button_text }}">
+        </div>
+    </form>
+    {% endwith %}
+{% endif %}
+
+{% endblock %}
+
+
+{% block angular %}
+{% endblock angular %}

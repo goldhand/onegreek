@@ -21,6 +21,7 @@ urlpatterns = patterns('',
                        url(r'^api/', include('apiroot.urls')),
                        url(r'^events/', include('events.urls', namespace='events')),
                        url(r'^chapters/', include('chapters.urls', namespace='chapters')),
+                       url(r'^rush/forms/', include('rush_forms.urls', namespace='rush-forms')),
 
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

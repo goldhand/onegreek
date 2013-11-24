@@ -70,6 +70,7 @@ class Common(Configuration):
         'events',
         'django_comments',
         'rest_comments',
+        'rush_forms',
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load staticfiles comments crispy_forms_tags %}
+{% comment %}For getting request data into angular app{% endcomment %}
+{% block extra_body_tag_data %} ng-controller="ChapterGlobalCtrl"
+    ng-init="initialize(
+    '{{ user.is_authenticated }}', '{{ user.id }}', '{{ user.chapter_id }}', '{{ request.get_host }}'
+    )"{% endblock extra_body_tag_data %}
+
+{% block title %}Chapters{% endblock %}
+
+{% block content %}
+    <div class="span9">
+        <div ng-view></div>
+    </div>
+
+
+
+    <script type="text/ng-template" id="list.html">
+
+<ul class="nav nav-tabs nav-stacked">
+    <li ng-repeat="chapter in globals.chapters">
+        <table class="table table-bordered table-condensed">
+            <caption>
+                <h3 class="left-align">
+                    <a href="{[{ chapter.api_url }]}">
+                        {[{ chapter.fraternity_title }]}
+                    </a>
+                    <small>
+                        {[{ chapter.title }]} chapter
+                    </small>
+                </h3>
+            </caption>
+            <thead>
+            <tr>
+                <th class="span2">
+                    Members:
+                </th>
+                <th class="span2">
+                    Status:
+                </th>
+                <th class="span2">
+                    GPA:
+                </th>
+                <th class="span2">
+                    Cost:
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    {[{ chapter.user_count }]}
+                </td>
+                <td>
+                    {[{ chapter.status }]}
+                </td>
+                <td>
+                    {[{ chapter.gpa }]}
+                </td>
+                <td>
+                    $ {[{ chapter.cost }]}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </li>
+</ul>
+    </script>
+
+
+    <script type="text/ng-template" id="detail.html">
+
+<div class="span9">
+    <h1 class="page-header">
+        <a href="{[{ chapter.api_url }]}">
+            {[{ chapter.fraternity_title }]}
+        </a>
+        <br/>
+        <small>
+            {[{ chapter.title }]} - {[{ chapter.university_title }]}
+        </small>
+    </h1>
+
+    <div class="row">
+
+        <div class="span5">
+            <img src="holder.js/380x200">
+
+            <dl>
+                <dt>
+                    Description:
+                </dt>
+                <dd>
+                    <p>{[{ chapter.description }]}</p>
+                    <a href="#" class="pull-right"><small>more...</small></a>
+                    <br/>
+                    <br/>
+                </dd>
+                <dt>
+                    Awards:
+                </dt>
+                <dd>
+                    <p>{[{ chapter.awards }]}</p>
+                    <a href="#" class="pull-right"><small>more...</small></a>
+                    <br/>
+                    <br/>
+                </dd>
+                <dt>
+                    Philanthropy:
+                </dt>
+                <dd>
+                    <p>{[{ chapter.philanthropy }]}</p>
+                    <a href="#" class="pull-right"><small>more...</small></a>
+                    <br/>
+                    <br/>
+                </dd>
+                <dt>
+                    Potential New Members:
+                </dt>
+                <dd>
+                    <p>{[{ chapter.potential_new_members }]}</p>
+                    <a href="#" class="pull-right"><small>more...</small></a>
+                    <br/>
+                    <br/>
+                </dd>
+            </dl>
+
+        </div>
+        <div class="span4">
+            <div ng-hide="chapter.rush.hide" style="display: table; margin-left: auto; margin-right: auto; margin-bottom: 30px;">
+                <a ng-disabled="chapter.rush.disabled" ng-click="rushSubmit()" class="btn btn-primary btn-large" > {[{ chapter.rush.title }]} </a>
+            </div>
+            <p ng-hide="chapter.rush.message.hide">{[{ chapter.rush.message.text }]}</p>
+
+            <h5>Status:</h5>
+            <div class="well" style="text-align: center;">
+                <p>{[{ chapter.fb_status }]}</p>
+            </div>
+
+            <ul class="nav nav-tabs" id="chapter-more-info">
+                <li class="active"><a href="#members">Members <span class="badge badge-info">{[{ chapter.user_count }]}</span></a></li>
+                <li><a href="#info">Info</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="members">
+                        <div class="media" ng-repeat="user in users">
+                            <a class="pull-left" href="#">
+                                <img class="media-object" data-src="holder.js/64x64/social">
+                            </a>
+
+                            <div class="media-body">
+                                <h4 class="media-heading">
+                                    {[{ user.get_full_name }]}
+                                </h4>
+                                {[{ user.position }]}
+                            </div>
+                        </div>
+                </div>
+                <div class="tab-pane" id="info">
+                    <dl>
+                        <dt>
+                            GPA:
+                        </dt>
+                        <dd>
+                            <p>{[{ chapter.gpa }]}</p>
+                        </dd>
+                        <dt>
+                            Cost:
+                        </dt>
+                        <dd>
+                            <p>{[{ chapter.cost }]}</p>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+    </script>
+
+
+{% endblock content %}
+{% block left_content %}
+<div class="span3">
+    <form class="form-search">
+        <div class="controls">
+            <input type="text" id="chapter-filter" name="chapter-filter" class="search-query input-medium"
+                   placeholder="Search" ng-model="chapterFilter"
+                   typeahead="chapter.fraternity_title for chapter in globals.chapters | filter:$viewValue | limitTo:8"/>
+        </div>
+    </form>
+    <ul class="nav nav-pills nav-stacked">
+
+        <li ng-repeat="chapter in globals.chapters | filter:chapterFilter | orderBy:'start'"
+            ng-model="globals.chapters"
+            >
+
+            <a href="{[{ chapter.api_url }]}"
+               data-popover="
+                                {[{ chapter.university_title }]}
+                                <br/>
+                                {[{ chapter.fraternity_title }]}
+                                "
+               data-popover-title="{[{ chapter.fraternity_title }]}"
+               data-popover-placement="right"
+               data-popover-trigger="mouseenter"
+               data-popover-popup-delay="500"
+                    >
+                {[{ chapter.fraternity_title }]}
+            </a>
+        </li>
+    </ul>
+</div>
+
+{% endblock left_content %}
+
+
+
+{% block angular_app_name %}chapterApp{% endblock angular_app_name %}
+
+{% block angular_modules %}
+    <script src="{% static 'angularjs/app/lib/angular/angular-cookies.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
+{% endblock angular_modules %}
+{% block angular_app %}
+    <script src="{% static 'chapters/app/js/app.js' %}"></script>
+    <script src="{% static 'chapters/app/js/controllers.js' %}"></script>
+    <script src="{% static 'chapters/app/js/services.js' %}"></script>
+    <script src="{% static 'chapters/app/js/directives.js' %}"></script>
+    <script src="{% static 'chapters/app/js/filters.js' %}"></script>
+
+
+    <script src="{% static 'users/app/js/services.js' %}"></script>
+{% endblock angular_app %}
