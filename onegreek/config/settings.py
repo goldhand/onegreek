@@ -66,9 +66,9 @@ class Common(Configuration):
         'universities',
         'fraternities',
         #'sororities',
-        'users',  # custom users app
         'rush_forms',
         'chapters',
+        'users',  # custom users app
         'django_comments',
         'rest_comments',
         'events',
