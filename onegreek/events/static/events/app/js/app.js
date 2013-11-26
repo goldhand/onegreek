@@ -33,7 +33,13 @@ eventsApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $h
     });
     $routeProvider.when('/events/:eventId', {
         templateUrl: 'detail.html',
-        controller: 'EventDetailCtrl'
+        controller: 'EventDetailCtrl',
+        resolve: {
+            event: function($route, EventService) {
+                var eventId = $route.current.params.eventId;
+                return EventService.get(eventId);
+                }
+            }
     });
     $routeProvider.otherwise({redirectTo: '/events'});
 }]);

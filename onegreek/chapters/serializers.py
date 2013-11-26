@@ -19,6 +19,7 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     rush_url = serializers.SerializerMethodField('get_rush_url')
     rush_form_url = serializers.SerializerMethodField('get_rush_form_url')
     absolute_url = serializers.Field('get_absolute_url')
+    groups = serializers.Field('get_groups')
     user_count = serializers.SerializerMethodField('get_user_count')
     ctype_id = serializers.SerializerMethodField('get_content_type_id')
 
@@ -64,8 +65,8 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_rush_form_url(self, obj):
         if obj:
-            if obj.rush_form:
-                return reverse('rush-forms:detail', kwargs={'pk': obj.rush_form.id})
+            rush_form = obj.get_rush_form()
+            return reverse('rush-forms:detail', kwargs={'pk': rush_form.id})
 
     def get_user_count(self, obj):
         if obj:

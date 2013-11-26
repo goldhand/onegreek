@@ -7,22 +7,25 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import Group, Permission
 
 from model_utils.fields import SplitField, StatusField
-from model_utils.models import TimeFramedModel
+from model_utils.models import TimeFramedModel, StatusModel
 from model_utils import Choices, FieldTracker
 
 #from comments.utils import CommentsRelation
 
-from guardian.shortcuts import assign_perm, get_perms
+from guardian.shortcuts import assign_perm, get_perms, remove_perm
 
 from core.models import Slugged
 from core.models import unique_slug, base_concrete_model
 
 
-class Event(TimeFramedModel, Slugged):
+class Event(TimeFramedModel, StatusModel, Slugged):
     owner = models.ForeignKey('users.User', null=True, blank=True, related_name='events')
     STATUS = Choices(('draft', 'Draft'), ('public', 'Public'),
-                     ('private', 'Share with members of your chapter'),
-                     ('custom', 'Share with other chapters'))
+                     ('chapter', 'Share with all members of your chapter'),
+                     ('rush', 'Share with rush group'),
+                     ('pledge', 'Share with Pledge group'),
+                     ('active', 'Share with Active Chapter')
+    )
     description = SplitField()
     #viewers = models.ManyToManyField('chapters.Chapter', null=True, blank=True)
     #No longer needed, will instead add view_event permissions to groups selected in form
@@ -54,8 +57,13 @@ class Event(TimeFramedModel, Slugged):
 def set_group(sender, **kwargs):
     event = kwargs.get('instance')
     chapter_group = event.owner.chapter.linked_group
+    if event.status == 'rush':
+        chapter_group = event.owner.chapter.linked_rush_group
 
     if chapter_group:
         if not 'view_event' in get_perms(chapter_group, event):
             print 'adding permissions'
             assign_perm('view_event', chapter_group, event)
+        if not 'change_event' in get_perms(event.owner, event):
+            assign_perm('change_event', event.owner, event)
+

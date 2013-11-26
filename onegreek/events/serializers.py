@@ -18,6 +18,7 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'title',
             'slug',
+            'status',
             'description',
             'start',
             'end',

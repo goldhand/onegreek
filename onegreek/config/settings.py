@@ -67,10 +67,10 @@ class Common(Configuration):
         'fraternities',
         #'sororities',
         'chapters',
-        'events',
         'django_comments',
         'rest_comments',
         'users',  # custom users app
+        'events',
         'rush_forms',
     )
 

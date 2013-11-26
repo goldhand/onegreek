@@ -4,14 +4,17 @@
 
 var eventsControllers = angular.module('eventsControllers', []);
 
-eventsControllers.controller('AppController', function ($scope, $rootScope, $location, GlobalService) {
+eventsControllers.controller('EventGlobalCtrl', function ($scope, $rootScope, $location, GlobalService) {
     var failureCb = function (status) {
         console.log(status);
     };
     $scope.globals = GlobalService;
 
-    $scope.initialize = function (is_authenticated) {
-        $scope.globals.is_authenticated = is_authenticated;
+    $scope.initialize = function (is_authenticated, user_id, user_chapter_id, chapter_id, host) {
+        $scope.globals.user_id = user_id;
+        $scope.globals.user_chapter_id = user_chapter_id;
+        $scope.globals.chapter_id = chapter_id;
+        $scope.globals.host = host;
     };
 });
 
@@ -53,13 +56,17 @@ eventsControllers.controller('EventListCtrl', [
 
 }]);
 
-eventsApp.controller('EventDetailCtrl', ['$scope', '$http', '$routeParams', function ($scope, $http, $routeParams) {
-    $http.get('/api/events/' + $routeParams.eventId + '/').success(function(data) {
-        $scope.event = data;
-    });
+eventsApp.controller('EventDetailCtrl', [
+    '$scope', '$http', '$routeParams', 'EventService', 'GlobalService', 'event',
+    function ($scope, $http, $routeParams, EventService, GlobalService, event) {
+        $scope.event = event;
+        $scope.globals = GlobalService;
+
     $scope.submit = function() {
-        $http.post('/api/events/' + $routeParams.eventId + '/', $scope.event).success(function(event_data) {
-            $scope.events.push(event_data);
+        EventService.update($scope.event).then(function(data) {
+            $scope.event = data;
+        }, function(status) {
+            console.log(status);
         });
     };
 }]);

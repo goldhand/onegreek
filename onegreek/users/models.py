@@ -19,16 +19,16 @@ from model_utils.models import StatusModel
 class User(AbstractUser, StatusModel):
     STATUS = Choices(
         ('Rushing', [
-            ('rushing', _('Rushing')),
+            ('rush', _('Rushing')),
         ]),
-        ('Pledging', [
-            ('pledging', _('Pledging')),
+        ('Pledge', [
+            ('pledge', _('Pledging')),
             ('pledge_dropped', _('Dropped from Pledge'))
         ]),
         ('Active', [
             ('active', _('Active')),
             ('alumni', _('Alumni')),
-            ('pending', _('Pending Active')),
+            ('active_pending', _('Active Pending')),
             ('active_dropped', _('Withdrew from Chapter')),
         ]),
         ('guest', _('Guest')),
@@ -88,18 +88,18 @@ def set_new_user_config(sender, **kwargs):
         if user.chapter_id:
             group_id = user.chapter.linked_pending_group_id
             user.groups.add(group_id)
-            user.status = "pending"
+            user.status = "active_pending"
         else:
-            user.status = "rushing"
+            user.status = "rush"
         user.save()
     else:
-        if user.status == "rushing" and user.chapter_id:
+        if user.status == "rush" and user.chapter_id:
             group_id = user.chapter.linked_pending_group_id
             user.groups.add(group_id)
-            user.status = "pending"
+            user.status = "active_pending"
             user.save()
-        elif user.status == "pending" and not user.chapter_id:
-            user.status = "rushing"
+        elif user.status == "active_pending" and not user.chapter_id:
+            user.status = "rush"
             user.groups = []
             user.fraternity = None
             user.save()

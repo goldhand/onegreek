@@ -13,7 +13,7 @@ from rest_framework.renderers import JSONRenderer, YAMLRenderer
 
 from .models import Chapter
 from rush_forms.forms import FormForForm
-from rush_forms.models import Form
+from rush_forms.models import Form as RushForm
 from .serializers import ChapterSerializer
 from .forms import ChapterForm
 
@@ -30,8 +30,8 @@ class ChapterDetail(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ChapterDetail, self).get_context_data(**kwargs)
-        object = super(ChapterDetail, self).get_object()
-        form = FormForForm(object.rush_form, self.request.POST or None, self.request.FILES or None)
+        _object = super(ChapterDetail, self).get_object()
+        form = FormForForm(_object.get_rush_form(), self.request.POST or None, self.request.FILES or None)
         context['rush_form'] = form
         context.update(**kwargs)
         return context

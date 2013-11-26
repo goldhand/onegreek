@@ -150,9 +150,11 @@
                   </div>
                 </div>
 
+            {% if request.user.status == 'active' %}
                 {% get_comment_form for chapter as comment_form %}
                 {% crispy comment_form %}
                 <a class="btn btn-small btn-primary" ng-click="commentSubmit()">Submit</a>
+            {% endif %}
 
             </div>
         </div>

@@ -8,40 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Event'
-        db.create_table(u'events_event', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
-            ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
-            ('start', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('end', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('status', self.gf('model_utils.fields.StatusField')(default='draft', max_length=100, no_check_for_status=True)),
-            ('status_changed', self.gf('model_utils.fields.MonitorField')(default=datetime.datetime.now, monitor=u'status')),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=500)),
-            ('slug', self.gf('django.db.models.fields.CharField')(max_length=2000, null=True, blank=True)),
-            ('owner', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='events', null=True, to=orm['users.User'])),
-            ('description', self.gf('model_utils.fields.SplitField')(no_excerpt_field=True)),
-            ('enable_comments', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            (u'_description_excerpt', self.gf('django.db.models.fields.TextField')()),
-        ))
-        db.send_create_signal(u'events', ['Event'])
-
-        # Adding M2M table for field attendees on 'Event'
-        m2m_table_name = db.shorten_name(u'events_event_attendees')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('event', models.ForeignKey(orm[u'events.event'], null=False)),
-            ('user', models.ForeignKey(orm[u'users.user'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['event_id', 'user_id'])
+        # Deleting field 'Form.chapter'
+        db.delete_column(u'rush_forms_form', 'chapter_id')
 
 
     def backwards(self, orm):
-        # Deleting model 'Event'
-        db.delete_table(u'events_event')
-
-        # Removing M2M table for field attendees on 'Event'
-        db.delete_table(db.shorten_name(u'events_event_attendees'))
+        # Adding field 'Form.chapter'
+        db.add_column(u'rush_forms_form', 'chapter',
+                      self.gf('django.db.models.fields.related.OneToOneField')(to=orm['chapters.Chapter'], unique=True, null=True, blank=True),
+                      keep_default=False)
 
 
     models = {
@@ -82,6 +57,7 @@ class Migration(SchemaMigration):
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'philanthropy': ('model_utils.fields.SplitField', [], {u'no_excerpt_field': 'True', 'blank': 'True'}),
             'potential_new_members': ('model_utils.fields.SplitField', [], {u'no_excerpt_field': 'True', 'blank': 'True'}),
+            'rush_form': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "'chapter'", 'unique': 'True', 'null': 'True', 'to': u"orm['rush_forms.Form']"}),
             'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
             'status': ('model_utils.fields.StatusField', [], {'default': "'excellence'", 'max_length': '100', u'no_check_for_status': 'True'}),
             'status_changed': ('model_utils.fields.MonitorField', [], {'default': 'datetime.datetime.now', u'monitor': "u'status'"}),
@@ -105,23 +81,6 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        u'events.event': {
-            'Meta': {'object_name': 'Event'},
-            u'_description_excerpt': ('django.db.models.fields.TextField', [], {}),
-            'attendees': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'attending'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['users.User']"}),
-            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
-            'description': ('model_utils.fields.SplitField', [], {u'no_excerpt_field': 'True'}),
-            'enable_comments': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'end': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'events'", 'null': 'True', 'to': u"orm['users.User']"}),
-            'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
-            'start': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'status': ('model_utils.fields.StatusField', [], {'default': "'draft'", 'max_length': '100', u'no_check_for_status': 'True'}),
-            'status_changed': ('model_utils.fields.MonitorField', [], {'default': 'datetime.datetime.now', u'monitor': "u'status'"}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '500'})
-        },
         u'fraternities.fraternity': {
             'Meta': {'object_name': 'Fraternity'},
             u'_description_excerpt': ('django.db.models.fields.TextField', [], {}),
@@ -135,6 +94,51 @@ class Migration(SchemaMigration):
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '500'})
+        },
+        u'rush_forms.field': {
+            'Meta': {'ordering': "(u'_order',)", 'object_name': 'Field'},
+            '_order': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'choices': ('django.db.models.fields.CharField', [], {'max_length': '1000', 'blank': 'True'}),
+            'default': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'field_type': ('django.db.models.fields.IntegerField', [], {}),
+            'form': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'fields'", 'to': u"orm['rush_forms.Form']"}),
+            'help_text': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'label': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'placeholder_text': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
+            'required': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'visible': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
+        },
+        u'rush_forms.fieldentry': {
+            'Meta': {'object_name': 'FieldEntry'},
+            'entry': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'fields'", 'to': u"orm['rush_forms.FormEntry']"}),
+            'field_id': ('django.db.models.fields.IntegerField', [], {}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'value': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'})
+        },
+        u'rush_forms.form': {
+            'Meta': {'object_name': 'Form'},
+            'button_text': ('django.db.models.fields.CharField', [], {'default': "u'Submit'", 'max_length': '50'}),
+            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
+            'email_copies': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            'email_from': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
+            'email_message': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'email_subject': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
+            'response': ('django.db.models.fields.TextField', [], {}),
+            'send_email': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '2000', 'null': 'True', 'blank': 'True'}),
+            'status': ('model_utils.fields.StatusField', [], {'default': "u'draft'", 'max_length': '100', u'no_check_for_status': 'True'}),
+            'status_changed': ('model_utils.fields.MonitorField', [], {'default': 'datetime.datetime.now', u'monitor': "u'status'"}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '500'})
+        },
+        u'rush_forms.formentry': {
+            'Meta': {'object_name': 'FormEntry'},
+            'entry_time': ('django.db.models.fields.DateTimeField', [], {}),
+            'form': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'entries'", 'to': u"orm['rush_forms.Form']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'rush_form_entries'", 'null': 'True', 'to': u"orm['users.User']"})
         },
         u'universities.university': {
             'Meta': {'object_name': 'University'},
@@ -176,4 +180,4 @@ class Migration(SchemaMigration):
         }
     }
 
-    complete_apps = ['events']
+    complete_apps = ['rush_forms']
