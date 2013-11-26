@@ -66,12 +66,12 @@ class Common(Configuration):
         'universities',
         'fraternities',
         #'sororities',
+        'rush_forms',
         'chapters',
         'django_comments',
         'rest_comments',
         'users',  # custom users app
         'events',
-        'rush_forms',
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
