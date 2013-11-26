@@ -12,7 +12,14 @@ class UserForm(forms.ModelForm):
 
         # Constrain the UserForm to just these fields.
         fields = (
-            "first_name", "last_name", "phone",
-            "highschool_gpa", "year", "major",
-            "gpa", "hometown", "chapter"
+            "first_name",
+            "last_name",
+            "phone",
+            "highschool_gpa",
+            "year",
+            "major",
+            "gpa",
+            "hometown",
+            "chapter"
         )
+

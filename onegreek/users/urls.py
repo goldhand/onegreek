@@ -6,13 +6,13 @@ from users import views
 urlpatterns = patterns('',
     # URL pattern for the UserListView
     url(
-        regex=r'^$',
+        regex=r'^~$',
         view=views.UserListView.as_view(),
         name='list'
     ),
     # URL pattern for the UserRedirectView
     url(
-        regex=r'^~redirect/$',
+        regex=r'^$',
         view=views.UserRedirectView.as_view(),
         name='redirect'
     ),

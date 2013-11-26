@@ -54,6 +54,8 @@
   </head>
 
   <body {% block extra_body_tag_data %}{% endblock extra_body_tag_data %}>
+
+  {% block header_navbar %}
     <div class="header navbar">
       <div class="container">
         <a class="navbar-brand" href="/">onegreek</a>
@@ -68,14 +70,15 @@
             <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
               {% if request.user.is_staff %}
                   <li><a href="{% url 'api-root' %}">API</a></li>
+                  <li><a href="/admin/">Admin</a></li>
                   {% endif %}
           {% else %}
-            <li><a href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a></li>
             <li><a href="{% url 'account_login' %}">{% trans "Log In" %}</a></li>
           {% endif %}
         </ul>
       </div>
     </div>
+  {% endblock header_navbar %}
 
     <div class="container">
         {% if messages %}
@@ -89,9 +92,6 @@
         {% endif %}
     <div class="row">
     {% block left_content %}
-        <div class="span3">
-        {% include 'proofs/left_side.html' %}
-        </div>
     {% endblock left_content %}
 
       {% block content %}

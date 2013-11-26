@@ -7,6 +7,7 @@ from django.views.generic import DetailView
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
 from django.views.generic import ListView
+from django.contrib.auth import get_user_model
 
 # Only authenticated users can access views using this.
 from braces.views import LoginRequiredMixin
@@ -15,7 +16,7 @@ from braces.views import LoginRequiredMixin
 from .forms import UserForm
 
 # Import the customized User model
-from .models import User
+User = get_user_model() # use this function for swapping user model
 from django.contrib.auth.models import Group
 
 
@@ -26,12 +27,23 @@ class UserDetailView(LoginRequiredMixin, DetailView):
     slug_url_kwarg = "pk"
 
 
-class UserRedirectView(LoginRequiredMixin, RedirectView):
+class UserRedirectView(RedirectView):
     permanent = False
 
     def get_redirect_url(self):
-        return reverse("users:detail",
-                       kwargs={"pk": self.request.user.pk})
+        user = self.request.user
+        redirect_url = reverse('account_login')
+        # is user anon?
+        if user.is_authenticated():
+            # is user an active of a chapter?
+            if user.chapter_id:
+                # yes
+                redirect_url = reverse("chapters:detail", kwargs={"pk": user.chapter_id})
+            else:
+                # no
+                redirect_url = reverse("chapters:list")
+
+        return redirect_url
 
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
@@ -42,8 +54,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
     # send the user back to their own page after a successful update
     def get_success_url(self):
-        return reverse("users:detail",
-                       kwargs={"pk": self.request.user.pk})
+        return reverse("users:redirect")
 
     def get_object(self):
         # Only get the User record for the user making the request

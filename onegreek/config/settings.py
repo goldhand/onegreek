@@ -54,6 +54,7 @@ class Common(Configuration):
         'guardian',
         'djangular',
         'django_filters',
+        'model_utils',
     )
 
     # Apps specific for this project go here.
@@ -66,10 +67,10 @@ class Common(Configuration):
         'fraternities',
         #'sororities',
         'chapters',
-        'users',  # custom users app
         'events',
         'django_comments',
         'rest_comments',
+        'users',  # custom users app
         'rush_forms',
     )
 
@@ -273,6 +274,13 @@ class Common(Configuration):
                 'AUTH_PARAMS': { 'auth_type': 'reauthenticate' },
                 'METHOD': 'js_sdk'}
         }
+
+    # ACCOUNT_SIGNUP_FORM_CLASS = "users.forms.UserForm"
+    # def save(user):
+    #   user.save()
+    #ACCOUNT_USER_DISPLAY = "user.get_full_name"
+    #ACCOUNT_USERNAME_REQUIRED (=True)
+
 
     ########## END AUTHENTICATION PROVIDERS
 

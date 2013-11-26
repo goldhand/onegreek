@@ -12,7 +12,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-                       url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name="home"),
+                       url(r'^$', include("users.urls")),
+                       url(r'^home$', TemplateView.as_view(template_name='pages/home.html'), name="home"),
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^users/', include("users.urls", namespace="users")),
                        url(r'^accounts/', include('allauth.urls')),
@@ -22,6 +23,5 @@ urlpatterns = patterns('',
                        url(r'^events/', include('events.urls', namespace='events')),
                        url(r'^chapters/', include('chapters.urls', namespace='chapters')),
                        url(r'^rush/forms/', include('rush_forms.urls', namespace='rush-forms')),
-
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
