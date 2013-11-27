@@ -36,6 +36,7 @@ class EventForm(NgModelFormMixin, forms.ModelForm):
         widgets = {
             'owner': forms.HiddenInput(),
             'slug': forms.HiddenInput(),
+            'enable_comments': forms.HiddenInput(),
         }
 
 

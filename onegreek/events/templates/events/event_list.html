@@ -5,8 +5,6 @@
     ng-init="initialize(
     '{{ user.is_authenticated }}',
     '{{ user.id }}',
-    '{{ user.chapter_id }}',
-    '{% if chapter %}{{ chapter.id }}{% endif %}',
     '{{ request.get_host }}'
     )"
 {% endblock extra_body_tag_data %}
@@ -14,6 +12,7 @@
 
 {% block content %}
 <div>
+    {% if request.user.chapter.linked_admin_group in request.user.groups.all %}
     <div ng-controller="MyFormCtrl">
         <button class="btn btn-primary btn-large pull-right" ng-click="openModal()">Create Event</button>
         <script type="text/ng-template" id="newEventModal.html">
@@ -34,6 +33,7 @@
             </script>
 
     </div>
+    {% endif %}
 
     <div class="row">
         <div class="span3">
@@ -67,6 +67,21 @@
 
 
         <div class="span9">
+         <tabset>
+            <tab
+            ng-repeat="tab in tabs"
+            ng-hide="tab.hidden"
+            heading="{[{tab.title}]}"
+            active="tab.active"
+            disabled="tab.disabled"
+            select="filterForGroup(tab.status)"
+            >
+              {[{tab.content}]}
+            </tab>
+         </tabset>
+
+
+
             <ul class="unstyled">
                 <li ng-repeat="event in events | filter:eventFilter | orderBy:'start'">
                     <h2>
@@ -102,7 +117,7 @@
 </h1>
 <p>Status:</p>
 <p>{[{ event.status }]}</p>
-<a>Attend</a>
+<a ng-click="attend()">Attend</a>
 <p>
 
     {[{ event.description }]}

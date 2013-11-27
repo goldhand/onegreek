@@ -4,16 +4,31 @@
 
 var eventsControllers = angular.module('eventsControllers', []);
 
-eventsControllers.controller('EventGlobalCtrl', function ($scope, $rootScope, $location, GlobalService) {
+eventsControllers.controller('EventGlobalCtrl', function ($scope, $rootScope, $location, $http, GlobalService) {
     var failureCb = function (status) {
         console.log(status);
     };
     $scope.globals = GlobalService;
 
-    $scope.initialize = function (is_authenticated, user_id, user_chapter_id, chapter_id, host) {
-        $scope.globals.user_id = user_id;
-        $scope.globals.user_chapter_id = user_chapter_id;
-        $scope.globals.chapter_id = chapter_id;
+    $scope.initialize = function (is_authenticated, user_id, host) {
+        if(is_authenticated) {
+            var api_url = "/api/users/";
+            var url = api_url + user_id + "/";
+            $http.get('/api/users/' + user_id + '/').success(function(user_data) {
+                $scope.globals.user = user_data;
+                console.log(user_data);
+                console.log($scope.globals.user.status);
+            });
+        }
+        else {
+            $scope.globals.user = {
+                id: false,
+                chapter_id: false,
+                status: false
+            }
+        }
+
+        $scope.globals.is_authenticated = is_authenticated;
         $scope.globals.host = host;
     };
 });
@@ -22,12 +37,14 @@ eventsControllers.controller('EventGlobalCtrl', function ($scope, $rootScope, $l
 eventsControllers.controller('EventListCtrl', [
     '$scope',
     '$http',
+    'filterFilter',
     'EventService',
     'GlobalService',
     'events',
     function (
         $scope,
         $http,
+        filterFilter,
         EventService,
         GlobalService,
         events
@@ -52,6 +69,51 @@ eventsControllers.controller('EventListCtrl', [
         //    });
         };
 
+        $scope.filterForGroup = function(status) {
+            if(status=="all"){
+                $scope.events = $scope.globals.events;
+            } else {
+                $scope.events = filterFilter($scope.globals.events, {status: status});
+            }
+        };
+        $scope.tabs = [
+            {
+                title:"All",
+                content:"All Chapter Events",
+                status: "all",
+                disabled: false,
+                active: $scope.globals.user.status != "rush",
+                hidden: false
+            },
+            {
+                title:"Active",
+                content:"Active Member Events",
+                status: "active",
+                disabled: $scope.globals.user.status != "active",
+                active: false,
+                hidden: $scope.globals.user.status != "active"
+            },
+            {
+                title:"Pledge",
+                content:"Pledge Events",
+                status: "pledge",
+                //disabled: $scope.globals.user.status != "pledge",
+                disabled: false,
+                active: false,
+                hidden: $scope.globals.user.status == "rush"
+            },
+            {
+                title:"Rush",
+                content:"Rush Events",
+                status: "rush",
+                disabled: false,
+                //disabled: $scope.globals.user.status != "rush",
+                active: $scope.globals.user.status == "rush",
+                hidden: false
+            }
+        ];
+
+
         $scope.Search = undefined;
 
 }]);
@@ -61,6 +123,16 @@ eventsApp.controller('EventDetailCtrl', [
     function ($scope, $http, $routeParams, EventService, GlobalService, event) {
         $scope.event = event;
         $scope.globals = GlobalService;
+
+        $scope.attend = function() {
+            $scope.event.attendees.push($scope.globals.user.url);
+            EventService.update($scope.event).then(function(data) {
+                $scope.event = data;
+                console.log(data);
+            }, function(status) {
+                console.log(status);
+            });
+        };
 
     $scope.submit = function() {
         EventService.update($scope.event).then(function(data) {
@@ -85,34 +157,35 @@ eventsControllers.controller('MyFormCtrl', [
         GlobalService,
         EventService
         ) {
-    $scope.event = {};
-    $scope.globals = GlobalService;
-    $scope.submit = function() {
-        EventService.save($scope.event).then(function(data) {
-            $scope.event = data;
-            $scope.globals.events.push(data);
-        }, function(status) {
-            console.log(status);
-        });
-    };
+        $scope.event = {};
+        $scope.globals = GlobalService;
+        $scope.submit = function() {
+            EventService.save($scope.event).then(function(data) {
+                $scope.event = data;
+                $scope.globals.events.push(data);
+            }, function(status) {
+                console.log(status);
+            });
+        };
 
-    $scope.openModal = function () {
-        var modalInstance = $modal.open({
-            templateUrl: 'newEventModal.html',
-            controller: 'ModalInstanceCtrl',
-            windowClass: 'full-screen-modal',
-            resolve: {
-                event: function () {
-                    return $scope.event;
+
+        $scope.openModal = function () {
+            var modalInstance = $modal.open({
+                templateUrl: 'newEventModal.html',
+                controller: 'ModalInstanceCtrl',
+                windowClass: 'full-screen-modal',
+                resolve: {
+                    event: function () {
+                        return $scope.event;
+                    }
                 }
-            }
-        });
+            });
 
-        modalInstance.result.then(function (newEvent) {
-            $scope.event = newEvent;
-            $scope.submit();
-        }, function () {});
-    };
+            modalInstance.result.then(function (newEvent) {
+                $scope.event = newEvent;
+                $scope.submit();
+            }, function () {});
+        };
 }]);
 
 eventsControllers.controller('ModalInstanceCtrl', [

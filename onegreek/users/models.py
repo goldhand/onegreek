@@ -81,9 +81,9 @@ class User(AbstractUser, StatusModel):
 def set_new_user_config(sender, **kwargs):
     user = kwargs.get('instance')
     if kwargs.get('created'):
-        user_msg = ""
+        #user_msg = ""
         # New user?
-        user_msg = "Signed up as %s %s, %s" % (user.first_name, user.last_name, user.status)
+        #user_msg = "Signed up as %s %s, %s" % (user.first_name, user.last_name, user.status)
         # Is he a pending active?
         if user.chapter_id:
             group_id = user.chapter.linked_pending_group_id
@@ -93,16 +93,29 @@ def set_new_user_config(sender, **kwargs):
             user.status = "rush"
         user.save()
     else:
-        if user.status == "rush" and user.chapter_id:
-            group_id = user.chapter.linked_pending_group_id
-            user.groups.add(group_id)
-            user.status = "active_pending"
-            user.save()
-        elif user.status == "active_pending" and not user.chapter_id:
+        # Was a pending active but changed to rushee
+        if user.status == "active_pending" and not user.chapter_id:
             user.status = "rush"
-            user.groups = []
+            user.groups.clear()
             user.fraternity = None
             user.save()
+        # Was a rushee but changed to pending active
+        elif user.status == "rush" and user.chapter_id:
+            user.groups.clear()
+            group_id = user.chapter.linked_group_id
+            pending_group_id = user.chapter.linked_pending_group_id
+            user.groups.add(group_id, pending_group_id)
+            user.status = "active_pending"
+            user.save()
+        # Was a rushee or pending active but changed to active
+        elif user.status == "active" and user.chapter.linked_active_group not in user.groups.all():
+            user.groups.clear()
+            group_id = user.chapter.linked_group_id
+            active_group_id = user.chapter.linked_active_group_id
+            user.groups.add(group_id, active_group_id)
+            user.status = "active"
+            user.save()
+            print user.groups.all()
 
 
 

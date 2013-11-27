@@ -17,7 +17,6 @@ class EventViewSet(viewsets.ModelViewSet):
     def pre_save(self, obj):
         obj.owner = self.request.user
 
-
 class EventDetail(generic.DetailView):
     model = Event
 

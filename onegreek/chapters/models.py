@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ObjectDoesNotExist
 from django.dispatch import receiver
+from guardian.shortcuts import assign_perm, get_perms
 
 from model_utils.fields import SplitField, StatusField
 from model_utils.models import StatusModel
@@ -33,7 +34,10 @@ class Chapter(Slugged, StatusModel):
     groups = models.ManyToManyField(Group, null=True, blank=True)
     linked_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter')
     linked_rush_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_rush')
+    linked_pledge_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_pledge')
     linked_pending_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_pending')
+    linked_active_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_active')
+    linked_admin_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_admin')
     rush_form = models.OneToOneField('rush_forms.Form', null=True, blank=True, related_name="chapter")
 
     _tracker = FieldTracker()
@@ -76,6 +80,8 @@ class Chapter(Slugged, StatusModel):
             self.groups.add(self.linked_group)
             self.groups.add(self.linked_rush_group)
             self.groups.add(self.linked_pending_group)
+            self.groups.add(self.linked_active_group)
+            self.groups.add(self.linked_admin_group)
         return self.groups.all()
 
 
@@ -83,12 +89,47 @@ class Chapter(Slugged, StatusModel):
 def set_group(sender, **kwargs):
     if kwargs.get('created'):
         chapter = kwargs.get('instance')
-        group = Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, chapter.title))
-        rush_group = Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, 'Rush'))
-        pending_group = Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, 'Pending'))
-        chapter.linked_group = group[0]
-        chapter.linked_rush_group = rush_group[0]
-        chapter.linked_pending_group = pending_group[0]
+
+        # create dict of all chapter groups, get or create the groups
+        cg_set = {
+            'group': Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, chapter.title))[0],
+            'rush_group': Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, 'Rush'))[0],
+            'pledge_group': Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, 'Pledge'))[0],
+            'pending_group': Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, 'Pending'))[0],
+            'active_group': Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, 'Active'))[0],
+            'admin_group': Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, 'Admin'))[0],
+        }
+
+        # give permissions to each group
+        for k, v in cg_set.items():
+            # assign to all groups
+            assign_perm('chapters.view_chapter', v)
+            assign_perm('events.view_event', v)
+            assign_perm('rest_comments.view_restcomment', v)
+            assign_perm('rush_forms.view_form', v)
+            if k == 'admin_group':
+                assign_perm('chapters.change_chapter', v, chapter)
+                assign_perm('events.add_event', v)
+                assign_perm('events.delete_event', v)
+                assign_perm('events.change_event', v)
+                assign_perm('rush_forms.change_form', v)
+                assign_perm('rest_comments.add_restcomment', v)
+                assign_perm('rest_comments.change_restcomment', v)
+                assign_perm('rest_comments.delete_restcomment', v)
+            elif k == 'active_group':
+                assign_perm('rest_comments.add_restcomment', v)
+                assign_perm('rest_comments.change_restcomment', v)
+                assign_perm('rest_comments.delete_restcomment', v)
+
+
+        # assign groups from cg_set to chapter
+        chapter.linked_group = cg_set['group']
+        chapter.linked_rush_group = cg_set['rush_group']
+        chapter.linked_pledge_group = cg_set['pledge_group']
+        chapter.linked_pending_group = cg_set['pending_group']
+        chapter.linked_active_group = cg_set['active_group']
+        chapter.linked_admin_group = cg_set['admin_group']
+
         chapter.save()
 
 

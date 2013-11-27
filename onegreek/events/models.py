@@ -20,11 +20,13 @@ from core.models import unique_slug, base_concrete_model
 
 class Event(TimeFramedModel, StatusModel, Slugged):
     owner = models.ForeignKey('users.User', null=True, blank=True, related_name='events')
-    STATUS = Choices(('draft', 'Draft'), ('public', 'Public'),
-                     ('chapter', 'Share with all members of your chapter'),
-                     ('rush', 'Share with rush group'),
-                     ('pledge', 'Share with Pledge group'),
-                     ('active', 'Share with Active Chapter')
+    STATUS = Choices(
+        ('draft', 'Draft'),
+        ('public', 'Public'),
+        ('chapter', 'Your Chapter'),
+        ('rush', 'Rushes'),
+        ('pledge', 'Pledges'),
+        ('active', 'Actives')
     )
     description = SplitField()
     #viewers = models.ManyToManyField('chapters.Chapter', null=True, blank=True)
@@ -40,6 +42,9 @@ class Event(TimeFramedModel, StatusModel, Slugged):
         verbose_name = "Event"
         verbose_name_plural = "Events"
         permissions = (
+            ('add_event', 'add_event'),
+            ('change_event', 'change_event'),
+            ('delete_event', 'delete_event'),
             ('view_event', 'view_event'),
         )
 
@@ -56,14 +61,33 @@ class Event(TimeFramedModel, StatusModel, Slugged):
 @receiver(signals.post_save, sender=Event)
 def set_group(sender, **kwargs):
     event = kwargs.get('instance')
-    chapter_group = event.owner.chapter.linked_group
+    chapter = event.owner.chapter
+    chapter_groups = []
+    if event.status == 'public':
+        chapter_groups = [chapter.linked_group]
+    if event.status == 'chapter':
+        chapter_groups = [chapter.linked_group]
     if event.status == 'rush':
-        chapter_group = event.owner.chapter.linked_rush_group
+        chapter_groups = [
+            chapter.linked_rush_group,
+            chapter.linked_active_group
+        ]
+    if event.status == 'pledge':
+        chapter_groups = [
+            chapter.linked_pledge_group,
+            chapter.linked_active_group
+        ]
+    if event.status == 'active':
+        chapter_groups = [chapter.linked_active_group]
 
-    if chapter_group:
-        if not 'view_event' in get_perms(chapter_group, event):
-            print 'adding permissions'
-            assign_perm('view_event', chapter_group, event)
-        if not 'change_event' in get_perms(event.owner, event):
-            assign_perm('change_event', event.owner, event)
+    if chapter_groups:
+        for chapter_group in chapter_groups:
+            if not 'view_event' in get_perms(chapter_group, event):
+                print 'adding view perm to %s' % chapter_group.name
+                assign_perm('view_event', chapter_group, event)
+                assign_perm('change_event', chapter_group, event)
+
+    if not 'change_event' in get_perms(event.owner, event):
+        assign_perm('change_event', event.owner, event)
+        assign_perm('delete_event', event.owner, event)
 

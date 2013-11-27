@@ -20,6 +20,7 @@ class UserForm(forms.ModelForm):
             "major",
             "gpa",
             "hometown",
-            "chapter"
+            "chapter",
+            "status"
         )
 

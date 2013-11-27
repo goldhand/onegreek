@@ -93,10 +93,12 @@
     </script>
                 {% endif %}
 
+                {% if chapter.fb_status %}
                 <h5>Status:</h5>
                 <div class="well" style="text-align: center;">
                     <p>{[{ chapter.fb_status }]}</p>
                 </div>
+                {% endif %}
 
                 <ul class="nav nav-tabs" id="chapter-more-info">
                     <li class="active"><a href="#members">Members <span class="badge badge-info">{[{ chapter.user_count }]}</span></a></li>
@@ -150,7 +152,7 @@
                   </div>
                 </div>
 
-            {% if request.user.status == 'active' %}
+            {% if perms.rest_comments.add_restcomment %}
                 {% get_comment_form for chapter as comment_form %}
                 {% crispy comment_form %}
                 <a class="btn btn-small btn-primary" ng-click="commentSubmit()">Submit</a>
