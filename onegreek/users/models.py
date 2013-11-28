@@ -74,6 +74,14 @@ class User(AbstractUser, StatusModel):
 
         return "http://www.gravatar.com/avatar/{}?s=40".format(hashlib.md5(self.email).hexdigest())
 
+    def profile_image_lg_url(self):
+        fb_uid = SocialAccount.objects.filter(user_id=self.id, provider='facebook')
+
+        if len(fb_uid):
+            return "http://graph.facebook.com/{}/picture?width=300&height=360".format(fb_uid[0].uid)
+
+        return "http://www.gravatar.com/avatar/{}?s=40".format(hashlib.md5(self.email).hexdigest())
+
     def is_chapter_admin(self):
         if self.chapter:
             return self in self.chapter.linked_admin_group.user_set.all()
