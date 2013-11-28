@@ -14,8 +14,6 @@
 
 <div>
     {% if request.user.chapter.linked_admin_group in request.user.groups.all %}
-    <div ng-controller="MyFormCtrl">
-        <button class="btn btn-primary btn-large pull-right" ng-click="openModal()">Create Event</button>
         <script type="text/ng-template" id="newEventModal.html">
 
             <div class="modal-header">
@@ -33,7 +31,6 @@
 
             </script>
 
-    </div>
     {% endif %}
 
     <div class="row">
@@ -66,6 +63,9 @@
 
         <script type="text/ng-template" id="list.html">
 
+            {% if request.user.is_chapter_admin %}
+        <button class="btn btn-primary btn-large pull-right" ng-click="openModal()">Create Event</button>
+        {% endif %}
 
         <div class="span9">
          <tabset>
@@ -102,6 +102,12 @@
     </script>
 
         <script type="text/ng-template" id="detail.html">
+
+            {% if request.user.is_chapter_admin %}
+        <button class="btn btn-primary btn-large pull-right" ng-click="openModal()">Edit Event</button>
+        {% endif %}
+
+
             <h1 ng-model="event">
                 <span>
                 {[{ event.title }]}

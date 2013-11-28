@@ -98,6 +98,10 @@ class Event(TimeFramedModel, StatusModel, Slugged):
 def set_group(sender, **kwargs):
     event = kwargs.get('instance')
     chapter = event.owner.chapter
+    # remove any existing perms
+    for group in chapter.groups.all():
+        remove_perm('view_event', group, event)
+
     chapter_groups = []
     if event.status == 'public':
         chapter_groups = [chapter.linked_group]
@@ -119,13 +123,13 @@ def set_group(sender, **kwargs):
     if chapter_groups:
         for chapter_group in chapter_groups:
             if not 'view_event' in get_perms(chapter_group, event):
-                print 'adding view perm to %s' % chapter_group.name
                 assign_perm('view_event', chapter_group, event)
-                assign_perm('change_event', chapter_group, event)
 
     if not 'change_event' in get_perms(event.owner, event):
         assign_perm('change_event', event.owner, event)
         assign_perm('delete_event', event.owner, event)
+    assign_perm('change_event', chapter.linked_admin_group, event)
+    assign_perm('delete_event', chapter.linked_admin_group, event)
 
 
 class Attendees(models.Model):

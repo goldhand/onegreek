@@ -37,6 +37,7 @@ eventsControllers.controller('EventGlobalCtrl', function ($scope, $rootScope, $l
 eventsControllers.controller('EventListCtrl', [
     '$scope',
     '$http',
+    '$modal',
     'filterFilter',
     'EventService',
     'GlobalService',
@@ -44,6 +45,7 @@ eventsControllers.controller('EventListCtrl', [
     function (
         $scope,
         $http,
+        $modal,
         filterFilter,
         EventService,
         GlobalService,
@@ -53,21 +55,6 @@ eventsControllers.controller('EventListCtrl', [
         $scope.events = events;
         $scope.globals = GlobalService;
         $scope.globals.events = events;
-
-        //$http.get('/api/events/').success(function(data) {
-        //    $scope.events = data;
-        //});
-        $scope.submit = function() {
-            EventService.save($scope.event).then(function(data) {
-                $scope.event = data;
-                $scope.events.push(data);
-            }, function(status) {
-                console.log(status);
-            });
-        //    $http.post('/api/events/', $scope.event).success(function(event_data) {
-        //        $scope.events.push(event_data);
-        //    });
-        };
 
         $scope.filterForGroup = function(status) {
             if(status=="all"){
@@ -116,11 +103,41 @@ eventsControllers.controller('EventListCtrl', [
 
         $scope.Search = undefined;
 
+        $scope.submit = function() {
+            EventService.save($scope.event).then(function(data) {
+                $scope.globals.events.push(data);
+                $scope.event = {};
+            }, function(status) {
+                console.log(status);
+            });
+        };
+
+
+        $scope.openModal = function () {
+            var modalInstance = $modal.open({
+                templateUrl: 'newEventModal.html',
+                controller: 'ModalInstanceCtrl',
+                windowClass: 'full-screen-modal',
+                resolve: {
+                    event: function () {
+                        return $scope.event;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (newEvent) {
+                $scope.event = newEvent;
+                $scope.submit();
+            }, function () {});
+        };
+
+
+
 }]);
 
 eventsApp.controller('EventDetailCtrl', [
-    '$scope', '$http', '$routeParams', 'EventService', 'GlobalService', 'event',
-    function ($scope, $http, $routeParams, EventService, GlobalService, event) {
+    '$scope', '$http', '$modal', '$routeParams', 'EventService', 'GlobalService', 'event',
+    function ($scope, $http, $modal, $routeParams, EventService, GlobalService, event) {
 
         $scope.globals = GlobalService;
         $scope.event = event;
@@ -147,13 +164,6 @@ eventsApp.controller('EventDetailCtrl', [
             $scope.submit = function () {};
         }
 
-        $scope.submit = function() {
-            EventService.update($scope.event).then(function(data) {
-                $scope.event = data;
-            }, function(status) {
-                console.log(status);
-            });
-        };
         $scope.getRsvp = function() {
             $http.get($scope.event.rsvp_url).success(function(data) {
                 $scope.event.rsvp = data;
@@ -173,12 +183,40 @@ eventsApp.controller('EventDetailCtrl', [
             //$scope.event.attendees.push($scope.globals.user.url);
             $http.post($scope.event.attend_url + '?attendee=' + attendee.id, {}).success(function(data) {
                 console.log(data);
-                if (data.attend) {
+                if (data.attend == 'true') {
                     $scope.event.guest_list.attendees.push(attendee);
                 } else {
-                    $scope.event.guest_list.attendees.pop(attendee);
+                    $scope.getAttendees();
                 }
             });
+        };
+
+        $scope.submit = function() {
+            EventService.update($scope.event).then(function(data) {
+                $scope.event = data;
+                $scope.getRsvp();
+            }, function(status) {
+                console.log(status);
+            });
+        };
+
+
+        $scope.openModal = function () {
+            var modalInstance = $modal.open({
+                templateUrl: 'newEventModal.html',
+                controller: 'ModalInstanceCtrl',
+                windowClass: 'full-screen-modal',
+                resolve: {
+                    event: function () {
+                        return $scope.event;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (newEvent) {
+                $scope.event = newEvent;
+                $scope.submit();
+            }, function () {});
         };
 
 }]);
