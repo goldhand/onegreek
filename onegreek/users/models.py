@@ -74,6 +74,14 @@ class User(AbstractUser, StatusModel):
 
         return "http://www.gravatar.com/avatar/{}?s=40".format(hashlib.md5(self.user.email).hexdigest())
 
+    def is_chapter_admin(self):
+        if self.chapter:
+            return self in self.chapter.linked_admin_group.user_set.all()
+        else:
+            return False
+
+
+
 
 
 
@@ -115,11 +123,21 @@ def set_new_user_config(sender, **kwargs):
             user.groups.add(group_id, active_group_id)
             user.status = "active"
             user.save()
-            print user.groups.all()
+        elif user.status == "active" and user.chapter.linked_pending_group in user.groups.all():
+            user.groups.remove(user.chapter.linked_pending_group)
+            user.save()
 
 
+@receiver(signals.post_save, sender=Group)
+def set_active_status(sender, instance=None, created=None, **kwargs):
+    if not created:
+        group = instance
+        if group.name == "%s_%d %s" % ("chapter", group.linked_chapter_active.id, 'Active'):
+            for user in group.user_set.all():
+                if user.status == "active_pending":
+                    user.status = "active"
+                    user.save()
 
-        #class UserPosition(models.Model):
 
         # home page
         #register

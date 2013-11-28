@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <div class="row-fluid">
+        {{ calendar }}
+    </div>
+{% endblock content %}
+
+{% block css %}
+    {{ block.super }}
+
+    <style>
+    table.month td.day {
+        height: 80px;
+
+    }
+    </style>
+
+{% endblock css %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+        $(document).ready(function() {
+            $('table').addClass('table table-bordered');
+        });
+
+    </script>
+
+
+{% endblock %}
+

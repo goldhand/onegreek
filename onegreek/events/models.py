@@ -18,6 +18,27 @@ from core.models import Slugged
 from core.models import unique_slug, base_concrete_model
 
 
+def color_key(status, component=None):
+    if status == "chapter":
+        _class = "error"
+        if component == "btn":
+            _class = "danger"
+    elif status == "pledge":
+        _class = "success"
+    elif status == "rush":
+        _class = "info"
+    elif status == "active":
+        _class = "warning"
+    else:
+        _class = ""
+    if component == "table":
+        return _class
+    else:
+        return "%s-%s" % (component, _class)
+
+
+
+
 class Event(TimeFramedModel, StatusModel, Slugged):
     owner = models.ForeignKey('users.User', null=True, blank=True, related_name='events')
     STATUS = Choices(
@@ -29,33 +50,48 @@ class Event(TimeFramedModel, StatusModel, Slugged):
         ('active', 'Actives')
     )
     description = SplitField()
-    #viewers = models.ManyToManyField('chapters.Chapter', null=True, blank=True)
-    #No longer needed, will instead add view_event permissions to groups selected in form
-    attendees = models.ManyToManyField('users.User', null=True, blank=True, related_name='attending')
+    #attendees = models.ManyToManyField('users.User', null=True, blank=True, related_name='attending')
 
     enable_comments = models.BooleanField("Enable comments", default=True)
 
     # Optional reverse relation, allow ORM querying:
     #comments_set = CommentsRelation()
 
-    class Meta:
-        verbose_name = "Event"
-        verbose_name_plural = "Events"
-        permissions = (
-            ('add_event', 'add_event'),
-            ('change_event', 'change_event'),
-            ('delete_event', 'delete_event'),
-            ('view_event', 'view_event'),
-        )
-
     def get_absolute_url(self):
         return reverse('events:detail', kwargs={'pk': self.pk})
+
+    def get_api_url(self):
+        return "/events/#/events/%d" % self.id
 
     def get_chapter(self):
         if self.owner:
             return self.owner.chapter
         else:
             return None
+
+    def get_status_text_class(self):
+        return color_key(self.status, "text")
+
+    def get_attendees_object(self):
+        if not self.attendees_set.all():
+            attendees = Attendees.objects.create(event=self)
+        else:
+            attendees = self.attendees_set.filter(active=True)[0]
+        return attendees
+
+    def get_attendees(self):
+        attendees_obj = self.get_attendees_object()
+        return attendees_obj.attendees.all()
+
+    def get_rsvps(self):
+        attendees_obj = self.get_attendees_object()
+        return attendees_obj.rsvps.all()
+
+    def get_rsvp_url(self):
+        return reverse("events:rsvp", kwargs={'event_id': self.id})
+
+    def get_attend_url(self):
+        return reverse("events:attend", kwargs={'event_id': self.id})
 
 
 @receiver(signals.post_save, sender=Event)
@@ -90,4 +126,61 @@ def set_group(sender, **kwargs):
     if not 'change_event' in get_perms(event.owner, event):
         assign_perm('change_event', event.owner, event)
         assign_perm('delete_event', event.owner, event)
+
+
+class Attendees(models.Model):
+    event = models.ForeignKey(Event)
+    active = models.BooleanField(default=1)
+    rsvps = models.ManyToManyField('users.User', null=True, blank=True, related_name='rsvps')
+    attendees = models.ManyToManyField('users.User', null=True, blank=True, related_name='attending')
+
+
+from calendar import HTMLCalendar
+from datetime import date
+from itertools import groupby
+
+from django.utils.html import conditional_escape as esc
+
+
+
+
+class EventCalendar(HTMLCalendar):
+    def __init__(self, events):
+        super(EventCalendar, self).__init__()
+        self.events = self.group_by_day(events)
+
+    def formatday(self, day, weekday):
+        if day != 0:
+            cssclass = "day %s %s" % (self.cssclasses[weekday], "span2")
+            if date.today() == date(self.year, self.month, day):
+                cssclass += ' today'
+            if day in self.events:
+                cssclass += ' filled'
+                body = ['<ul class="unstyled">']
+                for event in self.events[day]:
+                    body.append('<li>')
+                    body.append('<a href="%s" class="%s %s">' % (event.get_api_url(),
+                                                                 event.status,
+                                                                 color_key(event.status, "text"))
+                    )
+                    body.append(esc(event.title))
+                    body.append('</a></li>')
+                body.append('</ul>')
+                return self.day_cell(cssclass, '%d %s' % (day, ''.join(body)))
+            return self.day_cell(cssclass, day)
+        return self.day_cell('noday span2', '&nbsp;')
+
+    def formatmonth(self, year, month):
+        self.year, self.month = year, month
+        return super(EventCalendar, self).formatmonth(year, month)
+
+    def group_by_day(self, events):
+        field = lambda event: event.start.day
+        return dict(
+            [(day, list(items)) for day, items in groupby(events, field)]
+        )
+
+    def day_cell(self, cssclass, body):
+        return '<td class="%s">%s</td>' % (cssclass, body)
+
 

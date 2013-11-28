@@ -121,26 +121,66 @@ eventsControllers.controller('EventListCtrl', [
 eventsApp.controller('EventDetailCtrl', [
     '$scope', '$http', '$routeParams', 'EventService', 'GlobalService', 'event',
     function ($scope, $http, $routeParams, EventService, GlobalService, event) {
-        $scope.event = event;
-        $scope.globals = GlobalService;
 
-        $scope.attend = function() {
-            $scope.event.attendees.push($scope.globals.user.url);
+        $scope.globals = GlobalService;
+        $scope.event = event;
+        $scope.event.guest_list = {
+            attendees: [],
+            rsvps: [],
+            display: false
+        };
+
+        $scope.getAttendees = function() {
+            $http.get('/api/events/' + event.id + '/?nest=true').success(function(data) {
+                console.log(data);
+                $scope.event.guest_list = {
+                    attendees: data.get_attendees,
+                    rsvps: data.get_rsvps,
+                    display: true
+                };
+            });
+        };
+
+
+        if ($scope.globals.user.is_chapter_admin) {
+        } else {
+            $scope.submit = function () {};
+        }
+
+        $scope.submit = function() {
             EventService.update($scope.event).then(function(data) {
                 $scope.event = data;
-                console.log(data);
             }, function(status) {
                 console.log(status);
             });
         };
+        $scope.getRsvp = function() {
+            $http.get($scope.event.rsvp_url).success(function(data) {
+                $scope.event.rsvp = data;
+                console.log(data);
+            });
+        };
+        $scope.getRsvp();
 
-    $scope.submit = function() {
-        EventService.update($scope.event).then(function(data) {
-            $scope.event = data;
-        }, function(status) {
-            console.log(status);
-        });
-    };
+        $scope.postRsvp = function() {
+            //$scope.event.attendees.push($scope.globals.user.url);
+            $http.post($scope.event.rsvp_url, {}).success(function(data) {
+                    $scope.event.rsvp = data;
+                    console.log(data);
+                });
+        };
+        $scope.postAttend = function(attendee) {
+            //$scope.event.attendees.push($scope.globals.user.url);
+            $http.post($scope.event.attend_url + '?attendee=' + attendee.id, {}).success(function(data) {
+                console.log(data);
+                if (data.attend) {
+                    $scope.event.guest_list.attendees.push(attendee);
+                } else {
+                    $scope.event.guest_list.attendees.pop(attendee);
+                }
+            });
+        };
+
 }]);
 
 
@@ -161,8 +201,8 @@ eventsControllers.controller('MyFormCtrl', [
         $scope.globals = GlobalService;
         $scope.submit = function() {
             EventService.save($scope.event).then(function(data) {
-                $scope.event = data;
                 $scope.globals.events.push(data);
+                $scope.event = {};
             }, function(status) {
                 console.log(status);
             });

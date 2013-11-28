@@ -14,6 +14,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     position = serializers.Field('position.title')
     api_url = serializers.SerializerMethodField('get_api_url')
     get_full_name = serializers.Field('get_full_name')
+    is_chapter_admin = serializers.Field('is_chapter_admin')
 
     class Meta:
         model = User
@@ -26,6 +27,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'get_full_name',
             'status',
             'position',
+            'is_chapter_admin',
             #'avatar',
             'email',
             'phone',

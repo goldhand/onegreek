@@ -11,6 +11,7 @@
 {% block left_content %}{% endblock left_content %}
 
 {% block content %}
+
 <div>
     {% if request.user.chapter.linked_admin_group in request.user.groups.all %}
     <div ng-controller="MyFormCtrl">
@@ -101,28 +102,59 @@
     </script>
 
         <script type="text/ng-template" id="detail.html">
-<h1 ng-model="event">
-    <span>
-    {[{ event.title }]}
-    </span>
-    <small>
-    <span>
-                {[{ event.start | date }]}
-    </span>
-    -
-    <span>
-                {[{ event.end | date }]}
-    </span>
-    </small>
-</h1>
-<p>Status:</p>
-<p>{[{ event.status }]}</p>
-<a ng-click="attend()">Attend</a>
-<p>
+            <h1 ng-model="event">
+                <span>
+                {[{ event.title }]}
+                </span>
+                <small>
+                <span>
+                            {[{ event.start | date }]}
+                </span>
+                -
+                <span>
+                            {[{ event.end | date }]}
+                </span>
+                </small>
+            </h1>
+        <div class="span5">
+            <h4>
+            Event Type:
+            <span class="{[{ event.text_color_class }]}">{[{ event.status }]}</span>
+            </h4>
+            <h4>Description: </h4>
+            <p>
+                {[{ event.description }]}
+            </p>
 
-    {[{ event.description }]}
-</p>
-    <a ng-click="submit()" ng-hide="event.owner.id == globals.user_id">Submit</a>
+            {% if request.user.is_chapter_admin %}
+            <a class="btn btn-danger" ng-click="getAttendees()">View Guest List</a>
+            <a ng-click="submit()" ng-hide="event.owner.id == globals.user_id">Submit</a>
+            <div ng-show="event.guest_list.display">
+
+            RSVPS:
+
+            <ul ng-repeat="user in event.guest_list.rsvps">
+                <li>{[{ user.id }]} <a ng-click="postAttend(user)">Attended?</a></li>
+            </ul>
+
+            ATTENDEES:
+
+            <ul ng-repeat="user in event.guest_list.attendees">
+                <li>{[{ user.id }]}</li>
+            </ul>
+
+            </div>
+            {% endif %}
+            </div>
+            <div class="span4">
+
+            <div class="alert alert-info">
+            You are currently <span>{[{ event.rsvp.display }]}</span> this event
+            </div>
+            <a class="btn btn-info" ng-click="postRsvp()" ng-hide="event.rsvp.rsvp">RSVP</a>
+            <a class="btn btn-info" ng-click="postRsvp()" ng-show="event.rsvp.rsvp">Cancel RSVP</a>
+
+          </div>
 
 </script>
 

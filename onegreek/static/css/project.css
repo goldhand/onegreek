@@ -20,3 +20,6 @@
 .left-align {
     text-align: left;
 }
+.user-detail li {
+    line-height: 40px;
+}

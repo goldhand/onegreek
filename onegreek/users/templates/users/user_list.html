@@ -37,6 +37,7 @@
                                 {[{ user.email }]}
                                 {[{ user.year_display }]}
                                 {[{ user.major }]}
+                                {[{ user.status }]}
                                 "
                                 data-popover-title="{[{ user.last_name }]}, {[{ user.first_name }]}"
                                 data-popover-placement="right"
@@ -77,11 +78,42 @@
                         jqyoui-draggable="{index: {[{$index}]}, animate:true, placeholder: 'keep', onStart: 'startDragUser(user)'}"
                         data-jqyoui-options="{revert: 'invalid', helper: 'clone'}"
                         >
+
+           {% comment %}
+                <div class="pull-right" ng-hide="{[{ user.status != 'active_pending' }]}">
+                            <label for="status-{[{ user.id }]}">Active</label>
+                            <input
+                            id="status-{[{ user.id }]}"
+                            ng-model="user.status"
+                            type="checkbox"
+                            ng-true-value="active",
+                            ng-false-value="active_pending",
+                            >
+                </div>
                 <a href="#/users/{[{ user.id }]}">
                             <img ng-src="/static/img/holderjs-40x40.png">
                 {[{ user.last_name }]}, {[{ user.first_name }]}
                 </a>
-            </li>
+           {% endcomment %}
+                <a href="#/users/{[{ user.id }]}">
+               <ul class="inline row user-detail">
+                   <li class="span2">
+                        <img class="pull-left" style="margin-right:20px;"
+                        ng-src="/static/img/holderjs-40x40.png">
+                        <span>
+                        {[{ user.first_name }]}
+                        {[{ user.last_name }]}
+                        </span>
+                   </li>
+                   <li class="span1" >
+                        {[{ user.status }]}
+                   </li>
+                   <li class="span2">
+                        {[{ user.email }]}
+                   </li>
+               </ul>
+                </a>
+           </li>
         </ul>
         <a class="btn btn-smal btn-info" ng-click="submitGroup2(group)">Save</a>
         </tab-content>

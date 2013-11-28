@@ -154,6 +154,7 @@ userControllers.controller('GroupListCtrl', [
             var user_set = [];
             // convert user objects into urls for server
             angular.forEach(group.user_set, function(user) {
+                if(user.status)
                 if(user.url){
                     this.push(user.url.toString());
                 }
@@ -166,7 +167,8 @@ userControllers.controller('GroupListCtrl', [
                     'user_set':user_set
                 }
             ).success(function(data) {
-                console.log(data);
+                    console.log(data);
+
             });
         };
 
