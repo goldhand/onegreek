@@ -67,12 +67,12 @@ class User(AbstractUser, StatusModel):
         return super(User, self).save(*args, **kwargs)
 
     def profile_image_url(self):
-        fb_uid = SocialAccount.objects.filter(user_id=self.user.id, provider='facebook')
+        fb_uid = SocialAccount.objects.filter(user_id=self.id, provider='facebook')
 
         if len(fb_uid):
             return "http://graph.facebook.com/{}/picture?width=40&height=40".format(fb_uid[0].uid)
 
-        return "http://www.gravatar.com/avatar/{}?s=40".format(hashlib.md5(self.user.email).hexdigest())
+        return "http://www.gravatar.com/avatar/{}?s=40".format(hashlib.md5(self.email).hexdigest())
 
     def is_chapter_admin(self):
         if self.chapter:

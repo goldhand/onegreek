@@ -37,8 +37,6 @@ def color_key(status, component=None):
         return "%s-%s" % (component, _class)
 
 
-
-
 class Event(TimeFramedModel, StatusModel, Slugged):
     owner = models.ForeignKey('users.User', null=True, blank=True, related_name='events')
     STATUS = Choices(
@@ -86,6 +84,10 @@ class Event(TimeFramedModel, StatusModel, Slugged):
     def get_rsvps(self):
         attendees_obj = self.get_attendees_object()
         return attendees_obj.rsvps.all()
+
+    def get_rsvps_not_attendees(self):
+        attendees_obj = self.get_attendees_object()
+        return attendees_obj.rsvps.exclude(attending__id=attendees_obj.id)
 
     def get_rsvp_url(self):
         return reverse("events:rsvp", kwargs={'event_id': self.id})
@@ -136,7 +138,12 @@ class Attendees(models.Model):
     event = models.ForeignKey(Event)
     active = models.BooleanField(default=1)
     rsvps = models.ManyToManyField('users.User', null=True, blank=True, related_name='rsvps')
+    rsvps_copy = models.ManyToManyField('users.User', null=True, blank=True, related_name='rsvps_copy')
     attendees = models.ManyToManyField('users.User', null=True, blank=True, related_name='attending')
+
+    def save(self, *args, **kwargs):
+        self.rsvps_copy = self.rsvps.exclude(attending__id=self.id)
+        return super(Attendees, self).save()
 
 
 from calendar import HTMLCalendar

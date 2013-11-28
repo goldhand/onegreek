@@ -62,7 +62,7 @@
         <div ng-view></div>
 
         <script type="text/ng-template" id="list.html">
-        <a class="btn btn-info pull-right toggle-view" href="#/events/calendar">Calender View</a>
+        <a class="btn btn-info pull-right toggle-view" href="#/events/calendar">Calender</a>
 
             {% if request.user.is_chapter_admin %}
         <button class="btn btn-primary btn-large pull-right" ng-click="openModal()">Create Event</button>
@@ -103,18 +103,16 @@
     </script>
 
         <script type="text/ng-template" id="detail.html">
-        <a class="btn btn-info pull-right toggle-view" href="#/events/calendar">Calender View</a>
-
-            {% if request.user.is_chapter_admin %}
-        <button class="btn btn-primary btn-large pull-right" ng-click="openModal()">Edit Event</button>
-        {% endif %}
-
-
-            <h1 ng-model="event">
-                <span>
+        <a class="btn btn-info pull-right toggle-view" href="#/events/calendar">Calender</a>
+        <div class="span5">
+        <a class="" href="#/events"><< Back</a>
+            <h2 ng-model="event">
+                <span class="{[{ event.text_color_class }]}">
                 {[{ event.title }]}
                 </span>
+                <br/>
                 <small>
+                {[{ event.status }]}
                 <span>
                             {[{ event.start | date }]}
                 </span>
@@ -123,46 +121,109 @@
                             {[{ event.end | date }]}
                 </span>
                 </small>
-            </h1>
-        <div class="span5">
+            </h2>
             <h4>
-            Event Type:
-            <span class="{[{ event.text_color_class }]}">{[{ event.status }]}</span>
+                <span class="{[{ event.text_color_class }]}">{[{ event.status }]}</span>
             </h4>
-            <h4>Description: </h4>
             <p>
                 {[{ event.description }]}
             </p>
-
-            {% if request.user.is_chapter_admin %}
-            <a class="btn btn-danger" ng-click="getAttendees()">View Guest List</a>
-            <a ng-click="submit()" ng-hide="event.owner.id == globals.user_id">Submit</a>
-            <div ng-show="event.guest_list.display">
-
-            RSVPS:
-
-            <ul ng-repeat="user in event.guest_list.rsvps">
-                <li>{[{ user.id }]} <a ng-click="postAttend(user)">Attended?</a></li>
-            </ul>
-
-            ATTENDEES:
-
-            <ul ng-repeat="user in event.guest_list.attendees">
-                <li>{[{ user.id }]}</li>
-            </ul>
-
-            </div>
-            {% endif %}
-            </div>
-            <div class="span4">
+        </div>
+        <div class="span4">
 
             <div class="alert alert-info">
             You are currently <span>{[{ event.rsvp.display }]}</span> this event
             </div>
+
+            {% if request.user.is_chapter_admin %}
+            <div class="btn-group">
+                <button class="btn btn-warning" ng-click="openModal()">Edit Event</button>
+                <button class="btn btn-danger" ng-click="getAttendees()">Guest List</button>
+                <button class="btn btn-info" ng-click="postRsvp()" ng-hide="event.rsvp.rsvp">RSVP</button>
+                <button class="btn btn-info" ng-click="postRsvp()" ng-show="event.rsvp.rsvp">Cancel RSVP</button>
+            </div>
+            {% else %}
             <a class="btn btn-info" ng-click="postRsvp()" ng-hide="event.rsvp.rsvp">RSVP</a>
             <a class="btn btn-info" ng-click="postRsvp()" ng-show="event.rsvp.rsvp">Cancel RSVP</a>
+            {% endif %}
 
-          </div>
+        </div>
+        <div class="span9">
+
+            {% if request.user.is_chapter_admin %}
+            <div ng-show="event.guest_list.display" class="row">
+
+            <div class="span4">
+                <h4>RSVPS</h4>
+
+                <form class="form-search">
+                    <div class="controls">
+                        <input type="text" id="rsvp-filter" name="rsvp-filter" class="search-query input-block-level"
+                               ng-model="rsvpFilter"
+                               placeholder="Search"
+                               typeahead="user in event.guest_list.rsvps | filter:$viewValue"
+                               >
+                    </div>
+                </form>
+
+                <ul class="nav nav-stacked nav-tabs">
+                    <li ng-repeat="user in event.guest_list.rsvps | filter:rsvpFilter"
+                    style="padding-right: 20px">
+                        <a ng-click="postAttend(user)" class="user-detail">
+                           <ul class="inline">
+                               <li>
+                                        <img class="pull-left thumbnail" ng-src="{[{ user.profile_image_url }]}">
+                               </li>
+                               <li>
+                                        {[{ user.first_name }]}
+                                        {[{ user.last_name }]}
+                               </li>
+                               <li>
+                                        {[{ user.status }]}
+                               </li>
+                           </ul>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="span4">
+                <h4>Attendees</h4>
+
+                <form class="form-search">
+                    <div class="controls">
+                        <input type="text" id="attendee-filter" name="attendee-filter" class="search-query input-block-level"
+                               ng-model="attendeeFilter"
+                               placeholder="Search"
+                               typeahead="user in event.guest_list.attendees | filter:$viewValue"
+                               >
+                    </div>
+                </form>
+
+                <ul class="nav nav-stacked nav-tabs">
+                    <li ng-repeat="user in event.guest_list.attendees | filter:attendeeFilter"
+                    style="padding-right: 20px">
+                    <li ng-repeat="user in event.guest_list.attendees" style="padding-right: 20px">
+                        <a ng-click="postAttend(user)" class="user-detail">
+                           <ul class="inline">
+                               <li>
+                                        <img class="pull-left thumbnail" ng-src="{[{ user.profile_image_url }]}">
+                               </li>
+                               <li>
+                                        {[{ user.first_name }]}
+                                        {[{ user.last_name }]}
+                               </li>
+                               <li>
+                                        {[{ user.status }]}
+                               </li>
+                           </ul>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+            {% endif %}
 
 </script>
 

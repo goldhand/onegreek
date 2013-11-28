@@ -44,7 +44,7 @@
                                 data-popover-trigger="mouseenter"
                                 data-popover-popup-delay="500"
                                 >
-                            <img ng-src="/static/img/holderjs-40x40.png">
+                            <img ng-src="{[{ user.profile_image_url }]}">
                             {[{ user.last_name }]}, {[{ user.first_name }]}
                         </a>
                     </li>
@@ -79,43 +79,29 @@
                         data-jqyoui-options="{revert: 'invalid', helper: 'clone'}"
                         >
 
-           {% comment %}
-                <div class="pull-right" ng-hide="{[{ user.status != 'active_pending' }]}">
-                            <label for="status-{[{ user.id }]}">Active</label>
-                            <input
-                            id="status-{[{ user.id }]}"
-                            ng-model="user.status"
-                            type="checkbox"
-                            ng-true-value="active",
-                            ng-false-value="active_pending",
-                            >
-                </div>
-                <a href="#/users/{[{ user.id }]}">
-                            <img ng-src="/static/img/holderjs-40x40.png">
-                {[{ user.last_name }]}, {[{ user.first_name }]}
-                </a>
-           {% endcomment %}
-                <a href="#/users/{[{ user.id }]}">
-               <ul class="inline row user-detail">
-                   <li class="span2">
-                        <img class="pull-left" style="margin-right:20px;"
-                        ng-src="/static/img/holderjs-40x40.png">
-                        <span>
-                        {[{ user.first_name }]}
-                        {[{ user.last_name }]}
-                        </span>
-                   </li>
-                   <li class="span1" >
-                        {[{ user.status }]}
-                   </li>
-                   <li class="span2">
-                        {[{ user.email }]}
-                   </li>
-               </ul>
+                <a href="#/users/{[{ user.id }]}" class="user-detail">
+                           <ul class="inline">
+                               <li>
+                                        <img class="pull-left thumbnail" ng-src="{[{ user.profile_image_url }]}">
+                               </li>
+                               <li>
+                                        {[{ user.first_name }]}
+                                        {[{ user.last_name }]}
+                               </li>
+                               <li>
+                                        {[{ user.email }]}
+                               </li>
+                               <li>
+                                        {[{ user.status }]}
+                               </li>
+                           </ul>
                 </a>
            </li>
+
         </ul>
-        <a class="btn btn-smal btn-info" ng-click="submitGroup2(group)">Save</a>
+        <div class="clear-fix">
+            <a class="btn btn-small btn-info" ng-click="submitGroup2(group)">Save</a>
+        </div>
         </tab-content>
         </tab>
         <tab ng-controller="MyFormCtrl" select="openModal()">
@@ -139,12 +125,13 @@
 <script type="text/ng-template" id="detail.html">
 
             <div class="span9">
+        <a class="" href="#/events"><< Back</a>
 <h1>
-                            <img class="pull-left" src="{[{ user.avatar }]}">
     <span>
                     {[{ user.last_name }]}, {[{ user.first_name }]}
     </span>
 </h1>
+    <img class="" src="{[{ user.profile_image_url }]}">
 
     <br/>
     <br/>
@@ -283,5 +270,23 @@ GPA:
         </div>
     </div>
 </div>
+
+
+{% comment %}
+                <div class="pull-right" ng-hide="{[{ user.status != 'active_pending' }]}">
+                            <label for="status-{[{ user.id }]}">Active</label>
+                            <input
+                            id="status-{[{ user.id }]}"
+                            ng-model="user.status"
+                            type="checkbox"
+                            ng-true-value="active",
+                            ng-false-value="active_pending",
+                            >
+                </div>
+                <a href="#/users/{[{ user.id }]}">
+                            <img ng-src="user.profile_image_url">
+                {[{ user.last_name }]}, {[{ user.first_name }]}
+                </a>
+           {% endcomment %}
 
 

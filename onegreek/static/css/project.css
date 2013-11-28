@@ -20,8 +20,16 @@
 .left-align {
     text-align: left;
 }
+.user-detail {
+    float: left;
+    width: 95%;
+}
 .user-detail li {
     line-height: 40px;
+    float: left;
+    margin-left: 10px;
+}
+.user-detail li:last-child {
 }
 
 .toggle-view {

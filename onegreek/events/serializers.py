@@ -45,6 +45,7 @@ class EventNestedSerializer(serializers.HyperlinkedModelSerializer):
     text_color_class = serializers.Field('get_status_text_class')
     get_attendees = UserSerializer(many=True)
     get_rsvps = UserSerializer(many=True)
+    get_rsvps_not_attendees = UserSerializer(many=True)
 
     class Meta:
         model = Event
@@ -63,4 +64,5 @@ class EventNestedSerializer(serializers.HyperlinkedModelSerializer):
             'text_color_class',
             'get_attendees',
             'get_rsvps',
+            'get_rsvps_not_attendees',
         ]

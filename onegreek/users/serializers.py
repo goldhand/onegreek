@@ -15,6 +15,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     api_url = serializers.SerializerMethodField('get_api_url')
     get_full_name = serializers.Field('get_full_name')
     is_chapter_admin = serializers.Field('is_chapter_admin')
+    profile_image_url = serializers.Field('profile_image_url')
 
     class Meta:
         model = User
@@ -25,10 +26,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'first_name',
             'last_name',
             'get_full_name',
+            'profile_image_url',
             'status',
             'position',
             'is_chapter_admin',
-            #'avatar',
             'email',
             'phone',
             'year',
@@ -42,16 +43,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             #'university',
             #'groups',
         ]
-
-    def get_avatar(self, obj):
-        if obj:
-            try:
-                avatar = obj.avatar_set.get(primary=True).get_absolute_url()
-            except ObjectDoesNotExist:
-                avatar = '/static/img/holderjs-40x40.png'
-            return avatar
-        else:
-            return ''
 
     def get_api_url(self, obj):
         if obj:

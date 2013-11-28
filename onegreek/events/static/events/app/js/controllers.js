@@ -152,7 +152,7 @@ eventsApp.controller('EventDetailCtrl', [
                 console.log(data);
                 $scope.event.guest_list = {
                     attendees: data.get_attendees,
-                    rsvps: data.get_rsvps,
+                    rsvps: data.get_rsvps_not_attendees,
                     display: true
                 };
             });
@@ -173,20 +173,22 @@ eventsApp.controller('EventDetailCtrl', [
         $scope.getRsvp();
 
         $scope.postRsvp = function() {
-            //$scope.event.attendees.push($scope.globals.user.url);
             $http.post($scope.event.rsvp_url, {}).success(function(data) {
                     $scope.event.rsvp = data;
                     console.log(data);
                 });
         };
         $scope.postAttend = function(attendee) {
-            //$scope.event.attendees.push($scope.globals.user.url);
             $http.post($scope.event.attend_url + '?attendee=' + attendee.id, {}).success(function(data) {
                 console.log(data);
-                if (data.attend == 'true') {
+                if (data.attend) {
                     $scope.event.guest_list.attendees.push(attendee);
+                    var index = $scope.event.guest_list.rsvps.indexOf(attendee);
+                    $scope.event.guest_list.rsvps.splice(index, 1);
                 } else {
-                    $scope.getAttendees();
+                    $scope.event.guest_list.rsvps.push(attendee);
+                    index = $scope.event.guest_list.attendees.indexOf(attendee);
+                    $scope.event.guest_list.attendees.splice(index, 1);
                 }
             });
         };
@@ -199,7 +201,6 @@ eventsApp.controller('EventDetailCtrl', [
                 console.log(status);
             });
         };
-
 
         $scope.openModal = function () {
             var modalInstance = $modal.open({
