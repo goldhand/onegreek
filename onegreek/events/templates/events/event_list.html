@@ -13,7 +13,7 @@
 {% block content %}
 
 <div>
-    {% if request.user.chapter.linked_admin_group in request.user.groups.all %}
+    {% if request.user.is_chapter_admin %}
         <script type="text/ng-template" id="newEventModal.html">
 
             <div class="modal-header">
@@ -62,6 +62,7 @@
         <div ng-view></div>
 
         <script type="text/ng-template" id="list.html">
+        <a class="btn btn-info pull-right toggle-view" href="#/events/calendar">Calender View</a>
 
             {% if request.user.is_chapter_admin %}
         <button class="btn btn-primary btn-large pull-right" ng-click="openModal()">Create Event</button>
@@ -102,6 +103,7 @@
     </script>
 
         <script type="text/ng-template" id="detail.html">
+        <a class="btn btn-info pull-right toggle-view" href="#/events/calendar">Calender View</a>
 
             {% if request.user.is_chapter_admin %}
         <button class="btn btn-primary btn-large pull-right" ng-click="openModal()">Edit Event</button>

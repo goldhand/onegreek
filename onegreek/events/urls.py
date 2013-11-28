@@ -3,7 +3,7 @@ try:
 except ImportError:  # django < 1.4
     from django.conf.urls.defaults import *
 
-from .views import EventDetail, EventList
+from .views import EventDetail, EventList, CalendarRedirectView
 
 
 urlpatterns = patterns("events.views",
@@ -12,5 +12,6 @@ urlpatterns = patterns("events.views",
                        url(r"^(?P<event_id>\d+)/rsvp/$", 'rsvp_event', name='rsvp'),
                        url(r"^(?P<event_id>\d+)/attend/$", 'attend_event', name='attend'),
                        url(r"^calendar/(?P<year>\d+)/(?P<month>\d+)/$", 'calendar', name='calendar'),
+                       url(r"^calendar/$", CalendarRedirectView.as_view(), name='calendar-redirect'),
 )
 

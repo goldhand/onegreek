@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.urlresolvers import reverse
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 
@@ -116,3 +117,11 @@ def calendar(request, year, month):
     )
     cal = EventCalendar(my_events).formatmonth(int(year), int(month))
     return render(request, 'events/calendar.html', {'calendar': mark_safe(cal), })
+
+
+class CalendarRedirectView(generic.RedirectView):
+    permanent = False
+
+    def get_redirect_url(self):
+        redirect_url = reverse("events:calendar", kwargs={"year": 2013, "month": 11})
+        return redirect_url
