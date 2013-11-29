@@ -63,7 +63,9 @@
           <li class="active"><a href="{% url 'home' %}">Home</a></li>
             <li><a href="{% url 'events:list' %}">Events</a></li>
             <li><a href="{% url 'chapters:list' %}">Chapters</a></li>
+            {% if request.user.is_chapter_admin %}
             <li><a href="{% url 'users:list' %}">Members</a></li>
+            {% endif %}
 
           {% if request.user.is_authenticated %}
             <li><a href="{% url 'users:detail' request.user.id  %}">{% trans "My Profile" %}</a></li>
