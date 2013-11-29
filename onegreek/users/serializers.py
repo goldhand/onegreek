@@ -71,6 +71,7 @@ class GroupUpdateSerializer(serializers.HyperlinkedModelSerializer):
             'id', 'url', 'name', 'user_set'
         ]
 
+
 class GroupCreateSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:

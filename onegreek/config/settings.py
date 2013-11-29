@@ -378,7 +378,7 @@ class Local(Common):
     INTERNAL_IPS = ('127.0.0.1',)
 
     DEBUG_TOOLBAR_CONFIG = {
-        'INTERCEPT_REDIRECTS': True,
+        'INTERCEPT_REDIRECTS': False,
         'SHOW_TEMPLATE_CONTEXT': True,
     }
     ########## end django-debug-toolbar

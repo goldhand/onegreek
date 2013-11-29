@@ -133,11 +133,13 @@ userControllers.controller('UserDetailCtrl', ['$scope', '$http', '$routeParams',
 userControllers.controller('GroupListCtrl', [
     '$scope',
     '$http',
+    '$modal',
     'GroupService',
     'GlobalService',
     function (
         $scope,
         $http,
+        $modal,
         GlobalService,
         GroupService
         ) {
@@ -171,6 +173,22 @@ userControllers.controller('GroupListCtrl', [
 
             });
         };
+        $scope.openCarouselModal = function (users) {
+            var modalInstance = $modal.open({
+                templateUrl: 'carousel-modal.html',
+                controller: 'CarouselModalInstanceCtrl',
+                windowClass: 'full-screen-modal',
+                resolve: {
+                    users: function () {
+                        return users;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function () {
+
+            }, function () {});
+        };
 
 
 
@@ -193,10 +211,8 @@ userControllers.controller('MyFormCtrl', [
         $scope.globals = GlobalService;
         $scope.submit = function() {
             GroupService.save($scope.group).then(function(data) {
-               data.user_set = [
-                    $scope.globals.user.url
-                ];
-                $scope.submitGroup(data);
+                $scope.group.tab = { active: true, disabled: false};
+                $scope.globals.groups.push(data);
 
             }, function(status) {
                 console.log(status);
@@ -205,11 +221,9 @@ userControllers.controller('MyFormCtrl', [
         $scope.submitGroup = function(group) {
             GroupService.update(group).then(function(data) {
                 $scope.group = data;
-                $scope.group.user_set = [
-                    $scope.globals.user
-                ];
                 $scope.group.tab = { active: true, disabled: false};
                 $scope.globals.groups.push(data);
+                $scope.group = {}
             }, function(status) {
                 console.log(status);
             });
@@ -221,6 +235,7 @@ userControllers.controller('MyFormCtrl', [
                 controller: 'ModalInstanceCtrl',
                 resolve: {
                     group: function () {
+                        $scope.group = {};
                         console.log('myformctrl.openModal');
                         return $scope.group;
                     }
@@ -264,6 +279,30 @@ userControllers.controller('ModalInstanceCtrl', [
         };
     }]);
 
+
+userControllers.controller('CarouselModalInstanceCtrl', [
+    '$scope',
+    '$timeout',
+    '$modalInstance',
+    'users',
+    function (
+        $scope,
+        $timeout,
+        $modalInstance,
+        users
+        ) {
+
+        $scope.users = users;
+
+        $scope.ok = function () {
+            console.log('RushCarouselInstance.ok');
+            $modalInstance.close();
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
 
 
 

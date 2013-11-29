@@ -17,6 +17,7 @@ from .forms import EventForm
 
 User = get_user_model()
 
+
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
@@ -115,6 +116,11 @@ def calendar(request, year, month):
     my_events = get_objects_for_user(request.user, 'events.view_event').order_by('start').filter(
         start__year=year, start__month=month
     )
+    if 'rsvp' in request.GET:
+        if request.GET['rsvp']:
+            #self.events = self.group_by_day([event for event in events.event])
+            my_events = [attending.event for attending in request.user.get_rsvps()]
+
     cal = EventCalendar(my_events).formatmonth(int(year), int(month))
     return render(request, 'events/calendar.html', {'calendar': mark_safe(cal), })
 

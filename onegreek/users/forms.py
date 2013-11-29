@@ -14,13 +14,13 @@ class UserForm(forms.ModelForm):
         fields = (
             "first_name",
             "last_name",
-            "phone",
-            "highschool_gpa",
+            #"phone",
+            #"highschool_gpa",
             "year",
-            "major",
-            "gpa",
-            "hometown",
+            #"major",
+            #"gpa",
+            #"hometown",
             "chapter",
-            "status"
+            #"status"
         )
 

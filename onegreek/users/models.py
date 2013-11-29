@@ -88,8 +88,11 @@ class User(AbstractUser, StatusModel):
         else:
             return False
 
+    def get_attending(self):
+        return self.attending.filter(active=True)
 
-
+    def get_rsvps(self):
+        return self.rsvps.filter(active=True)
 
 
 
@@ -137,14 +140,16 @@ def set_new_user_config(sender, **kwargs):
 
 
 @receiver(signals.post_save, sender=Group)
-def set_active_status(sender, instance=None, created=None, **kwargs):
-    if not created:
-        group = instance
-        if group.name == "%s_%d %s" % ("chapter", group.linked_chapter_active.id, 'Active'):
-            for user in group.user_set.all():
-                if user.status == "active_pending":
-                    user.status = "active"
-                    user.save()
+def set_active_status(sender, **kwargs):
+    if 'created' not in kwargs:
+        print 'not created'
+        group = kwargs.get('instance')
+        if group.linked_chapter_active:
+            if group.name == "%s_%d %s" % ("chapter", group.linked_chapter_active.id, 'Active'):
+                for user in group.user_set.all():
+                    if user.status == "active_pending":
+                        user.status = "active"
+                        user.save()
 
 
         # home page

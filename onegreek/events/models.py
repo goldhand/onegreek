@@ -145,6 +145,22 @@ class Attendees(models.Model):
         self.rsvps_copy = self.rsvps.exclude(attending__id=self.id)
         return super(Attendees, self).save()
 
+    def title(self):
+        return self.event.title
+
+    def start(self):
+        return self.event.start
+
+    def end(self):
+        return self.event.end
+
+    def status(self):
+        return self.event.status
+
+
+
+
+
 
 from calendar import HTMLCalendar
 from datetime import date

@@ -72,6 +72,8 @@
         <group-display group="group"></group-diplay>
         </tab-heading>
         <tab-content>
+
+
         <ul class="nav nav-pills nav-stacked">
             <li ng-repeat="user in group.user_set"
                         data-drag="true"
@@ -89,9 +91,6 @@
                                         {[{ user.last_name }]}
                                </li>
                                <li>
-                                        {[{ user.email }]}
-                               </li>
-                               <li>
                                         {[{ user.status }]}
                                </li>
                            </ul>
@@ -100,13 +99,16 @@
 
         </ul>
         <div class="clear-fix">
-            <a class="btn btn-small btn-info" ng-click="submitGroup2(group)">Save</a>
+        <div class="btn-group">
+            <a ng-click="submitGroup2(group)" class="btn btn-primary">Save Changes</a>
+            <a ng-click="openCarouselModal(group.user_set)" class="btn btn-info">Slide Show</a>
+        </div>
         </div>
         </tab-content>
         </tab>
-        <tab ng-controller="MyFormCtrl" select="openModal()">
+        <tab ng-controller="MyFormCtrl">
         <tab-heading>
-            <a>+ Create Group</button>
+            <a ng-click="openModal()">+ Create Group</a>
         </tab-heading>
         </tab>
 
@@ -189,33 +191,81 @@
     </div>
 </script>
 
-        <script type="text/ng-template" id="newGroupModal.html">
-            <div class="modal-header">
-                <h3>Create New Group</h3>
+            <div ng-controller="MyFormCtrl">
+<script type="text/ng-template" id="newGroupModal.html">
+<div class="modal-header">
+    <h3>Create New Group</h3>
+</div>
+<div class="modal-body">
+    <form class="form">
+        <div class="control-group">
+            <label class="control-label" for="group.name">Title</label>
+            <div class="controls">
+                <input id="group.name" class="input-block-level" ng-model="group.name"/>
             </div>
-            <div class="modal-body">
-                <form class="form">
-                    <div class="control-group">
-                        <label class="control-label" for="group.name">Title</label>
-                        <div class="controls">
-                            <input id="group.name" class="input-block-level" ng-model="group.name"/>
-                        </div>
-                    </div>
-                </form>
-            </div>
+        </div>
+    </form>
+</div>
 
-            <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="ok()">OK</button>
-                <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-            </div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
 
-            </script>
-            <script type="text/ng-template" id="group-display.html">
-            <span>{[{ groupName }]}</span>
-            </script>
+</script>
+            </div>
+<script type="text/ng-template" id="group-display.html">
+<span>{[{ groupName }]}</span>
+</script>
+
+<script type="text/ng-template" id="carousel-modal.html">
+
+
+<div class="modal-header">
+    <h3>Rush Slide Show</h3>
+</div>
+<div class="modal-body">
+
+ <carousel interval="myInterval">
+    <slide ng-repeat="user in users" active="user.active">
+    <div class="row">
+        <div class="span5 offset1">
+      <img ng-src="{[{user.profile_image_lg_url}]}" style="height: 360px;">
+      </div>
+      <div class="span5">
+      <h2>
+        {[{ user.first_name }]} {[{ user.last_name }]}
+      </h2>
+
+      </div>
+      </div>
+
+    </slide>
+  </carousel>
+
+
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="cancel()">Close</button>
+</div>
+
+
+
+</script>
+
+
+
+
 
         </div>
     </div>
+
+
+
+
+
+
 
 {% endblock content %}
 
