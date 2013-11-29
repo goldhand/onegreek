@@ -32,10 +32,10 @@ eventsApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $h
         }
     });
     $routeProvider.when('/events/calendar', {
-        templateUrl: 'http://localhost:8000/events/calendar/2013/11/'
+        templateUrl: 'http://onegreek.goldhand.co/events/calendar/2013/11/'
     });
     $routeProvider.when('/events/calendar/rsvp', {
-        templateUrl: 'http://localhost:8000/events/calendar/2013/11/?rsvp=true'
+        templateUrl: 'http://onegreek.goldhand.co/events/calendar/2013/11/?rsvp=true'
     });
     $routeProvider.when('/events/:eventId', {
         templateUrl: 'detail.html',
