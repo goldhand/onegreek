@@ -142,7 +142,7 @@ class Attendees(models.Model):
     attendees = models.ManyToManyField('users.User', null=True, blank=True, related_name='attending')
 
     def save(self, *args, **kwargs):
-        self.rsvps_copy = self.rsvps.exclude(attending__id=self.id)
+        #self.rsvps_copy = self.rsvps.exclude(attending__id=self.id)
         return super(Attendees, self).save()
 
     def title(self):
@@ -158,6 +158,7 @@ class Attendees(models.Model):
         return self.event.status
 
 
+#Event.attendees_set = property(lambda e: Attendees.objects.get_or_create(event=e)[0])
 
 
 
