@@ -138,18 +138,20 @@ def set_new_user_config(sender, **kwargs):
             user.groups.remove(user.chapter.linked_pending_group)
             user.save()
 
+import re
 
 @receiver(signals.post_save, sender=Group)
 def set_active_status(sender, **kwargs):
-    if 'created' not in kwargs:
+    if not kwargs['created']:
         print 'not created'
         group = kwargs.get('instance')
-        if group.linked_chapter_active:
-            if group.name == "%s_%d %s" % ("chapter", group.linked_chapter_active.id, 'Active'):
-                for user in group.user_set.all():
-                    if user.status == "active_pending":
-                        user.status = "active"
-                        user.save()
+        if re.match("chapter_. Active", str(group.name)):
+            print 're match'
+            for user in group.user_set.all():
+                if user.status == "active_pending":
+                    print user.first_name
+                    user.status = "active"
+                    user.save()
 
 
         # home page
