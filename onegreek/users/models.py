@@ -42,7 +42,7 @@ class User(AbstractUser, StatusModel):
     )
 
     university_email = models.EmailField(max_length=255, blank=True)
-    phone = models.CharField(max_length=13, null=True, blank=True)
+    phone = models.BigIntegerField(null=True, blank=True)
     highschool_gpa = models.FloatField(null=True, blank=True)
     gpa = models.FloatField(null=True, blank=True)
     year = models.IntegerField(choices=COLLEGE_YEARS, default=0)
