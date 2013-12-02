@@ -100,63 +100,66 @@
                 </div>
                 {% endif %}
 
-                <ul class="nav nav-tabs" id="chapter-more-info">
-                    <li class="active"><a href="#members">Members <span class="badge badge-info">{[{ chapter.user_count }]}</span></a></li>
-                    <li><a href="#info">Info</a></li>
-                </ul>
-
-                <div class="tab-content">
-                    <div class="tab-pane active" id="members">
+                <tabset>
+                    <tab heading="Members">
+                        <tab-content>
                         <div class="media" ng-repeat="user in users">
-                            <a class="pull-left" href="#">
-                                <img class="media-object" data-src="holder.js/64x64/social">
+                            <a href="#/users/{[{ user.id }]}" class="pull-left">
+                                <img class="media-object" ng-src="{[{ user.profile_image_url }]}">
                             </a>
 
                             <div class="media-body">
                                 <h4 class="media-heading">
-                                    {[{ user.get_full_name }]}
+                                    {[{ user.first_name }]}
+                                    {[{ user.last_name }]}
                                 </h4>
                                 {[{ user.position }]}
                             </div>
                         </div>
-                    </div>
-                    <div class="tab-pane" id="info">
-                        <dl>
-                            <dt>
-                                GPA:
-                            </dt>
-                            <dd>
-                                <p>{[{ chapter.gpa }]}</p>
-                            </dd>
-                            <dt>
-                                Cost:
-                            </dt>
-                            <dd>
-                                <p>{[{ chapter.cost }]}</p>
-                            </dd>
-                        </dl>
-                    </div>
-                </div>
+                        </tab-content>
+                    </tab>
+                    <tab heading="Comments">
+                        <tab-content>
+                            <div ng-repeat="comment in comments" class="media">
 
-                <div ng-repeat="comment in comments" class="media">
+                                <a class="pull-left" href="#">
+                                    <img class="media-object" ng-src="{[{ comment.profile_image_url }]}">
+                                </a>
 
-                  <a class="pull-left" href="#">
-                    <img class="media-object" src="/static/img/holderjs-40x40.png">
-                  </a>
+                                <div class="media-body">
+                                    <p class="media-heading">
+                                        {[{ comment.name }]} - {[{ comment.submit_date|date }]}
+                                    </p>
+                                    <p>{[{ comment.comment }]}</p>
+                                </div>
+                            </div>
 
-                  <div class="media-body">
-                    <h4 class="media-heading">
-                        {[{ comment.submit_date|date }]} - {[{ comment.name }]}
-                    </h4>
-                      <p>{[{ comment.comment }]}</p>
-                  </div>
-                </div>
-
-            {% if perms.rest_comments.add_restcomment %}
-                {% get_comment_form for chapter as comment_form %}
-                {% crispy comment_form %}
-                <a class="btn btn-small btn-primary" ng-click="commentSubmit()">Submit</a>
-            {% endif %}
+                            {% if perms.rest_comments.add_restcomment %}
+                                {% get_comment_form for chapter as comment_form %}
+                                {% crispy comment_form %}
+                                <a class="btn btn-small btn-primary" ng-click="commentSubmit()">Submit</a>
+                            {% endif %}
+                        </tab-content>
+                    </tab>
+                    <tab heading="Info">
+                        <tab-content>
+                            <dl>
+                                <dt>
+                                    GPA:
+                                </dt>
+                                <dd>
+                                    <p>{[{ chapter.gpa }]}</p>
+                                </dd>
+                                <dt>
+                                    Cost:
+                                </dt>
+                                <dd>
+                                    <p>{[{ chapter.cost }]}</p>
+                                </dd>
+                            </dl>
+                        </tab-content>
+                    </tab>
+                </tabset>
 
             </div>
         </div>

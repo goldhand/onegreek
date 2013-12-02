@@ -48,9 +48,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_api_url(self, obj):
         if obj:
-            return "#/users/%s" % obj.id
+            return "/users/#/users/%s" % obj.id
         else:
-            return "#/users/"
+            return "/users/#/users/"
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

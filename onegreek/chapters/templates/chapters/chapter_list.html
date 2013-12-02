@@ -83,7 +83,7 @@
                    typeahead="chapter.fraternity_title for chapter in chapters | filter:$viewValue | limitTo:8"/>
         </div>
     </form>
-    <ul class="nav nav-pills nav-stacked">
+    <ul class="nav nav-pills nav-stacked chapter-list">
             <li ng-repeat="chapter in chapters | filter:chapterFilter | orderBy:'start'">
             <a ng-href="{[{ chapter.absolute_url }]}"
                data-popover="
@@ -99,6 +99,28 @@
             </a>
         </li>
     </ul>
+
+    {% block chapter_event_carousel %}
+    <div class="row">
+    <carousel interval=5000>
+        <slide ng-repeat="event in events" active="event.active">
+            <div class="span3">
+                <h4>
+                <a href="/events/#/events/{[{ event.id }]}">
+                <span class="{[{ event.text_color_class }]}">
+                            {[{ event.title }]}
+                </span>
+                </a>
+                </h4>
+                <small>{[{ event.start | date }]} - {[{ event.end | date }]}</small>
+                <p>{[{ event.description }]}</p>
+
+            </div>
+
+        </slide>
+    </carousel>
+    </div>
+    {% endblock chapter_event_carousel %}
 </div>
 </div>
 
@@ -125,4 +147,33 @@
 
 {% endblock angular_app %}
 
+{% block css %}
+{{ block.super }}
 
+<style>
+    .carousel-indicators {
+        top: 0;
+        right: 0;
+    }
+    .carousel-indicators li {
+        background-color: rgba(0, 0, 0, 0.25);
+    }
+    .carousel-inner {
+        min-height: 160px;
+    }
+    .carousel-inner>.item {
+        padding-top: 20px;
+    }
+    .carousel-control {
+        top: 120%;
+        width: 20px;
+        height: 20px;
+        font-size: 30px;
+        line-height: 15px;
+
+    }
+    .chapter-list {
+        min-height: 250px;
+    }
+</style>
+{% endblock css %}

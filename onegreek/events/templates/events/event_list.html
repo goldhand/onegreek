@@ -88,12 +88,14 @@
                 <li ng-repeat="event in events | filter:eventFilter | orderBy:'start'">
                     <h2>
                         <a href="#/events/{[{ event.id }]}">
+                <span class="{[{ event.text_color_class }]}">
                             {[{ event.title }]}
+                </span>
+                        </a>
                             <small>
                                 {[{ event.start | date }]} -
                                 {[{ event.end | date }]}
                             </small>
-                        </a>
                     </h2>
                     <p>{[{ event.description }]}
                 </li>

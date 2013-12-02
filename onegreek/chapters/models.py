@@ -20,8 +20,10 @@ class Chapter(Slugged, StatusModel):
     STATUS = Choices('excellence', 'achievement', 'probation', 'inactive')
     fraternity = models.ForeignKey('fraternities.Fraternity', null=True, blank=True)
     university = models.ForeignKey('universities.University', null=True, blank=True)
-    fraternity_title = models.CharField(max_length=255, blank=True)
-    university_title = models.CharField(max_length=255, blank=True)
+    fraternity_title = models.CharField(max_length=255, blank=True,
+                                        help_text='Leave blank to have this field auto-populated')
+    university_title = models.CharField(max_length=255, blank=True,
+                                        help_text='Leave blank to have this field auto-populated')
     description = SplitField(blank=True)
     location = models.TextField(blank=True)
     awards = SplitField(blank=True)
@@ -31,14 +33,22 @@ class Chapter(Slugged, StatusModel):
     fb_status = models.TextField(blank=True)
     cost = models.IntegerField(blank=True, null=True)
     gpa = models.FloatField(blank=True, null=True)
-    groups = models.ManyToManyField(Group, null=True, blank=True)
-    linked_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter')
-    linked_rush_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_rush')
-    linked_pledge_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_pledge')
-    linked_pending_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_pending')
-    linked_active_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_active')
-    linked_admin_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_admin')
-    rush_form = models.OneToOneField('rush_forms.Form', null=True, blank=True, related_name="chapter")
+    groups = models.ManyToManyField(Group, null=True, blank=True,
+                                    help_text='Leave blank to have this field auto-populated')
+    linked_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter',
+                                        help_text='Leave blank to have this field auto-populated')
+    linked_rush_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_rush',
+                                             help_text='Leave blank to have this field auto-populated')
+    linked_pledge_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_pledge',
+                                               help_text='Leave blank to have this field auto-populated')
+    linked_pending_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_pending',
+                                                help_text='Leave blank to have this field auto-populated')
+    linked_active_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_active',
+                                               help_text='Leave blank to have this field auto-populated')
+    linked_admin_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_admin',
+                                              help_text='Leave blank to have this field auto-populated')
+    rush_form = models.OneToOneField('rush_forms.Form', null=True, blank=True, related_name="chapter",
+                                     help_text='Leave blank to have this field auto-populated')
 
     _tracker = FieldTracker()
 

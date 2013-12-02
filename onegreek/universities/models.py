@@ -13,7 +13,8 @@ from core.models import Slugged, base_concrete_model, unique_slug
 
 
 class University(Slugged):
-    group = models.ForeignKey(Group, null=True, blank=True)
+    group = models.ForeignKey(Group, null=True, blank=True,
+                                        help_text='Leave blank to have this field auto-populated')
 
     def save(self, *args, **kwargs):
         """

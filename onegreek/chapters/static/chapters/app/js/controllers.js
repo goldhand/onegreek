@@ -31,14 +31,18 @@ chapterControllers.controller('ChapterGlobalCtrl', [
 chapterControllers.controller('ChapterListCtrl', [
     '$scope',
     '$http',
+    'filterFilter',
     'GlobalService',
     function (
         $scope,
         $http,
+        filterFilter,
         GlobalService
         ) {
 
         $scope.globals = GlobalService;
+        $scope.Search = undefined;
+
         $scope.getChapters = function() {
             $http.get('/api/chapters/').success(function(data) {
                 $scope.chapters = data;
@@ -46,7 +50,22 @@ chapterControllers.controller('ChapterListCtrl', [
         };
         $scope.getChapters();
 
-        $scope.Search = undefined;
+        $scope.getEvents = function() {
+            $http.get('/api/events/').success(function(data) {
+                $scope.events = data;
+                $scope.globals.events = data;
+            });
+        };
+        $scope.getEvents();
+
+        $scope.globals.filterForChapter = function(chapter) {
+            if(!(chapter)){
+                $scope.events = $scope.globals.events;
+            } else {
+                $scope.events = filterFilter($scope.globals.events, {chapter_id: chapter.id});
+            }
+        };
+
 
     }]);
 
@@ -87,6 +106,7 @@ chapterControllers.controller('ChapterDetailCtrl', [
                 if(data.ctype_id) {
                     $scope.getComments(data.ctype_id, data.id);
                 }
+                $scope.globals.filterForChapter(data.id);
             });
         };
 
@@ -155,6 +175,7 @@ chapterControllers.controller('ChapterDetailCtrl', [
                 $scope.rushSubmit();
             }
         };
+
 }]);
 
 

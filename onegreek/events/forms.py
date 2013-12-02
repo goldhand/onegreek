@@ -39,7 +39,6 @@ class EventForm(NgModelFormMixin, forms.ModelForm):
             'enable_comments': forms.HiddenInput(),
         }
 
-
     def __init__(self, *args, **kwargs):
         kwargs.update(scope_prefix='event')
         super(EventForm, self).__init__(*args, **kwargs)

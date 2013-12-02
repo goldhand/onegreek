@@ -15,12 +15,13 @@ from core.models import Slugged, base_concrete_model, unique_slug
 
 
 class Fraternity(Slugged):
-
-    description = SplitField()
+    description = SplitField(blank=True)
     facebook = models.URLField(blank=True)
     fb_status = models.TextField(blank=True)
-    gpa = models.FloatField()
-    group = models.OneToOneField(Group, null=True, blank=True)
+    gpa = models.FloatField(default=0,
+                            help_text='Leave blank to have this field auto-populated')
+    group = models.OneToOneField(Group, null=True, blank=True,
+                                 help_text='Leave blank to have this field auto-populated')
 
     _tracker = FieldTracker()
 

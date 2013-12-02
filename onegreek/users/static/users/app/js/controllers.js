@@ -156,7 +156,6 @@ userControllers.controller('GroupListCtrl', [
             var user_set = [];
             // convert user objects into urls for server
             angular.forEach(group.user_set, function(user) {
-                if(user.status)
                 if(user.url){
                     this.push(user.url.toString());
                 }
@@ -168,10 +167,22 @@ userControllers.controller('GroupListCtrl', [
                     'url': group.url,
                     'user_set':user_set
                 }
-            ).success(function(data) {
-                    console.log(data);
+            ).success(function(group_data) {
+                    console.log(group_data);
+                    $http.get('/api/groups/').success(function(data) {
+                        $scope.globals.groups = data;
+                        angular.forEach($scope.globals.groups, function(group) {
+                            group.tab = {
+                                active: false,
+                                disabled: false
+                            };
+                            if (group.name == group_data.name) {
+                                group.tab.active = true;
 
-            });
+                            };
+                        });
+                    });
+                });
         };
         $scope.openCarouselModal = function (users) {
             var modalInstance = $modal.open({

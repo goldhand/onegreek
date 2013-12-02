@@ -9,9 +9,12 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
     title = serializers.WritableField(source='title', blank=True)
     description = serializers.WritableField(source='description', blank=True)
     chapter = serializers.HyperlinkedRelatedField('get_chapter', view_name='chapter-detail', read_only=True)
+    chapter_id = serializers.SerializerMethodField('get_chapter_id')
+    chapter_title = serializers.Field('get_chapter')
     attend_url = serializers.Field('get_attend_url')
     rsvp_url = serializers.Field('get_rsvp_url')
     text_color_class = serializers.Field('get_status_text_class')
+    #api_url = serializers.SerializerMethodField('get_api_url')
 
     class Meta:
         model = Event
@@ -20,6 +23,9 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'title',
             'slug',
+            'chapter',
+            'chapter_title',
+            'chapter_id',
             'status',
             'description',
             'start',
@@ -31,8 +37,13 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
             #'enable_comments',
             #'viewers',
             #'attendees',
-            #'chapter',
         ]
+
+    def get_chapter_id(self, obj):
+        if obj:
+            return obj.get_chapter().id
+        else:
+            return None
 
 
 class EventNestedSerializer(serializers.HyperlinkedModelSerializer):

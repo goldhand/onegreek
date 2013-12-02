@@ -42,7 +42,7 @@ class User(AbstractUser, StatusModel):
     )
 
     university_email = models.EmailField(max_length=255, blank=True)
-    phone = models.BigIntegerField(null=True, blank=True)
+    phone = models.CharField(max_length=13, null=True, blank=True)
     highschool_gpa = models.FloatField(null=True, blank=True)
     gpa = models.FloatField(null=True, blank=True)
     year = models.IntegerField(choices=COLLEGE_YEARS, default=0)
@@ -100,9 +100,6 @@ class User(AbstractUser, StatusModel):
 def set_new_user_config(sender, **kwargs):
     user = kwargs.get('instance')
     if kwargs.get('created'):
-        #user_msg = ""
-        # New user?
-        #user_msg = "Signed up as %s %s, %s" % (user.first_name, user.last_name, user.status)
         # Is he a pending active?
         if user.chapter_id:
             group_id = user.chapter.linked_pending_group_id
@@ -126,42 +123,51 @@ def set_new_user_config(sender, **kwargs):
             user.groups.add(group_id, pending_group_id)
             user.status = "active_pending"
             user.save()
-        # Was a rushee or pending active but changed to active
-        elif user.status == "active" and user.chapter.linked_active_group not in user.groups.all():
-            user.groups.clear()
-            group_id = user.chapter.linked_group_id
-            active_group_id = user.chapter.linked_active_group_id
-            user.groups.add(group_id, active_group_id)
-            user.status = "active"
-            user.save()
-        elif user.status == "active" and user.chapter.linked_pending_group in user.groups.all():
-            user.groups.remove(user.chapter.linked_pending_group)
-            user.save()
 
 import re
 
 @receiver(signals.post_save, sender=Group)
-def set_active_status(sender, **kwargs):
+def set_group_and_status(sender, **kwargs):
     if not kwargs['created']:
-        print 'not created'
         group = kwargs.get('instance')
-        if re.match("chapter_. Active", str(group.name)):
-            print 're match'
+        if re.match("chapter_.+? Active", str(group.name)):
+            chapter = group.linked_chapter_active
             for user in group.user_set.all():
-                if user.status == "active_pending":
-                    print user.first_name
+                if not user.status == "active":
                     user.status = "active"
+                    if not user.chapter == chapter:
+                        user.chapter = chapter
+                    user.groups.clear()
+                    user.groups.add(group, chapter.linked_group)
+                    user.save()
+        elif re.match("chapter_.+? Pledge", str(group.name)):
+            chapter = group.linked_chapter_pledge
+            for user in group.user_set.all():
+                if not user.status == "pledge":
+                    user.status = "pledge"
+                    if not user.chapter == chapter:
+                        user.chapter = chapter
+                    user.groups.clear()
+                    user.groups.add(group, chapter.linked_group)
+                    user.save()
+        if re.match("chapter_.+? Pending", str(group.name)):
+            chapter = group.linked_chapter_pending
+            for user in group.user_set.all():
+                if not user.status == "active_pending":
+                    user.status = "active_pending"
+                    if not user.chapter == chapter:
+                        user.chapter = chapter
+                    user.groups.clear()
+                    user.groups.add(group, chapter.linked_group)
+                    user.save()
+        elif re.match("chapter_.+? Rush", str(group.name)):
+            for user in group.user_set.all():
+                if not user.status == "rush":
+                    user.status = "rush"
+                    if user.chapter:
+                        user.chapter = None
+                    user.groups.clear()
+                    user.groups.add(group)
                     user.save()
 
-
-        # home page
-        #register
-        #active
-        #added to "pending actives" group
-        #rushee
-        #fills out custom form for rushing chapter
-
-
-
-#check in users
 
