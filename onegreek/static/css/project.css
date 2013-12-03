@@ -22,7 +22,7 @@
 }
 .user-detail {
     float: left;
-    width: 90%;
+    width: 85%;
 }
 .user-detail li {
     line-height: 40px;
@@ -36,4 +36,9 @@
     position: absolute;
     top: 10px;
     right: 10px;
+}
+
+.pending-active-select {
+    margin-top: 12px;
+    float: left;
 }

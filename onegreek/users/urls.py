@@ -22,6 +22,11 @@ urlpatterns = patterns('',
         view=views.UserDetailView.as_view(),
         name='detail'
     ),
+    url(
+        regex=r'^group/mod/$',
+        view='users.views.mod_group',
+        name='mod-group'
+    ),
     # URL pattern for the UserUpdateView
     url(
         regex=r'^~update/$',

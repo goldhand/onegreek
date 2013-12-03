@@ -39,6 +39,8 @@ class Chapter(Slugged, StatusModel):
                                         help_text='Leave blank to have this field auto-populated')
     linked_rush_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_rush',
                                              help_text='Leave blank to have this field auto-populated')
+    linked_call_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_call',
+                                                  help_text='Leave blank to have this field auto-populated')
     linked_pledge_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_pledge',
                                                help_text='Leave blank to have this field auto-populated')
     linked_pending_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter_pending',
@@ -58,6 +60,12 @@ class Chapter(Slugged, StatusModel):
         permissions = (
             ('view_chapter', 'view_chapter'),
         )
+
+    def __unicode__(self):
+        if self.fraternity and self.university:
+            return "%s - %s " % (self.fraternity.title, self.university.title)
+        else:
+            return self.title
 
     def get_absolute_url(self):
         return reverse('chapters:detail', kwargs={'pk': self.pk})
@@ -89,6 +97,7 @@ class Chapter(Slugged, StatusModel):
         if not self.groups.all():
             self.groups.add(self.linked_group)
             self.groups.add(self.linked_rush_group)
+            self.groups.add(self.linked_call_group)
             self.groups.add(self.linked_pending_group)
             self.groups.add(self.linked_active_group)
             self.groups.add(self.linked_admin_group)
@@ -104,6 +113,7 @@ def set_group(sender, **kwargs):
         cg_set = {
             'group': Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, chapter.title))[0],
             'rush_group': Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, 'Rush'))[0],
+            'call_group': Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, 'Call List'))[0],
             'pledge_group': Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, 'Pledge'))[0],
             'pending_group': Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, 'Pending'))[0],
             'active_group': Group.objects.get_or_create(name="%s_%d %s" % ("chapter", chapter.id, 'Active'))[0],
@@ -135,6 +145,7 @@ def set_group(sender, **kwargs):
         # assign groups from cg_set to chapter
         chapter.linked_group = cg_set['group']
         chapter.linked_rush_group = cg_set['rush_group']
+        chapter.linked_rush_call_group = cg_set['call_group']
         chapter.linked_pledge_group = cg_set['pledge_group']
         chapter.linked_pending_group = cg_set['pending_group']
         chapter.linked_active_group = cg_set['active_group']

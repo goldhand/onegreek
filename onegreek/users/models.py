@@ -49,7 +49,8 @@ class User(AbstractUser, StatusModel):
     major = models.CharField(max_length=255, blank=True)
     hometown = models.CharField(max_length=255, blank=True)
     chapter = models.ForeignKey('chapters.Chapter', blank=True, null=True,
-                                help_text="Leave blank to continue as a rushee")
+                                help_text="Select your chapter " \
+                                          "*note: your active status will be pending until approved by an administrator")
     university = models.ForeignKey('universities.University', blank=True, null=True)
     fraternity = models.ForeignKey('fraternities.Fraternity', blank=True, null=True)
     position = models.ForeignKey('chapters.Position', blank=True, null=True)
@@ -95,7 +96,6 @@ class User(AbstractUser, StatusModel):
         return self.rsvps.filter(active=True)
 
 
-
 @receiver(signals.post_save, sender=User)
 def set_new_user_config(sender, **kwargs):
     user = kwargs.get('instance')
@@ -118,13 +118,14 @@ def set_new_user_config(sender, **kwargs):
         # Was a rushee but changed to pending active
         elif user.status == "rush" and user.chapter_id:
             user.groups.clear()
-            group_id = user.chapter.linked_group_id
             pending_group_id = user.chapter.linked_pending_group_id
-            user.groups.add(group_id, pending_group_id)
+            user.groups.add(pending_group_id)
             user.status = "active_pending"
             user.save()
 
+
 import re
+
 
 @receiver(signals.post_save, sender=Group)
 def set_group_and_status(sender, **kwargs):
@@ -158,7 +159,7 @@ def set_group_and_status(sender, **kwargs):
                     if not user.chapter == chapter:
                         user.chapter = chapter
                     user.groups.clear()
-                    user.groups.add(group, chapter.linked_group)
+                    user.groups.add(group)
                     user.save()
         elif re.match("chapter_.+? Rush", str(group.name)):
             for user in group.user_set.all():

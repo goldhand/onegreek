@@ -13,6 +13,9 @@ from django.contrib.auth import get_user_model
 from braces.views import LoginRequiredMixin
 
 # Import the form from users/forms.py
+from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 from .forms import UserForm
 
 # Import the customized User model
@@ -54,7 +57,10 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
     # send the user back to their own page after a successful update
     def get_success_url(self):
-        return reverse("users:redirect")
+        if 'next' in self.request.GET:
+            return self.request.GET['next']
+        else:
+            return reverse("users:redirect")
 
     def get_object(self):
         # Only get the User record for the user making the request
@@ -91,7 +97,7 @@ class UserViewSet(viewsets.ModelViewSet):
             if 'rush' in self.request.GET:
                 return q.filter(groups__name__istartswith='chapter_%s' % chapter_id).distinct()
             else:
-                return q.filter(chapter_id=chapter_id)
+                return q.filter(chapter_id=chapter_id).exclude(status="active_pending")
         else:
             chapter_id = self.request.user.chapter_id
             if chapter_id:
@@ -115,3 +121,26 @@ class GroupViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         q = super(GroupViewSet, self).get_queryset()
         return q.filter(chapter__id=self.request.user.chapter_id)
+
+
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+def mod_group(request, format=None):
+    if 'group_id' in request.DATA and 'action' in request.DATA \
+        and 'chapter_id' in request.DATA and 'user_set' in request.DATA:
+        group = get_object_or_404(Group, id=request.DATA['group_id'])
+        print group.name
+        action = request.DATA['action']
+        chapter_id = request.DATA['chapter_id']
+        user_set = request.DATA['user_set']
+        print user_set
+        for user_id in user_set:
+            user = get_object_or_404(User, id=user_id)
+            user.groups.clear()
+            user.status = 'rush'
+            user.chapter = None
+            user.save()
+        response = {'success': True}
+    else:
+        response = {'success': False}
+    return Response(response)

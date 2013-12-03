@@ -5,8 +5,8 @@
 var userControllers = angular.module('userControllers', []);
 
 userControllers.controller('UserGlobalCtrl', [
-    '$scope', '$rootScope', '$location', '$timeout', 'GlobalService',
-    function ($scope, $rootScope, $location, $timeout, GlobalService) {
+    '$scope', '$rootScope', '$location', '$http', '$timeout', 'GlobalService',
+    function ($scope, $rootScope, $location, $http, $timeout, GlobalService) {
 
         $scope.globals = GlobalService;
         $scope.globals.users = undefined;
@@ -16,6 +16,15 @@ userControllers.controller('UserGlobalCtrl', [
         $scope.initialize = function (is_authenticated, user_id, chapter_id, host) {
             $scope.globals.is_authenticated = is_authenticated;
             $scope.globals.user_id = user_id;
+            if(is_authenticated) {
+                var api_url = "/api/users/";
+                var url = api_url + user_id + "/";
+                $http.get('/api/users/' + user_id + '/').success(function(user_data) {
+                    $scope.globals.user = user_data;
+                    console.log(user_data);
+                    console.log($scope.globals.user.status);
+                });
+            }
             $scope.globals.chapter_id = chapter_id;
             $scope.globals.host = host;
             console.log(host);
@@ -49,13 +58,32 @@ userControllers.controller('UserListCtrl', [
         $scope.globals = GlobalService;
         $scope.groups = groups;
 
-        angular.forEach($scope.groups, function(group) {
-            group.tab = {
-                active: false,
-                disabled: false
-            };
-        });
-        $scope.groups[0].tab.active = true;
+        $scope.updateGroups = function(active_group_name) {
+            angular.forEach($scope.groups, function(group) {
+                group.tab = {
+                    active: false,
+                    disabled: false,
+                    display: false,
+                    rush: false,
+                    pending: false
+                };
+                var re = /^\w+?\d+?\s/;
+                group.tab.display = group.name.split(re)[1];
+                if(group.tab.display == "Rush") {
+                    group.tab.rush = true;
+                }
+                if(group.tab.display == "Pending") {
+                    group.tab.pending = true;
+                }
+                if(group.tab.display == active_group_name) {
+                    group.tab.active = true;
+                }
+            });
+            if(active_group_name == '') {
+                $scope.groups[0].tab.active = true;
+            }
+        };
+        $scope.updateGroups('');
 
         if($scope.globals.users == undefined) {
             $scope.globals.users = users;
@@ -69,16 +97,83 @@ userControllers.controller('UserListCtrl', [
 
         $scope.Search = undefined;
 
-        //$scope.filterForGroup = function(group) {
-        //    return filterFilter($scope.globals.users, {groups: group.url});
-            //$scope.users = filterFilter($scope.globals.users, {groups: group.url});
-            //UserService.filter('group', group.id).then(function(data) {
-            //    $scope.users = data;
-            //});
-        //};
-        //angular.forEach($scope.groups, function(group) {
-        //    group.user_set = $scope.filterForGroup(group);
-        //});
+        $scope.filterForGroupName = function(group_name) {
+            return filterFilter($scope.groups, {name: group_name})[0];
+        };
+
+        $scope.submitPending = function(group) {
+            var drop_user_set = [];
+            var unchanged_user_set = [];
+
+            var group_name_prefix = 'chapter_' + $scope.globals.chapter_id;
+            var active_group_name = group_name_prefix + ' Active';
+            var active_group = $scope.filterForGroupName(active_group_name);
+
+            // convert user objects into urls for server
+            angular.forEach(group.user_set, function(user) {
+                var index = group.user_set.indexOf(user);
+                if(user.pending == "active") {
+                    this.push(user);
+                }
+                else {
+                    if(user.pending == "drop") {
+                        drop_user_set.push(user.id);
+                    }
+                    else {
+                        unchanged_user_set.push(user.url.toString())
+                    }
+                }
+            }, active_group.user_set);
+            $http.put(group.url,
+                {
+                    'id': group.id,
+                    'name': group.name,
+                    'url': group.url,
+                    'user_set':unchanged_user_set
+                }
+            ).success(function(group_data) {
+
+                    $http.post('/users/group/mod/',
+                        {
+                            'action': 'drop',
+                            'group_id': group.id,
+                            'chapter_id': $scope.globals.chapter_id,
+                            'user_set': drop_user_set
+                        }
+                        ).success(function(data){
+                        $scope.submitGroup(active_group);
+                    });
+                });
+        };
+
+        $scope.submitGroup = function(group) {
+            var user_set = [];
+            // convert user objects into urls for server
+            angular.forEach(group.user_set, function(user) {
+                if(user.url){
+                    this.push(user.url.toString());
+                }
+            }, user_set);
+            $http.put(group.url,
+                {
+                    'id': group.id,
+                    'name': group.name,
+                    'url': group.url,
+                    'user_set':user_set
+                }
+            ).success(function(group_data) {
+                    $http.get('/api/groups/').success(function(data) {
+                        $scope.groups = data;
+                        $scope.updateGroups(group.tab.display);
+                        $scope.globals.groups = $scope.groups;
+                    });
+                    UserService.list().then(function(data) {
+                        $scope.globals.users = data;
+                    });
+                });
+        };
+
+
 
         $scope.startDragUser = function(user) {
             $scope.draggedUser = user;
@@ -134,24 +229,20 @@ userControllers.controller('GroupListCtrl', [
     '$scope',
     '$http',
     '$modal',
+    'filterFilter',
     'GroupService',
     'GlobalService',
     function (
         $scope,
         $http,
         $modal,
+        filterFilter,
         GlobalService,
         GroupService
         ) {
 
 
-        $scope.submitGroup = function(group) {
-            GroupService.update(group).then(function(data) {
-                console.log(data);
-            }, function(status) {
-                console.log(status);
-            });
-        };
+
         $scope.submitGroup2 = function(group) {
             var user_set = [];
             // convert user objects into urls for server
@@ -184,6 +275,8 @@ userControllers.controller('GroupListCtrl', [
                     });
                 });
         };
+
+
         $scope.openCarouselModal = function (users) {
             var modalInstance = $modal.open({
                 templateUrl: 'carousel-modal.html',
@@ -317,3 +410,32 @@ userControllers.controller('CarouselModalInstanceCtrl', [
 
 
 
+userControllers.controller('UserFormCtrl', [
+    '$scope',
+    '$http',
+    'filterFilter',
+    'GlobalService',
+    function (
+        $scope,
+        $http,
+        filterFilter,
+        GlobalService
+        //GroupService,
+        ) {
+
+        $scope.globals = GlobalService;
+        $scope.userForm = {
+            part2: false,
+            next: '?next=/avatar/change/'
+            };
+        $scope.userForm.reveal = function(status) {
+            console.log('userform');
+            $scope.userForm.part2 = true;
+            if(status == 'active') {
+                $scope.userForm.next = '';
+            } else {
+                $scope.userForm.next = '?next=/avatar/change/';
+            }
+        };
+
+    }]);

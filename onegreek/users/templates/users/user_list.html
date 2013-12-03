@@ -81,6 +81,15 @@
                         data-jqyoui-options="{revert: 'invalid', helper: 'clone'}"
                         >
 
+                <div class="btn-group btn-group-vertical pending-active-select" ng-show="group.tab.pending">
+                        <button type="button" class="btn btn-mini" ng-model="user.pending" btn-radio="'active'">
+                        <i class="icon icon-ok"></i>
+                        </button>
+                        <button type="button" class="btn btn-mini" ng-model="user.pending" btn-radio="'drop'">
+                        <i class="icon icon-remove"></i>
+                        </button>
+                </div>
+
                 <a href="#/users/{[{ user.id }]}" class="user-detail">
                            <ul class="inline">
                                <li>
@@ -95,14 +104,14 @@
                                </li>
                            </ul>
                 </a>
-           </li>
-
+            </li>
         </ul>
         <div class="clear-fix">
-        <div class="btn-group">
-            <a ng-click="submitGroup2(group)" class="btn btn-primary">Save Changes</a>
-            <a ng-click="openCarouselModal(group.user_set)" class="btn btn-info">Slide Show</a>
-        </div>
+        <a ng-hide="group.tab.pending" ng-click="submitGroup(group)" class="btn btn-primary">Save Changes</a>
+        <a ng-show="group.tab.pending" ng-click="submitPending(group)" class="btn btn-info">Save Changes</a>
+        <a ng-show="group.tab.rush" ng-click="openCarouselModal(group.user_set)" class="btn btn-info">Slide Show</a>
+
+
         </div>
         </tab-content>
         </tab>

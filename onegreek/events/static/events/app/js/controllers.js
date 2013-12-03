@@ -85,7 +85,7 @@ eventsControllers.controller('EventListCtrl', [
                 content:"Pledge Events",
                 status: "pledge",
                 //disabled: $scope.globals.user.status != "pledge",
-                disabled: false,
+                disabled: $scope.globals.user.status == "active_pending",
                 active: false,
                 hidden: $scope.globals.user.status == "rush"
             },
@@ -93,7 +93,7 @@ eventsControllers.controller('EventListCtrl', [
                 title:"Rush",
                 content:"Rush Events",
                 status: "rush",
-                disabled: false,
+                disabled: $scope.globals.user.status == "active_pending",
                 //disabled: $scope.globals.user.status != "rush",
                 active: $scope.globals.user.status == "rush",
                 hidden: false

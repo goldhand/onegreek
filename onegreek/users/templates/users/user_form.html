@@ -1,22 +1,45 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags staticfiles %}
 
 {% block title %}User: {{ user.username }}{% endblock %}
+{% block header_navbar %}{% endblock header_navbar %}
+{% block extra_body_tag_data %} ng-controller="UserGlobalCtrl"
+    ng-init="initialize(
+    '{{ user.is_authenticated }}', '{{ user.id }}', '{{ user.chapter_id }}', '{{ request.get_host }}'
+    )"{% endblock extra_body_tag_data %}
 
 {% block content %}
 
-<div class="span9">
+<div class="span9" ng-controller="UserFormCtrl">
         <div class="col-lg-12">
-            <h1>{% block header %}User: {{ user.username }}{% endblock %}</h1>
-            <form class="form-horizontal" method="post" action="{% url 'users:update' %}">
+            <h1>{% block header %}Registration{% endblock %}</h1>
+            <form class="form-horizontal" method="post" action="{% url 'users:update' %}{[{ userForm.next }]}">
                 {% csrf_token %}
-                {{ form|crispy }}
-                <div class="control-group">
-                  <div class="controls">
-                    <button type="submit" class="btn">Update</button>
-                  </div>
-                </div>
+                {% crispy form %}
             </form>
         </div>
 </div>
 {% endblock %}
+
+{% block angular_app_name %}userApp{% endblock angular_app_name %}
+
+{% block angular_modules %}
+    <script src="{% static 'angularjs/app/lib/angular/angular-cookies.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
+
+    <script src="{% static 'users/app/lib/angular/angular-dragdrop.min.js' %}"></script>
+{% endblock angular_modules %}
+{% block angular_app %}
+    <script src="{% static 'users/app/js/app.js' %}"></script>
+    <script src="{% static 'users/app/js/controllers.js' %}"></script>
+    <script src="{% static 'users/app/js/services.js' %}"></script>
+    <script src="{% static 'users/app/js/directives.js' %}"></script>
+    <script src="{% static 'users/app/js/filters.js' %}"></script>
+
+    <script src="{% static 'groups/app/js/controllers.js' %}"></script>
+    <script src="{% static 'groups/app/js/services.js' %}"></script>
+
+
+{% endblock angular_app %}
