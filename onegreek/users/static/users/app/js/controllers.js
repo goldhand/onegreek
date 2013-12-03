@@ -36,6 +36,7 @@ userControllers.controller('UserGlobalCtrl', [
 userControllers.controller('UserListCtrl', [
     '$scope',
     '$http',
+    '$modal',
     'filterFilter',
     'UserService',
     //'GroupService',
@@ -45,6 +46,7 @@ userControllers.controller('UserListCtrl', [
     function (
         $scope,
         $http,
+        $modal,
         filterFilter,
         UserService,
         GlobalService,
@@ -57,6 +59,10 @@ userControllers.controller('UserListCtrl', [
         $scope.users = users;
         $scope.globals = GlobalService;
         $scope.groups = groups;
+
+        $scope.filterForGroupName = function(group_name) {
+            return filterFilter($scope.groups, {name: group_name})[0];
+        };
 
         $scope.updateGroups = function(active_group_name) {
             angular.forEach($scope.groups, function(group) {
@@ -97,10 +103,6 @@ userControllers.controller('UserListCtrl', [
 
         $scope.Search = undefined;
 
-        $scope.filterForGroupName = function(group_name) {
-            return filterFilter($scope.groups, {name: group_name})[0];
-        };
-
         $scope.submitPending = function(group) {
             var drop_user_set = [];
             var unchanged_user_set = [];
@@ -111,7 +113,6 @@ userControllers.controller('UserListCtrl', [
 
             // convert user objects into urls for server
             angular.forEach(group.user_set, function(user) {
-                var index = group.user_set.indexOf(user);
                 if(user.pending == "active") {
                     this.push(user);
                 }
@@ -210,8 +211,51 @@ userControllers.controller('UserListCtrl', [
                 console.log(status);
             });
         };
+        $scope.callList = function(user, action) {
+            var group_name_prefix = 'chapter_' + $scope.globals.chapter_id;
+            var call_group = $scope.filterForGroupName(group_name_prefix + ' Call List');
 
+            $http.post('/users/group/call/', {
+                    'user_id': user.id,
+                    'group_id': call_group.id,
+                    'action': action
+            }
+            ).success(function(data) {
+                    if(action == 'add') {
+                        user.call = true;
+                    }
+                    if(action == 'remove') {
+                        user.call = false;
+                    }
+                console.log(data);
+            });
+        };
 
+        $scope.openCarouselModal = function (users) {
+            var group_name_prefix = 'chapter_' + $scope.globals.chapter_id;
+            var call_group = $scope.filterForGroupName(group_name_prefix + ' Call List');
+            var modalInstance = $modal.open({
+                templateUrl: 'carousel-modal.html',
+                controller: 'CarouselModalInstanceCtrl',
+                windowClass: 'full-screen-modal',
+                resolve: {
+                    users: function () {
+                        return users;
+                    },
+                    call_list: function () {
+                        return call_group;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (call_list) {
+                console.log(call_list);
+                angular.forEach(call_list.add, function(user) {
+                    call_group.user_set.push(user);
+                });
+                $scope.submitGroup(call_group);
+            }, function () {});
+        };
 
     }]);
 
@@ -221,6 +265,17 @@ userControllers.controller('UserDetailCtrl', ['$scope', '$http', '$routeParams',
         $http.post('/api/users/' + $routeParams.userId + '/', $scope.user).success(function(user_data) {
             $scope.users.push(user_data);
         });
+    };
+    $scope.callList = function(user, action, group_id) {
+
+        $http.post('/users/group/call/', {
+                'user_id': user.id,
+                'group_id': group_id,
+                'action': action
+            }
+        ).success(function(data) {
+                console.log(data);
+            });
     };
 }]);
 
@@ -274,24 +329,6 @@ userControllers.controller('GroupListCtrl', [
                         });
                     });
                 });
-        };
-
-
-        $scope.openCarouselModal = function (users) {
-            var modalInstance = $modal.open({
-                templateUrl: 'carousel-modal.html',
-                controller: 'CarouselModalInstanceCtrl',
-                windowClass: 'full-screen-modal',
-                resolve: {
-                    users: function () {
-                        return users;
-                    }
-                }
-            });
-
-            modalInstance.result.then(function () {
-
-            }, function () {});
         };
 
 
@@ -389,22 +426,38 @@ userControllers.controller('CarouselModalInstanceCtrl', [
     '$timeout',
     '$modalInstance',
     'users',
+    'call_list',
     function (
         $scope,
         $timeout,
         $modalInstance,
-        users
+        users,
+        call_list
         ) {
 
         $scope.users = users;
+        $scope.call_list = call_list;
 
+
+        $scope.callList = function(user, action) {
+            if(action == 'add') {
+                $scope.call_list.user_set.push(user);
+                user.call = true;
+            }
+            if(action == 'remove') {
+                var add_index = $scope.call_list.user_set.indexOf(user);
+                $scope.call_list.user_set.splice(add_index, 1);
+                user.call = false;
+            }
+
+        };
         $scope.ok = function () {
             console.log('RushCarouselInstance.ok');
-            $modalInstance.close();
+            $modalInstance.close($scope.call_list);
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $modalInstance.close($scope.call_list);
         };
     }]);
 

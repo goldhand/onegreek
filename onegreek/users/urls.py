@@ -27,6 +27,11 @@ urlpatterns = patterns('',
         view='users.views.mod_group',
         name='mod-group'
     ),
+    url(
+        regex=r'^group/call/$',
+        view='users.views.call_list',
+        name='call-list'
+    ),
     # URL pattern for the UserUpdateView
     url(
         regex=r'^~update/$',

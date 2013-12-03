@@ -129,11 +129,9 @@ def mod_group(request, format=None):
     if 'group_id' in request.DATA and 'action' in request.DATA \
         and 'chapter_id' in request.DATA and 'user_set' in request.DATA:
         group = get_object_or_404(Group, id=request.DATA['group_id'])
-        print group.name
         action = request.DATA['action']
         chapter_id = request.DATA['chapter_id']
         user_set = request.DATA['user_set']
-        print user_set
         for user_id in user_set:
             user = get_object_or_404(User, id=user_id)
             user.groups.clear()
@@ -143,4 +141,20 @@ def mod_group(request, format=None):
         response = {'success': True}
     else:
         response = {'success': False}
+    return Response(response)
+
+
+@api_view(['GET', 'POST'])
+@renderer_classes((JSONRenderer,))
+def call_list(request, format=None):
+    user_id = request.DATA['user_id']
+    group_id = request.DATA['group_id']
+    action = request.DATA['action']
+    user = get_object_or_404(User, id=user_id)
+    if action == "add":
+        user.groups.add(group_id)
+    elif action == "remove":
+        user.groups.remove(group_id)
+    user.save()
+    response = {'success': True}
     return Response(response)

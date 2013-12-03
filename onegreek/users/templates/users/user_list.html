@@ -90,6 +90,17 @@
                         </button>
                 </div>
 
+                <div class="btn-group btn-group-vertical pending-active-select" ng-show="group.tab.rush">
+                    <button type="button" class="btn btn-mini" ng-disabled="user.call == true"
+                    ng-click="callList(user, 'add')">
+                            <i class="icon icon-plus"></i>
+                    </button>
+                    <button type="button" class="btn btn-mini" ng-disabled="user.call == false"
+                    ng-click="callList(user, 'remove')">
+                            <i class="icon icon-minus"></i>
+                    </button>
+                </div>
+
                 <a href="#/users/{[{ user.id }]}" class="user-detail">
                            <ul class="inline">
                                <li>
@@ -136,7 +147,7 @@
 <script type="text/ng-template" id="detail.html">
 
             <div class="span9">
-        <a class="" href="#/events"><< Back</a>
+        <a class="" href="#/users"><< Back</a>
         <div class="row">
         <div class="span5">
     <h2>
@@ -151,6 +162,16 @@
         <img class="" src="{[{ user.profile_image_lg_url }]}">
         </div>
         <div class="span4">
+                <div class="btn-group" ng-show="user.status == 'rush'">
+                    <button type="button" class="btn btn-mini"
+                    ng-click="callList(user, 'add', {{ user.chapter.linked_call_group.id }})">
+                            <i class="icon icon-plus"></i>
+                    </button>
+                    <button type="button" class="btn btn-mini"
+                    ng-click="callList(user, 'remove', {{ user.chapter.linked_call_group.id }})">
+                            <i class="icon icon-minus"></i>
+                    </button>
+                </div>
     <dl class="dl-horizontal">
     <dt>
     Email:
@@ -242,6 +263,14 @@
       <img ng-src="{[{user.profile_image_lg_url}]}" style="height: 360px;">
       </div>
       <div class="span5">
+    <div class="btn-group btn-group-vertical">
+        <button type="button" class="btn btn-mini" ng-click="callList(user, 'add')" ng-disabled="user.call">
+                <i class="icon icon-plus"></i>
+        </button>
+        <button type="button" class="btn btn-mini" ng-click="callList(user, 'remove')" ng-disabled="user.call == false">
+                <i class="icon icon-minus"></i>
+        </button>
+    </div>
       <h2>
         {[{ user.first_name }]} {[{ user.last_name }]}
       </h2>
@@ -256,7 +285,7 @@
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-warning" ng-click="cancel()">Close</button>
+    <button class="btn btn-warning" ng-click="ok()">Save</button>
 </div>
 
 
