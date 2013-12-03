@@ -256,7 +256,6 @@ userControllers.controller('UserListCtrl', [
                 $scope.submitGroup(call_group);
             }, function () {});
         };
-
     }]);
 
 userControllers.controller('UserDetailCtrl', ['$scope', '$http', '$routeParams', 'user', function ($scope, $http, $routeParams, user) {
