@@ -64,8 +64,19 @@ userControllers.controller('UserListCtrl', [
         $scope.filterForUserStatus = function(status) {
             $scope.users = filterFilter($scope.globals.users, {status: status});
         };
-        $scope.pendingActivesFirst = function(user) {
-            return (user.status == 'active_pending');
+        $scope.userStatusOrder = function(user) {
+            var userStatusOrderKey = {
+                active_pending: 1,
+                admin: 2,
+                active: 3,
+                pledge: 4,
+                rush: 5
+            };
+            if(user.is_chapter_admin) {
+                return userStatusOrderKey['admin'];
+            } else {
+                return userStatusOrderKey[user.status];
+            }
         };
 
         $scope.modUser = function(user, action, status, new_status) {
@@ -79,21 +90,17 @@ userControllers.controller('UserListCtrl', [
                     console.log(data);
                     if(data.success) {
                         if(data.status == 'admin') {
-                            if(data.action == 'add') {
-                                user.is_chapter_admin = true;
-                            } else {
-                                user.is_chapter_admin = false;
-
-                            }
+                            user.is_chapter_admin = data.action == 'add';
 
                         } else {
                             if(data.action == 'add') {
                                 user.status = data.status;
                             } else {
                                 if(data.status == 'active_pending') {
-                                    var index = $scope.users.indexOf(user);
-                                    $scope.users.splice(index, 1);
-
+                                    if(data.new_status == 'rush') {
+                                        var index = $scope.users.indexOf(user);
+                                        $scope.users.splice(index, 1);
+                                    }
                                 }
                                 user.status = data.new_status;
                             }
@@ -101,6 +108,16 @@ userControllers.controller('UserListCtrl', [
                     }
             });
         };
+
+        $scope.updateUsers = function(users) {
+            angular.forEach(users, function(user) {
+                user.status_order = $scope.userStatusOrder(user);
+            });
+        };
+
+        $scope.updateUsers($scope.users);
+        console.log($scope.users);
+
 
 
         $scope.filterForGroupName = function(group_name) {

@@ -190,14 +190,8 @@ def mod_user_groups(request, format=None):
         group = chapter.linked_active_group
     elif status == 'active_pending':
         group = chapter.linked_pending_group
-        if action == "add":
-            user.chapter = chapter
-        elif action == "remove":
-            user.chapter = None
     elif status == 'rush':
         group = chapter.linked_rush_group
-        if action == "add":
-            user.chapter = chapter
     elif status == 'pledge':
         group = chapter.linked_pledge_group
     elif status == 'admin':
@@ -210,8 +204,6 @@ def mod_user_groups(request, format=None):
         new_group = chapter.linked_pending_group
     elif new_status == 'rush':
         new_group = chapter.linked_rush_group
-        if action == "remove":
-            user.chapter = None
     elif new_status == 'pledge':
         new_group = chapter.linked_pledge_group
     elif new_status == 'admin':
@@ -220,14 +212,37 @@ def mod_user_groups(request, format=None):
 
     if group:
         if action == "add":
+
             user.groups.add(new_group.id)
+
+            # admin is not a status
             if status != 'admin':
-                user.status = status
+
+                # rush uses a different 'add' action than other status
+                if status == 'rush':
+                # If action: add and status: rush the user is being added to chapter
+                    user.groups.remove(group.id)
+                    # remove from rush group here because 'add' action won't remove groups otherwise
+                    user.chapter = chapter
+                    # set chapter for new member
+                    user.status = new_status
+                else:
+                    user.status = status
+
                 response['status'] = user.status
+
         elif action == "remove":
+
             user.groups.remove(group.id)
-            if status != 'pending_active':
-                user.groups.add(new_group.id)
+            user.groups.add(new_group.id)
+
+            # If action: remove and status: active_pending the user is being removed permanently
+            if new_status == 'rush':
+                user.chapter = None
+
+                if status == 'active_pending':
+                    user.groups.remove(new_group.id)
+
             user.status = new_status
         user.save()
         response['success'] = True

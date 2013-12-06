@@ -103,7 +103,7 @@
                 <ul class="nav nav-pills nav-stacked">
 
                     <li
-                    ng-repeat="user in users | orderBy: pendingActivesFirst(user)">
+                    ng-repeat="user in users | orderBy: 'status_order'">
 
 
 
@@ -132,7 +132,7 @@
 
                       <ul class="dropdown-menu" ng-show="user.status == 'active_pending'">
                             <li>
-                            <a ng-click="modUser(user, 'add', 'active', 'active')">
+                            <a ng-click="modUser(user, 'remove', 'active_pending', 'active')">
                             Approve
                             </a>
                             </li>
@@ -143,20 +143,15 @@
                             </li>
                       </ul>
 
-                      <ul class="dropdown-menu" ng-show="user.status != 'active_pending'">
+                      <ul class="dropdown-menu" ng-show="user.status == 'active'">
                             <li ng-hide="user.is_chapter_admin">
-                                <a ng-click="modUser(user, 'add', 'admin', 'active')">
+                                <a ng-click="modUser(user, 'add', 'admin', 'admin')">
                                 Make Admin
                                 </a>
                             </li>
                             <li ng-show="user.is_chapter_admin">
                                 <a ng-click="modUser(user, 'remove', 'admin', 'active')">
                                 Remove From Admin
-                                </a>
-                            </li>
-                            <li ng-hide="user.status == 'active'">
-                                <a ng-click="modUser(user, 'remove', 'pledge', 'active')">
-                                Make Active
                                 </a>
                             </li>
                             <li ng-hide="user.status == 'pledge'">
@@ -169,22 +164,59 @@
                                 Make Rush
                                 </a>
                             </li>
-                            <li ng-show="user.status == 'pledge'">
-                                <a ng-click="modUser(user, 'remove', 'pledge', 'rush')">
-                                Make Rush
-                                </a>
-                            </li>
                             <li ng-show="user.status == 'active'">
                                 <a ng-click="modUser(user, 'remove', 'active', 'active_pending')">
                                 Delete
                                 </a>
                             </li>
-                            <li ng-show="user.status != 'active'">
+                      </ul>
+
+                      <ul class="dropdown-menu" ng-show="user.status == 'pledge'">
+                            <li ng-hide="user.is_chapter_admin">
+                                <a ng-click="modUser(user, 'add', 'admin', 'admin')">
+                                Make Admin
+                                </a>
+                            </li>
+                            <li ng-show="user.is_chapter_admin">
+                                <a ng-click="modUser(user, 'remove', 'admin', 'pledge')">
+                                Remove From Admin
+                                </a>
+                            </li>
+                            <li ng-hide="user.status == 'active'">
+                                <a ng-click="modUser(user, 'remove', 'pledge', 'active')">
+                                Make Active
+                                </a>
+                            </li>
+                            <li ng-show="user.status == 'pledge'">
+                                <a ng-click="modUser(user, 'remove', 'pledge', 'rush')">
+                                Make Rush
+                                </a>
+                            </li>
+                            <li ng-show="user.status == 'pledge'">
+                                <a ng-click="modUser(user, 'remove', 'pledge', 'active_pending')">
+                                Delete
+                                </a>
+                            </li>
+                      </ul>
+
+                      <ul class="dropdown-menu" ng-show="user.status == 'rush'">
+                            <li ng-hide="user.status == 'active'">
+                                <a ng-click="modUser(user, 'add', 'rush', 'active')">
+                                Make Active
+                                </a>
+                            </li>
+                            <li ng-hide="user.status == 'pledge'">
+                                <a ng-click="modUser(user, 'add', 'rush', 'pledge')">
+                                Make Pledge
+                                </a>
+                            </li>
+                            <li ng-show="user.status == 'rush'">
                                 <a ng-click="modUser(user, 'remove', 'active_pending', 'rush')">
                                 Delete
                                 </a>
                             </li>
                       </ul>
+
 
 
 
