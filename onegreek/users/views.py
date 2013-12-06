@@ -158,3 +158,78 @@ def call_list(request, format=None):
     user.save()
     response = {'success': True}
     return Response(response)
+
+
+from chapters.models import Chapter
+
+@api_view(['GET', 'POST'])
+@renderer_classes((JSONRenderer,))
+def mod_user_groups(request, format=None):
+
+    user_id = request.DATA['user_id']
+    chapter_id = request.DATA['chapter_id']
+    status = request.DATA['status']
+    new_status = request.DATA['new_status']
+    action = request.DATA['action']
+
+    user = get_object_or_404(User, id=user_id)
+    chapter = get_object_or_404(Chapter, id=chapter_id)
+    group = None
+    new_group = None
+
+    response = {
+        'success': False,
+        'user_full_name': user.get_full_name(),
+        'action': action,
+        'status': status,
+        'new_status': new_status
+    }
+
+
+    if status == 'active':
+        group = chapter.linked_active_group
+    elif status == 'active_pending':
+        group = chapter.linked_pending_group
+        if action == "add":
+            user.chapter = chapter
+        elif action == "remove":
+            user.chapter = None
+    elif status == 'rush':
+        group = chapter.linked_rush_group
+        if action == "add":
+            user.chapter = chapter
+    elif status == 'pledge':
+        group = chapter.linked_pledge_group
+    elif status == 'admin':
+        group = chapter.linked_admin_group
+
+
+    if new_status == 'active':
+        new_group = chapter.linked_active_group
+    elif new_status == 'active_pending':
+        new_group = chapter.linked_pending_group
+    elif new_status == 'rush':
+        new_group = chapter.linked_rush_group
+        if action == "remove":
+            user.chapter = None
+    elif new_status == 'pledge':
+        new_group = chapter.linked_pledge_group
+    elif new_status == 'admin':
+        new_group = chapter.linked_admin_group
+
+
+    if group:
+        if action == "add":
+            user.groups.add(new_group.id)
+            if status != 'admin':
+                user.status = status
+                response['status'] = user.status
+        elif action == "remove":
+            user.groups.remove(group.id)
+            if status != 'pending_active':
+                user.groups.add(new_group.id)
+            user.status = new_status
+        user.save()
+        response['success'] = True
+
+    return Response(response)

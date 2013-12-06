@@ -6,6 +6,8 @@ from rest_framework import serializers
 from .models import User
 
 
+
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     #avatar = serializers.SerializerMethodField('get_avatar')
@@ -17,6 +19,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     is_chapter_admin = serializers.Field('is_chapter_admin')
     profile_image_url = serializers.Field('profile_image_url')
     profile_image_lg_url = serializers.Field('profile_image_lg_url')
+    #text_color_class = serializers.Field('get_status_text_class')
 
     class Meta:
         model = User

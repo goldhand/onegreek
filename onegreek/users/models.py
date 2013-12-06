@@ -16,6 +16,32 @@ from model_utils import Choices, FieldTracker
 from model_utils.models import StatusModel
 
 
+def color_key(status, component=None):
+    if status == "active":
+        _class = "error"
+        if component == "btn":
+            _class = "danger"
+    elif status == "pledge":
+        _class = "success"
+    elif status == "rush":
+        _class = "info"
+    elif status == "active":
+        _class = "warning"
+    elif status == "active_pending":
+        _class = "muted"
+    else:
+        _class = ""
+    if component == "table":
+        return _class
+    else:
+        return "%s-%s" % (component, _class)
+
+
+def get_status_text_class(self):
+    return color_key(self.status, "text")
+
+
+
 class User(AbstractUser, StatusModel):
     STATUS = Choices(
         ('Rushing', [

@@ -6,8 +6,13 @@ from users import views
 urlpatterns = patterns('',
     # URL pattern for the UserListView
     url(
-        regex=r'^~$',
+        regex=r'^alt/$',
         view=views.UserListView.as_view(),
+        name='list-alt'
+    ),
+    url(
+        regex=r'^~$',
+        view=views.UserListView.as_view(template_name='users/user_list_alt.html'),
         name='list'
     ),
     # URL pattern for the UserRedirectView
@@ -26,6 +31,11 @@ urlpatterns = patterns('',
         regex=r'^group/mod/$',
         view='users.views.mod_group',
         name='mod-group'
+    ),
+    url(
+        regex=r'^mod/$',
+        view='users.views.mod_user_groups',
+        name='mod-user-groups'
     ),
     url(
         regex=r'^group/call/$',

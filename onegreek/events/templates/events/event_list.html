@@ -169,9 +169,9 @@
                 </form>
 
                 <ul class="nav nav-stacked nav-tabs">
-                    <li ng-repeat="user in event.guest_list.rsvps | filter:rsvpFilter"
-                    style="padding-right: 20px">
-                        <a ng-click="postAttend(user)" class="user-detail">
+                    <li ng-repeat="user in event.guest_list.rsvps | filter:rsvpFilter">
+                        <a ng-click="postAttend(user)" class="user-detail"
+                        style="width: 90%;">
                            <ul class="inline">
                                <li>
                                         <img class="pull-left thumbnail" ng-src="{[{ user.profile_image_url }]}">
@@ -203,9 +203,9 @@
                 </form>
 
                 <ul class="nav nav-stacked nav-tabs">
-                    <li ng-repeat="user in event.guest_list.attendees | filter:attendeeFilter"
-                    style="padding-right: 20px">
-                        <a ng-click="postAttend(user)" class="user-detail">
+                    <li ng-repeat="user in event.guest_list.attendees | filter:attendeeFilter">
+                        <a ng-click="postAttend(user)" class="user-detail"
+                        style="width: 90%;">
                            <ul class="inline">
                                <li>
                                         <img class="pull-left thumbnail" ng-src="{[{ user.profile_image_url }]}">

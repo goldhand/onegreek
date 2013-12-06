@@ -30,6 +30,11 @@
     margin-left: 10px;
 }
 .user-detail li:last-child {
+    float: right;
+    margin-right: 20px;
+}
+.user-detail li:first-child {
+    margin-left: 0;
 }
 
 .toggle-view {
@@ -41,4 +46,14 @@
 .pending-active-select {
     margin-top: 12px;
     float: left;
+}
+
+.active_pending {
+    background-color: #d3d3d3;
+    color: #3e3e3e;
+}
+
+.user-edit-menu {
+    float: left;
+    padding: 15px 5px;
 }
