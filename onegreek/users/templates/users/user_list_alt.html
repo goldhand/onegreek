@@ -65,28 +65,40 @@
 
 <div ng-controller="GroupListCtrl">
     <tabset class="tabs-top">
-        <tab select="filterForUserStatus('active')">
-        <tab-heading>
-        Actives
-        </tab-heading>
-        <tab-content>
 
-        </tab-content>
+
+        <tab select="filterForUserStatus('!rush')">
+            <tab-heading>
+            All
+            </tab-heading>
+            <tab-content>
+            </tab-content>
         </tab>
+
+        <tab select="filterForUserStatus('active')">
+            <tab-heading>
+            Actives
+            </tab-heading>
+            <tab-content>
+            </tab-content>
+        </tab>
+
         <tab select="filterForUserStatus('pledge')">
-        <tab-heading>
-        Pledge
-        </tab-heading>
-        <tab-content>
-        </tab-content>
+            <tab-heading>
+            Pledge
+            </tab-heading>
+            <tab-content>
+            </tab-content>
         </tab>
+
         <tab select="filterForUserStatus('rush')">
-        <tab-heading>
-        Rush
-        </tab-heading>
-        <tab-content>
-        </tab-content>
+            <tab-heading>
+            Rush
+            </tab-heading>
+            <tab-content>
+            </tab-content>
         </tab>
+
     </tabset>
                 <ul class="nav nav-pills nav-stacked">
 
