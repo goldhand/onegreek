@@ -94,10 +94,12 @@ class Chapter(Slugged, StatusModel):
         return self.rush_form
 
     def get_groups(self, *args, **kwargs):
-        if not self.groups.all():
+        if not self.groups.count <= 6:
+            print 'adding groups'
             self.groups.add(self.linked_group)
             self.groups.add(self.linked_rush_group)
             self.groups.add(self.linked_call_group)
+            self.groups.add(self.linked_pledge_group)
             self.groups.add(self.linked_pending_group)
             self.groups.add(self.linked_active_group)
             self.groups.add(self.linked_admin_group)
@@ -145,7 +147,7 @@ def set_group(sender, **kwargs):
         # assign groups from cg_set to chapter
         chapter.linked_group = cg_set['group']
         chapter.linked_rush_group = cg_set['rush_group']
-        chapter.linked_rush_call_group = cg_set['call_group']
+        chapter.linked_call_group = cg_set['call_group']
         chapter.linked_pledge_group = cg_set['pledge_group']
         chapter.linked_pending_group = cg_set['pending_group']
         chapter.linked_active_group = cg_set['active_group']
