@@ -1,65 +1,45 @@
 from rest_framework import serializers
-
-from .models import RestComment
-from events.models import Event
-from chapters.models import Chapter
+from imagestore.models import Album, Image
 
 
-class ContentObjectRelatedField(serializers.RelatedField):
-    """
-    A custom field to use for the `content_object` generic relationship.
-    """
-
-    def to_native(self, value):
-        """
-        Serialize content objects to a simple textual representation.
-        """
-        if isinstance(value, Event):
-            return value.get_absolute_url()
-        if isinstance(value, Chapter):
-            return value.get_absolute_url()
-        #elif isinstance(value, ''):
-        #    return 'Note: ' + value.text
-        raise Exception('Unexpected type of content object')
-
-
-class RestCommentSerializer(serializers.HyperlinkedModelSerializer):
-    #viewers = serializers.PrimaryKeyRelatedField(many=True)
-    #content_object = ContentObjectRelatedField()
-    content_type = serializers.Field(source='content_type')
-    name = serializers.Field(source='name')
-    profile_image_url = serializers.SerializerMethodField('get_profile_image_url')
-    #site = serializers.PrimaryKeyRelatedField()
-    content_object_url = serializers.Field(source='get_content_object_url')
+class ImageSerializer(serializers.HyperlinkedModelSerializer):
+    #content_type = serializers.Field(source='content_type')
+    content_type = serializers.PrimaryKeyRelatedField(source='content_type')
     content_object = serializers.Field(source='content_object')
+    api_url = serializers.Field(source='get_api_url')
+    sm_img_url = serializers.Field(source='get_sm_img_url')
+    md_img_url = serializers.Field(source='get_md_img_url')
+    lg_img_url = serializers.Field(source='get_lg_img_url')
+    album = serializers.PrimaryKeyRelatedField(source='album')
 
     class Meta:
-        model = RestComment
+        model = Image
         fields = [
-            'user',
-            'name',
-            'comment',
+            'id',
             'url',
-            'profile_image_url',
-            'submit_date',
+            'api_url',
+            'sm_img_url',
+            'md_img_url',
+            'lg_img_url',
+            'title',
+            'description',
+            'tags',
+            'order',
+            'image',
+            'user',
+            'url',
+            'created',
+            'updated',
+            'album',
+
+            'status',
+
             'content_type',
             'object_pk',
-            'content_object_url',
             'content_object',
-            #'timestamp',
-            #'security_hash',
         ]
         read_only_fields = [
-            'submit_date',
-            #'content_type',
-            #'object_pk',
-            #'content_object',
-            #'timestamp',
-            #'security_hash',
+            'created',
+            'updated',
         ]
 
-    def get_profile_image_url(self, obj):
-        if obj:
-            return obj.user.profile_image_url()
-        else:
-            return None

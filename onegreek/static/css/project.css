@@ -4,6 +4,9 @@
     margin-right: auto;
     margin-left: auto;
 }
+.center-text {
+    text-align: center;
+}
 
 .modal.full-screen-modal {
     width: 970px;
@@ -26,12 +29,12 @@
 }
 .user-detail li {
     line-height: 40px;
-    float: left;
-    margin-left: 10px;
-}
-.user-detail li:last-child {
     float: right;
     margin-right: 20px;
+}
+.user-detail li:first-child {
+    margin-left: 10px;
+    float: left;
 }
 .user-detail li:first-child {
     margin-left: 0;
@@ -56,4 +59,97 @@
 .user-edit-menu {
     float: left;
     padding: 15px 5px;
+}
+.page-wrapper {
+    padding: 0 40px;
+    background-color: #fff;
+}
+.top-bar {
+    background: linear-gradient(to right, #c41e3a, #000080);
+    height: 30px;
+    width: 100%;
+    padding: 0 40px;
+}
+.left-column {
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+    float: left;
+    padding: 20px 0;
+}
+
+.event-carousel {
+    padding-bottom: 50px;
+}
+
+.event-carousel .carousel-indicators {
+        top: 0;
+        right: 10px;
+    }
+ .event-carousel .carousel-indicators li {
+        background-color: rgba(0, 0, 0, 0.25);
+    }
+ .event-carousel .carousel-inner {
+        min-height: 160px;
+    }
+ .event-carousel .carousel-inner>.item {
+        padding-top: 20px;
+    }
+.event-carousel .carousel-control {
+        top: 120%;
+        width: 20px;
+        height: 20px;
+        font-size: 30px;
+        line-height: 15px;
+
+    }
+
+.chapter-carousel .carousel-indicators {
+    top: 0;
+    right: 10px;
+    display: none;
+}
+.chapter-carousel .carousel-indicators li {
+    background-color: rgba(0, 0, 0, 0.25);
+}
+.chapter-carousel .carousel-inner {
+}
+.chapter-carousel .carousel-inner>.item {
+}
+.chapter-carousel .carousel-control {
+    top: 50%;
+    border-radius: 25px;
+    width: 20px;
+    height: 30px;
+    font-size: 30px;
+    line-height: 25px;
+    border: none;
+}
+.chapter-carousel .carousel-control.left {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    left: -15px;
+    box-shadow: 5px 0 5px rgba(0, 0, 0, .5);
+
+}
+.chapter-carousel .carousel-control.right {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    right: -15px;
+    box-shadow: -5px 0 5px rgba(0, 0, 0, .5);
+
+}
+
+
+.chapter-list {
+        min-height: 250px;
+    }
+
+.avatar-select, .avatar-select ul {
+    list-style: none;
+}
+.avatar-select>li:first-of-type>label {
+    display: none;
+}
+
+body {
+    padding-bottom: 100px;
 }

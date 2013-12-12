@@ -105,6 +105,7 @@ chapterControllers.controller('ChapterDetailCtrl', [
                 }
                 if(data.ctype_id) {
                     $scope.getComments(data.ctype_id, data.id);
+                    $scope.getImages(data.ctype_id, data.id);
                 }
                 $scope.globals.filterForChapter(data.id);
             });
@@ -119,6 +120,12 @@ chapterControllers.controller('ChapterDetailCtrl', [
         $scope.getComments = function(ctype, obj) {
             $http.get('/api/comments/?ctype=' + ctype + '&obj=' + obj).success(function(data) {
                 $scope.comments = data;
+            });
+        };
+        $scope.getImages = function(ctype, obj) {
+            $http.get('/api/images/?ctype=' + ctype + '&obj=' + obj).success(function(data) {
+                console.log(data);
+                $scope.images = data;
             });
         };
 
@@ -150,6 +157,7 @@ chapterControllers.controller('ChapterDetailCtrl', [
 
         $scope.getChapter($scope.globals.chapter_id);
         $scope.getUsers($scope.globals.chapter_id);
+
 
         $scope.rush_form = {};
 

@@ -26,7 +26,7 @@ class ContentObjectRelatedField(serializers.RelatedField):
 class RestCommentSerializer(serializers.HyperlinkedModelSerializer):
     #viewers = serializers.PrimaryKeyRelatedField(many=True)
     #content_object = ContentObjectRelatedField()
-    content_type = serializers.Field(source='content_type')
+    content_type = serializers.PrimaryKeyRelatedField(source='content_type')
     name = serializers.Field(source='name')
     profile_image_url = serializers.SerializerMethodField('get_profile_image_url')
     #site = serializers.PrimaryKeyRelatedField()

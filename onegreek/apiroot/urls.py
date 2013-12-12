@@ -12,6 +12,8 @@ from rest_comments.views import CommentViewSet
 from events.views import EventViewSet
 from universities.views import UniversityViewSet
 
+from imagestore.views import ImageViewSet
+
 router = DefaultRouter()
 router.register(r'chapters', ChapterViewSet)
 router.register(r'fraternities', FraternityViewSet)
@@ -20,6 +22,7 @@ router.register(r'groups', GroupViewSet)
 router.register(r'comments', CommentViewSet)
 router.register(r'events', EventViewSet)
 router.register(r'universities', UniversityViewSet)
+router.register(r'images', ImageViewSet)
 
 urlpatterns = patterns('apiroot.views',
                        url(r'^', include(router.urls)),

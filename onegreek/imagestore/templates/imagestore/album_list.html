@@ -37,7 +37,8 @@
         {% trans "Albums for user" %} {{ view_user }}
     {% else %}
         {% trans "All albums" %}
-    {% endif %}</h1>
+    {% endif %}
+    </h1>
     {% include "imagestore/pagination.html" %}
     <div class='album-list'>
         {% for album in album_list %}

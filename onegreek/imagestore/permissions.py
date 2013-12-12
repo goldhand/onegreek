@@ -1,7 +1,7 @@
 from rest_framework import permissions
 
 
-class CommentObjectPermissions(permissions.DjangoObjectPermissions):
+class ImageObjectPermissions(permissions.DjangoObjectPermissions):
     """
     Similar to `DjangoObjectPermissions`, but adding 'view' permissions.
     """

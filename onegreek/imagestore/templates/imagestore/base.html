@@ -2,10 +2,9 @@
 {% load i18n %}
 {% load url from future %}
 
-{% block head %}
-    {% if IMAGESTORE_LOAD_CSS %}
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}imagestore.css" media="screen" />
-    {% endif %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}imagestore.css" media="screen" />
 {% endblock %}
 
 {% block breadcrumb %}
@@ -27,8 +26,8 @@
 {% block content-related %}
         {% block imagestore-info %}
         {% endblock %}
-        <div id="controls">
-            <ul>
+        <div id="controls" class="pull-right">
+            <ul class="nav nav-pills">
                 {% if imagestore_perms.add_image or request.user.is_superuser %}
                     <li><a href={% url 'imagestore:upload' %}>{% trans "Upload image" %}</a></li>
                 {% endif %}

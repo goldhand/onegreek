@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import serializers
@@ -19,6 +20,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     is_chapter_admin = serializers.Field('is_chapter_admin')
     profile_image_url = serializers.Field('profile_image_url')
     profile_image_lg_url = serializers.Field('profile_image_lg_url')
+    ctype_id = serializers.SerializerMethodField('get_content_type_id')
     #text_color_class = serializers.Field('get_status_text_class')
 
     class Meta:
@@ -27,6 +29,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'api_url',
             'id',
+            'ctype_id',
             'first_name',
             'last_name',
             'get_full_name',
@@ -54,6 +57,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             return "/users/#/users/%s" % obj.id
         else:
             return "/users/#/users/"
+
+    def get_content_type_id(self, obj):
+        return ContentType.objects.get_for_model(User).id
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

@@ -2,6 +2,7 @@
 from django.conf.urls import patterns, url
 
 from users import views
+from .forms import UserEditForm
 
 urlpatterns = patterns('',
     # URL pattern for the UserListView
@@ -27,6 +28,20 @@ urlpatterns = patterns('',
         view=views.UserDetailView.as_view(),
         name='detail'
     ),
+    # URL pattern for the UserEditView
+    url(
+        regex=r'^~edit/$',
+        view=views.UserUpdateView.as_view(
+            template_name='users/user_edit.html',
+            form_class=UserEditForm),
+        name='edit'
+    ),
+    # URL pattern for the UserUpdateView
+    url(
+        regex=r'^~update/$',
+        view=views.UserUpdateView.as_view(),
+        name='update'
+    ),
     url(
         regex=r'^group/mod/$',
         view='users.views.mod_group',
@@ -41,11 +56,5 @@ urlpatterns = patterns('',
         regex=r'^group/call/$',
         view='users.views.call_list',
         name='call-list'
-    ),
-    # URL pattern for the UserUpdateView
-    url(
-        regex=r'^~update/$',
-        view=views.UserUpdateView.as_view(),
-        name='update'
     ),
 )

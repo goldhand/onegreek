@@ -3,26 +3,24 @@
 {% load url from future %}
 
 {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="span12">
-        <h2>{% trans "Your current avatar: " %}</h2>
-        {% avatar user %}
+    <div class="span6">
+        <a href="{% url 'users:detail' user.id %}"><< back</a>
         {% if not avatars %}
             <p>{% trans "You haven't uploaded an avatar yet. Please upload one now." %}</p>
         {% else %}
             <form method="POST" action="{% url 'avatar_change' %}?next=/chapters/">
-                <ul>
-                    {{ primary_avatar_form.as_ul }}
+                <ul class="unstyled">
+                    {{ primary_avatar_form }}
                 </ul>
-                <p>{% csrf_token %}<input type="submit" value="{% trans "Choose new Default" %}" /></p>
+                <p>{% csrf_token %}<input class="btn btn-primary" type="submit" value="{% trans "Choose new Default" %}" /></p>
             </form>
         {% endif %}
+    </div>
+    <div class="span6">
+    <h4>Select one of your existing profile images or upload a new one.</h4>
         <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}?next=/chapters/">
             {{ upload_avatar_form.as_p }}
             <p>{% csrf_token %}<input  class="btn btn-primary" type="submit" value="{% trans "Upload New Image" %}" /></p>
         </form>
     </div>
-  </div>
-</div>
 {% endblock %}

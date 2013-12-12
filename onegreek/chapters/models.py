@@ -6,6 +6,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ObjectDoesNotExist
 from django.dispatch import receiver
+from django.contrib.contenttypes.models import ContentType
+
 from guardian.shortcuts import assign_perm, get_perms
 
 from model_utils.fields import SplitField, StatusField
@@ -95,7 +97,6 @@ class Chapter(Slugged, StatusModel):
 
     def get_groups(self, *args, **kwargs):
         if not self.groups.count <= 6:
-            print 'adding groups'
             self.groups.add(self.linked_group)
             self.groups.add(self.linked_rush_group)
             self.groups.add(self.linked_call_group)
@@ -104,6 +105,9 @@ class Chapter(Slugged, StatusModel):
             self.groups.add(self.linked_active_group)
             self.groups.add(self.linked_admin_group)
         return self.groups.all()
+
+    def get_content_type_id(self):
+        return ContentType.objects.get_for_model(self).id
 
 
 @receiver(signals.post_save, sender=Chapter)

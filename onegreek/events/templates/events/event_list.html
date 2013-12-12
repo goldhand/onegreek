@@ -8,11 +8,36 @@
     '{{ request.get_host }}'
     )"
 {% endblock extra_body_tag_data %}
-{% block left_content %}{% endblock left_content %}
+{% block left_content %}
+
+    <div class="span3">
+        <form class="form-search">
+            <div class="controls">
+                <input type="text" id="event-filter" name="event-filter" class="search-query input-medium"
+                       placeholder="Search" ng-model="eventFilter"
+                       typeahead="event.title for event in globals.events | filter:$viewValue | limitTo:8"/>
+            </div>
+        </form>
+        <ul class="nav nav-pills nav-stacked">
+            <li ng-repeat="event in globals.events | filter:eventFilter | orderBy:'start'">
+                <a href="#/events/{[{ event.id }]}">
+                    {[{ event.title }]}
+                    <br/>
+                    <small>
+                        {[{ event.start | date }]} -
+                        {[{ event.end | date }]}
+                    </small>
+                </a>
+            </li>
+        </ul>
+
+
+    </div>
+
+{% endblock left_content %}
 
 {% block content %}
 
-<div>
     {% if request.user.is_chapter_admin %}
         <script type="text/ng-template" id="newEventModal.html">
 
@@ -33,33 +58,13 @@
 
     {% endif %}
 
+
+
+    <div class="span9">
     <div class="row">
-        <div class="span3">
-            <form class="form-search">
-                <div class="controls">
-                    <input type="text" id="event-filter" name="event-filter" class="search-query input-medium"
-                           placeholder="Search" ng-model="eventFilter"
-                           typeahead="event.title for event in globals.events | filter:$viewValue | limitTo:8"/>
-                </div>
-            </form>
-            <ul class="nav nav-pills nav-stacked">
-                <li ng-repeat="event in globals.events | filter:eventFilter | orderBy:'start'">
-                    <a href="#/events/{[{ event.id }]}">
-                        {[{ event.title }]}
-                        <br/>
-                        <small>
-                            {[{ event.start | date }]} -
-                            {[{ event.end | date }]}
-                        </small>
-                    </a>
-                </li>
-            </ul>
-
-
-        </div>
-
-
         <div ng-view></div>
+    </div>
+    </div>
 
         <script type="text/ng-template" id="list.html">
         <a class="btn btn-info pull-right toggle-view" href="#/events/calendar">Calender</a>
@@ -105,10 +110,19 @@
     </script>
 
         <script type="text/ng-template" id="detail.html">
-        <a class="btn btn-info pull-right toggle-view" href="#/events/calendar">Calender</a>
-        <div class="span5">
-        <a class="" href="#/events"><< Back</a>
-            <h2 ng-model="event">
+        <div class="span3">
+
+                <div class="chapter-carousel">
+                <carousel>
+                    <slide ng-repeat="image in event.images">
+                        <img class="image-responsive" src="{[{ image.md_img_url }]}">
+                    </slide>
+                </carousel>
+                </div>
+        </div>
+        <div class="span3">
+
+            <h4>
                 <span class="{[{ event.text_color_class }]}">
                 {[{ event.title }]}
                 </span>
@@ -123,35 +137,47 @@
                             {[{ event.end | date }]}
                 </span>
                 </small>
-            </h2>
-            <h4>
-                <span class="{[{ event.text_color_class }]}">{[{ event.status }]}</span>
             </h4>
+
+
+
+            <ul class="nav nav-pills">
+            {% if request.user.is_chapter_admin %}
+                <li class="dropdown">
+                    <a class="dropdown-toggle">Admin <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    <li>
+                    <a ng-click="openModal()">Edit Event</a>
+                    </li>
+                    <li>
+                    <a href="{% url 'imagestore:upload'  %}{[{ event.ctype_id }]}/{[{ event.id }]}/">Add Images</a>
+                    </li>
+                    <li>
+                    <a ng-click="getAttendees()">Refresh Guest List</a>
+                    </li>
+                    </ul>
+                </li>
+            {% endif %}
+                <li>
+                    <a class="" ng-click="postRsvp()" ng-show="event.rsvp.rsvp">I'm {[{ event.rsvp.display }]}</a>
+                </li>
+                <li>
+                    <a class="" ng-click="postRsvp()" ng-hide="event.rsvp.rsvp">I'm {[{ event.rsvp.display }]}</a>
+                </li>
+            </ul>
+
+
+
+        </div>
+        <div class="span3">
+
             <p>
                 {[{ event.description }]}
             </p>
-        </div>
-        <div class="span4">
 
-            <div class="alert alert-info">
-            You are currently <span>{[{ event.rsvp.display }]}</span> this event
-            </div>
-
-            {% if request.user.is_chapter_admin %}
-            <div class="btn-group">
-                <button class="btn btn-warning" ng-click="openModal()">Edit Event</button>
-                <button class="btn btn-danger" ng-click="getAttendees()">Guest List</button>
-                <button class="btn btn-info" ng-click="postRsvp()" ng-hide="event.rsvp.rsvp">RSVP</button>
-                <button class="btn btn-info" ng-click="postRsvp()" ng-show="event.rsvp.rsvp">Cancel RSVP</button>
-            </div>
-            {% else %}
-            <a class="btn btn-info" ng-click="postRsvp()" ng-hide="event.rsvp.rsvp">RSVP</a>
-            <a class="btn btn-info" ng-click="postRsvp()" ng-show="event.rsvp.rsvp">Cancel RSVP</a>
-            {% endif %}
 
         </div>
         <div class="span9">
-
             {% if request.user.is_chapter_admin %}
             <div ng-show="event.guest_list.display" class="row">
 
@@ -223,13 +249,25 @@
                 </ul>
 
             </div>
-        </div>
+        {% else %}
+
+        <h4>Other's who are attending</h4>
+        <hr>
+
+            <div class="pull-left" ng-repeat="user in event.guest_list.rsvps | filter:rsvpFilter">
+            <img class="thumbnail" ng-src="{[{ user.profile_image_url }]}">
+            </div>
+
+        <div class="clearfix"></div>
+        <hr>
+
             {% endif %}
+        <a class="" href="#/events"><< Back</a>
+        </div>
 
 </script>
 
 
-    </div>
 
 
 

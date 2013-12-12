@@ -13,21 +13,44 @@ from django.contrib.auth import get_user_model
 from braces.views import LoginRequiredMixin
 
 # Import the form from users/forms.py
+from django.views.generic.edit import FormMixin
+from django.contrib import messages
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from .forms import UserForm
+
+from avatar.forms import UploadAvatarForm, DeleteAvatarForm, PrimaryAvatarForm
+
+from .forms import UserForm, UserEditForm, UploadAvatarFormNu, DeleteAvatarFormNu, PrimaryAvatarFormNu
 
 # Import the customized User model
 User = get_user_model() # use this function for swapping user model
 from django.contrib.auth.models import Group
 
 
-class UserDetailView(LoginRequiredMixin, DetailView):
+class UserDetailView(LoginRequiredMixin, FormMixin, DetailView):
     model = User
+    form_class = UserEditForm
     # These next two lines tell the view to index lookups by username
     slug_field = "pk"
     slug_url_kwarg = "pk"
+
+    def get_context_data(self, **kwargs):
+        context = super(UserDetailView, self).get_context_data(**kwargs)
+        avatars = self.get_object().avatar_set.all()
+        context['avatars'] = avatars
+        context['profile_form'] = self.form_class(instance=self.get_object())
+        context['avatar_upload_form'] = UploadAvatarFormNu(user=self.get_object())
+        context['avatar_primary_form'] = PrimaryAvatarForm(user=self.get_object(), avatars=avatars)
+        context['avatar_delete_form'] = DeleteAvatarForm(user=self.get_object(), avatars=avatars)
+        return context
+
+    def get_success_url(self):
+        messages.success(self.request, 'Successfully updated your profile', 'success')
+        if 'next' in self.request.GET:
+            return self.request.GET['next']
+        else:
+            return reverse("users:edit")
 
 
 class UserRedirectView(RedirectView):
@@ -57,6 +80,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
     # send the user back to their own page after a successful update
     def get_success_url(self):
+        messages.success(self.request, 'Successfully updated your profile', 'success')
         if 'next' in self.request.GET:
             return self.request.GET['next']
         else:

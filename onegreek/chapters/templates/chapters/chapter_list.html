@@ -102,6 +102,7 @@
 
     {% block chapter_event_carousel %}
     <div class="row">
+    <div class="event-carousel">
     <carousel interval=5000>
         <slide ng-repeat="event in events" active="event.active">
             <div class="span3">
@@ -119,6 +120,7 @@
 
         </slide>
     </carousel>
+    </div>
     </div>
     {% endblock chapter_event_carousel %}
 </div>
@@ -147,33 +149,3 @@
 
 {% endblock angular_app %}
 
-{% block css %}
-{{ block.super }}
-
-<style>
-    .carousel-indicators {
-        top: 0;
-        right: 0;
-    }
-    .carousel-indicators li {
-        background-color: rgba(0, 0, 0, 0.25);
-    }
-    .carousel-inner {
-        min-height: 160px;
-    }
-    .carousel-inner>.item {
-        padding-top: 20px;
-    }
-    .carousel-control {
-        top: 120%;
-        width: 20px;
-        height: 20px;
-        font-size: 30px;
-        line-height: 15px;
-
-    }
-    .chapter-list {
-        min-height: 250px;
-    }
-</style>
-{% endblock css %}

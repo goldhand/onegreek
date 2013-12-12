@@ -158,6 +158,17 @@ eventsApp.controller('EventDetailCtrl', [
             });
         };
 
+        $scope.getImages = function(ctype, obj) {
+            $http.get('/api/images/?ctype=' + ctype + '&obj=' + obj).success(function(data) {
+                console.log(data);
+                $scope.event.images = data;
+            });
+        };
+
+
+        $scope.getAttendees();
+        $scope.getImages($scope.event.ctype_id, $scope.event.id);
+
 
         if ($scope.globals.user.is_chapter_admin) {
         } else {

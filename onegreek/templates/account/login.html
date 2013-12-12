@@ -7,12 +7,17 @@
 {% load socialaccount %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
-{% block header_navbar %}{% endblock header_navbar %}
+{% block user_panel %}{% endblock user_panel %}
 
 {% block content %}
 <div class="container">
   <div class="row">
-    <div class="col-md-5">
+
+    <div class="span4 offset4">
+    <div class="well centered" style="margin:100px 0; text-align: center;">
+    <hr>
+    <h1>OneGreek.org</h1>
+    <hr>
 
       {% if socialaccount.providers  %}
       <div class="socialaccount_ballot">
@@ -26,6 +31,7 @@
 
     <a href="{% url "chapters:list" %}" title="Continue as guest">Continue as a guest</a>
 
+      </div>
       </div>
 
 

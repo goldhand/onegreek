@@ -55,6 +55,8 @@ class Common(Configuration):
         'djangular',
         'django_filters',
         'model_utils',
+        'sorl.thumbnail',
+        'tagging',
     )
 
     # Apps specific for this project go here.
@@ -72,6 +74,7 @@ class Common(Configuration):
         'django_comments',
         'rest_comments',
         'events',
+        #'images',
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -83,6 +86,7 @@ class Common(Configuration):
         'allauth',  # registration
         'allauth.account',  # registration
         'allauth.socialaccount',  # registration
+        'imagestore',
     )
 
     ########## END APP CONFIGURATION
@@ -347,6 +351,16 @@ class Common(Configuration):
     }
 
     ########## END DJANGO_REST_FRAMEWORK CONFIGURATION
+
+    ########## IMAGESTORE CONFIGURATION
+    #IMAGESTORE_IMAGE_MODEL = 'images.models.Image'
+    #IMAGESTORE_ALBUM_MODEL = 'images.models.Album'
+    #IMAGESTORE_IMAGE_FORM = 'images.forms.ImageForm'
+    #IMAGESTORE_ALBUM_FORM = 'images.forms.AlbumForm'
+    IMAGESTORE_LOAD_CSS = True
+
+    ########## END IMAGESTORE CONFIGURATION
+
 
     ########## Your common stuff: Below this line define 3rd party libary settings
 

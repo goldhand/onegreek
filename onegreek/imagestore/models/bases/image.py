@@ -16,6 +16,7 @@ from django.db.models.signals import post_save
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 
+
 try:
     from django.contrib.auth import get_user_model
     User = get_user_model()
@@ -53,6 +54,34 @@ class BaseImage(models.Model):
     @permalink
     def get_absolute_url(self):
         return 'imagestore:image', (), {'pk': self.id}
+
+    def get_api_url(self):
+        return '%s%s' % (settings.MEDIA_URL, self.image)
+
+    def get_sm_img_url(self):
+        try:
+            return get_thumbnail(self.image, '200x150', crop='center').url
+        except IOError:
+            return 'IOError'
+        except ThumbnailError, ex:
+            return 'ThumbnailError, %s' % ex.message
+
+    def get_md_img_url(self):
+        try:
+            return get_thumbnail(self.image, '320x240', crop='center').url
+        except IOError:
+            return 'IOError'
+        except ThumbnailError, ex:
+            return 'ThumbnailError, %s' % ex.message
+
+    def get_lg_img_url(self):
+        try:
+            return get_thumbnail(self.image, '400x300', crop='center').url
+        except IOError:
+            return 'IOError'
+        except ThumbnailError, ex:
+            return 'ThumbnailError, %s' % ex.message
+
 
     def __unicode__(self):
         return '%s'% self.id

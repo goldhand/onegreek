@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import signals
@@ -95,6 +96,10 @@ class Event(TimeFramedModel, StatusModel, Slugged):
     def get_attend_url(self):
         return reverse("events:attend", kwargs={'event_id': self.id})
 
+    def get_content_type_id(self):
+        return ContentType.objects.get_for_model(self).id
+
+
 
 @receiver(signals.post_save, sender=Event)
 def set_group(sender, **kwargs):
@@ -158,18 +163,14 @@ class Attendees(models.Model):
         return self.event.status
 
 
+
 #Event.attendees_set = property(lambda e: Attendees.objects.get_or_create(event=e)[0])
-
-
-
 
 from calendar import HTMLCalendar
 from datetime import date
 from itertools import groupby
 
 from django.utils.html import conditional_escape as esc
-
-
 
 
 class EventCalendar(HTMLCalendar):

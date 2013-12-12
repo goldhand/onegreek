@@ -1,4 +1,29 @@
 {% extends "base.html" %}
+{% load i18n avatar_tags %}
 
-{% block title %}django-avatar{% endblock %}
+{% block title %}{{ user.get_full_name }} Profile{% endblock %}
+
+{% block header_content %}
+    <hr>
+    <div class="row">
+        <div class="span2">
+            {% avatar user %}
+        </div>
+        <div class="span10">
+            <h2>
+                {{ user.get_full_name }} <small>{{ user.status }}</small>
+            </h2>
+            <h4>
+                {% if user.status != 'rush' %}
+                    {{ user.chapter.fraternity.title }}
+                    <small>
+                        {{ user.chapter.title }} chapter - {{ user.university.title }}
+                    </small>
+                {% endif %}
+            </h4>
+        </div>
+    </div>
+    <hr>
+{% endblock header_content %}
+
 {% block content %}{% endblock %}

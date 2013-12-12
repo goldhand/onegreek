@@ -1,49 +1,226 @@
 {% extends "base.html" %}
-{% load avatar_tags %}
+{% load avatar_tags crispy_forms_tags i18n %}
 {% load static %}
 
-{% block title %}User: {{ object.username }}{% endblock %}
+{% block title %}{{ object.get_full_name }}{% endblock %}
+
+{% block header_content %}
+    <hr>
+    <div class="row">
+        <div class="span2">
+            {% avatar object %}
+        </div>
+        <div class="span10">
+            <h2>
+                {{ object.get_full_name }}
+                <small>{{ object.status }}</small>
+            </h2>
+            <h4>
+                {% if object.status != 'rush' %}
+                    {{ object.chapter.fraternity.title }}
+                    <small>
+                        {{ object.chapter.title }} chapter - {{ object.university.title }}
+                    </small>
+                {% endif %}
+            </h4>
+        </div>
+    </div>
+    <hr>
+{% endblock header_content %}
+
 
 {% block content %}
-    <div class="span9">
 
-    <div class="col-sm-9">
-      <h2>{{ object.username }}</h2>
-    </div>
+    {% if object == request.user %}
+        <!-- Action buttons -->
 
-{% if object == request.user %}
-<!-- Action buttons -->     
+        <div class="row">
 
-  <div class="col-sm-9 ">
-    <a class="btn btn-primary" href="{% url 'users:update' %}">My Info</a>
-    <a class="btn btn-primary" href="{% url 'account_email' %}">E-Mail</a>
-    <a class="btn btn-info" href="{% url 'avatar_change' %}">Avatar</a>
-    <!-- Your Stuff: Custom user template urls -->
-  </div>
+            <div class="span8">
+                <tabset class="tabs-top">
+                    <tab heading="Dashboard">
+                        <div ng-view></div>
+                    </tab>
+                    <tab heading="Profile">
+                        <form class="form-horizontal" method="post"
+                              action="{% url 'users:update' %}?next={{ request.path }}">
+                            {% crispy profile_form %}
+                            <div class="form-actions">
+                                <input class="btn btn-primary" type="submit" value="Submit">
+                            </div>
+                        </form>
 
-<!-- End Action buttons -->
-{% endif %}
+                </tabset>
+            </div>
 
-        <h3>
-            {% avatar user %}
-        {{ user.get_full_name }}
-        </h3>
-        <h4>
-            {{ user.chapter.fraternity }}
-            <small>
-                {{ user.chapter }} - {{ user.chapter.university }}
-            </small>
-        </h4>
-        <p>
-            {{ user.year }}
-        </p>
-        <p>
-            {{ user.major }}
-        </p>
-        <p>
-            {{ user.hometown }}
-        </p>
-    </div>
+
+            <div class="span4">
+                <div class="row">
+                    <div class="span4">
+                        <fieldset>
+                            <legend>
+                                Other Links
+                            </legend>
+                            <ul class="unstyled">
+                                <li>
+                                    <a class="" href="{% url 'account_email' %}">Manage E-Mail</a>
+                                </li>
+                                <li>
+                                    <a class="" href="{% url 'events:list' %}">Events List</a>
+                                </li>
+                                {% if object.chapter %}
+                                    <li>
+                                        <a class=""
+                                           href="{% url 'chapters:detail' object.chapter_id %}">{{ object.chapter.fraternity.title }}</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span4">
+                        <fieldset>
+                            <legend>
+                                Profile Image
+                            </legend>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span4">
+                        <tabset class="tabs-top">
+                            <tab heading="Upload New">
+                                <form enctype="multipart/form-data" method="POST"
+                                      action="{% url 'avatar_add' %}">
+                                    {% csrf_token %}
+                                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                                        <div class="btn-group">
+                                    <span class="btn btn-default btn-file">
+                                        <span class="fileinput-new">Upload image</span>
+                                        <span class="fileinput-exists">Change</span>
+                                        <input type="file" name="avatar" id="id_avatar">
+                                    </span>
+                                            <a href="#" class="btn btn-default fileinput-exists"
+                                               data-dismiss="fileinput">Remove</a>
+                                            <input class="btn btn-primary" type="submit"
+                                                   value="{% trans "Save" %}"/>
+                                        </div>
+                                        <div class="fileinput-preview" data-trigger="fileinput"
+                                             style="width: 100%; height: auto; margin-top: 20px;"></div>
+                                    </div>
+
+                                </form>
+                            </tab>
+                            <tab heading="Set Default">
+                                {% if not avatars %}
+                                    <p>{% trans "You haven't uploaded an avatar yet. Please upload one now." %}</p>
+                                {% else %}
+                                    <form method="POST" action="{% url 'avatar_change' %}">
+                                        {% csrf_token %}
+                                        <ul class="avatar-select">
+                                            {{ avatar_primary_form.as_ul }}
+                                        </ul>
+                                        <input class="btn btn-primary" type="submit"
+                                               value="{% trans "Set as profile image" %}"/>
+                                    </form>
+                                {% endif %}
+
+                            </tab>
+                            <tab heading="Delete">
+                                {% if not avatars %}
+                                    <p>{% blocktrans %}You have no avatars to delete. Please
+                                        <a href="{{ avatar_change_url }}">upload one</a> now.{% endblocktrans %}
+                                    </p>
+                                {% else %}
+                                    <form method="POST" action="{% url 'avatar_delete' %}">
+                                        <ul class="avatar-select">
+                                            {{ avatar_delete_form.as_ul }}
+                                        </ul>
+                                        <p>{% csrf_token %}<input class="btn btn-danger" type="submit"
+                                                                  value="{% trans "Delete These" %}"/></p>
+                                    </form>
+                                {% endif %}
+
+                            </tab>
+                        </tabset>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    {% else %}
+
+
+        <div class="span12">
+
+        </div>
+    {% endif %}
+
+
+    <script type="text/ng-template" id="profile-calendar.html">
+
+<h4>
+<a class="" href="{% url 'events:list' %}">
+Events Calendar
+</a>
+</h4>
+
+<a class="btn pull-left" ng-click="calMonthDown()"> < </a>
+<a class="btn pull-right" ng-click="calMonthUp()"> > </a>
+
+<div ng-bind-html="calendar.html"></div>
+
+
+</script>
+
+
 
 
 {% endblock content %}
+
+{% block angular_app_name %}userApp{% endblock angular_app_name %}
+
+{% block angular_modules %}
+    <script src="{% static 'angularjs/app/lib/angular/angular-cookies.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
+    <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
+
+    <script src="{% static 'users/app/lib/angular/angular-dragdrop.min.js' %}"></script>
+{% endblock angular_modules %}
+{% block angular_app %}
+    <script src="{% static 'users/app/js/app-profile.js' %}"></script>
+    <script src="{% static 'users/app/js/controllers.js' %}"></script>
+    <script src="{% static 'users/app/js/services.js' %}"></script>
+    <script src="{% static 'users/app/js/directives.js' %}"></script>
+    <script src="{% static 'users/app/js/filters.js' %}"></script>
+{% endblock angular_app %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap-jasny.css' %}">
+    <style>
+        table.month td.day {
+            height: 80px;
+
+        }
+    </style>
+    {{ block.super }}
+{% endblock css %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/bootstrap-jasny.min.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.avatar-select input').on('click', function () {
+                var checkedId = $(this, 'input').attr('id');
+                $('#' + checkedId)[0].parent.addClass('active');
+                console.log(checkedId);
+            });
+        });
+    </script>
+{% endblock javascript %}

@@ -112,17 +112,25 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.safestring import mark_safe
 
 
+@api_view(['GET', 'POST'])
+@renderer_classes((JSONRenderer,))
 def calendar(request, year, month):
     my_events = get_objects_for_user(request.user, 'events.view_event').order_by('start').filter(
         start__year=year, start__month=month
     )
+    cal_template = 'events/calendar.html'
+
     if 'rsvp' in request.GET:
         if request.GET['rsvp']:
             #self.events = self.group_by_day([event for event in events.event])
             my_events = [attending.event for attending in request.user.get_rsvps()]
+    elif 'profile' in request.GET:
+        if request.GET['profile']:
+            cal_template = 'events/calendar-profile.html'
 
     cal = EventCalendar(my_events).formatmonth(int(year), int(month))
-    return render(request, 'events/calendar.html', {'calendar': mark_safe(cal), })
+
+    return Response({'calendar': mark_safe(cal)})
 
 
 class CalendarRedirectView(generic.RedirectView):

@@ -16,10 +16,13 @@ from django.utils.translation import ugettext_lazy as _
 class ImageForm(forms.ModelForm):
     class Meta(object):
         model = Image
-        exclude = ('user', 'order')
+        exclude = ('user', 'order', 'status_changed',
+                   'content_type', 'object_pk')
 
     description = forms.CharField(widget=forms.Textarea(attrs={'rows': 2, 'cols': 19}), required=False,
                                   label=_('Description'))
+    #content_type = forms.CharField(widget=forms.HiddenInput())
+    #object_pk = forms.CharField(widget=forms.HiddenInput())
 
     def __init__(self, user, *args, **kwargs):
         super(ImageForm, self).__init__(*args, **kwargs)

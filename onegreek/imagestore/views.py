@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
@@ -12,6 +13,8 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from rest_framework import viewsets, filters
+from rest_framework.response import Response
 from tagging.models import TaggedItem
 from tagging.utils import get_tag
 from utils import load_class
@@ -42,8 +45,8 @@ class AlbumListView(ListView):
     def get_queryset(self):
         albums = Album.objects.filter(is_public=True).select_related('head')
         self.e_context = dict()
-        if 'username' in self.kwargs:
-            user = get_object_or_404(**{'klass': User, username_field: self.kwargs['username']})
+        if 'pk' in self.kwargs:
+            user = get_object_or_404(**{'klass': User, 'pk': self.kwargs['pk']})
             albums = albums.filter(user=user)
             self.e_context['view_user'] = user
         return albums
@@ -63,8 +66,8 @@ def get_images_queryset(self):
             raise Http404(_('No Tag found matching "%s".') % self.kwargs['tag'])
         self.e_context['tag'] = tag_instance
         images = TaggedItem.objects.get_by_model(images, tag_instance)
-    if 'username' in self.kwargs:
-        user = get_object_or_404(**{'klass': User, username_field: self.kwargs['username']})
+    if 'pk' in self.kwargs:
+        user = get_object_or_404(**{'klass': User, 'pk': self.kwargs['pk']})
         self.e_context['view_user'] = user
         images = images.filter(user=user)
     if 'album_id' in self.kwargs:
@@ -212,6 +215,12 @@ class CreateImage(CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.user = self.request.user
+
+        # Very explicit use of ctype/obj id. Should be made more modular to support more than chapters
+        chapter = self.request.user.chapter
+
+        self.object.content_type = ContentType.objects.get_for_model(chapter)
+        self.object.object_pk = chapter.id
         self.object.save()
         if self.object.album:
             self.object.album.save()
@@ -254,3 +263,72 @@ class DeleteImage(DeleteView):
     @method_decorator(permission_required('%s.delete_%s' % (image_applabel, image_classname)))
     def dispatch(self, *args, **kwargs):
         return super(DeleteImage, self).dispatch(*args, **kwargs)
+
+
+from django.db import models
+from .serializers import ImageSerializer
+from .permissions import ImageObjectPermissions
+
+
+
+class ImageViewSet(viewsets.ModelViewSet):
+    queryset = Image.objects.all()
+    serializer_class = ImageSerializer
+    #filter_backends = (filters.DjangoObjectPermissionsFilter,)
+    #permission_classes = (ImageObjectPermissions,)
+
+    def get_queryset(self):
+        q = super(ImageViewSet, self).get_queryset()
+        if 'ctype' in self.request.GET and'obj' in self.request.GET:
+            return q.filter(content_type_id=self.request.GET['ctype'], object_pk=self.request.GET['obj'])
+
+        elif 'user' in self.request.GET:
+            return q.filter(user_id=self.request.GET['user'])
+        else:
+            return q
+
+
+class CreateImageFor(CreateImage):
+    template_name = 'imagestore/forms/image_form.html'
+    model = Image
+    form_class = ImageForm
+
+    @method_decorator(login_required)
+    @method_decorator(permission_required('%s.add_%s' % (image_applabel, image_classname)))
+    def dispatch(self, *args, **kwargs):
+        return super(CreateImage, self).dispatch(*args, **kwargs)
+
+    def get_form(self, form_class):
+        return form_class(user=self.request.user, **self.get_form_kwargs())
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+
+        ctype = ContentType.objects.get(id=self.kwargs['ctype_id'])
+        obj_id = self.kwargs['obj_id']
+
+
+        self.object.content_type = ctype
+        self.object.object_pk = obj_id
+        self.object.save()
+        if self.object.album:
+            self.object.album.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class CreateAlbumFor(CreateAlbum):
+    template_name = 'imagestore/forms/album_form.html'
+    model = Album
+    form_class = AlbumForm
+
+    @method_decorator(login_required)
+    @method_decorator(permission_required('%s.add_%s' % (album_applabel, album_classname)))
+    def dispatch(self, *args, **kwargs):
+        return super(CreateAlbum, self).dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())

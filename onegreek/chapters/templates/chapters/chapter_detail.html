@@ -17,7 +17,13 @@
         <div class="row">
 
             <div class="span5">
-                <img src="holder.js/380x200">
+                <div class="chapter-carousel">
+                <carousel>
+                    <slide ng-repeat="image in images">
+                        <img class="image-responsive" src="{[{ image.lg_img_url }]}">
+                    </slide>
+                </carousel>
+                </div>
 
                 <dl>
                     <dt>

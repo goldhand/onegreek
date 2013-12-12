@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
 from users.serializers import UserSerializer
@@ -14,12 +15,14 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
     attend_url = serializers.Field('get_attend_url')
     rsvp_url = serializers.Field('get_rsvp_url')
     text_color_class = serializers.Field('get_status_text_class')
+    ctype_id = serializers.SerializerMethodField('get_content_type_id')
     #api_url = serializers.SerializerMethodField('get_api_url')
 
     class Meta:
         model = Event
         fields = [
             'id',
+            'ctype_id',
             'url',
             'title',
             'slug',
@@ -44,6 +47,9 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
             return obj.get_chapter().id
         else:
             return None
+
+    def get_content_type_id(self, obj):
+        return ContentType.objects.get_for_model(Event).id
 
 
 class EventNestedSerializer(serializers.HyperlinkedModelSerializer):

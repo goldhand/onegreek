@@ -9,9 +9,8 @@ var userApp = angular.module('userApp', [
     'ngDragDrop',
     'userControllers',
     'userServices',
-    'userDirectives',
+    'userDirectives'
     //'groupControllers',
-    'groupServices'
     //'myApp.filters',
     //'myApp.services',
     //'myApp.directives',
@@ -26,45 +25,90 @@ var userApp = angular.module('userApp', [
 userApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-    $routeProvider.when('/users', {
-        templateUrl: 'list.html',
-        controller: 'UserListCtrl',
-        resolve: {
-            users: function(UserService) {
-                return UserService.list();
-            },
-            groups: function(GroupService) {
-                return GroupService.list();
-            }
-        }
+    $routeProvider.when('/events/calendar/:year/:month/:day', {
+            templateUrl: 'profile-calendar.html',
+            controller: 'ProfileCalendarCtrl'
     });
-    $routeProvider.when('/users/filter/:query/:queryId', {
-        templateUrl: 'list.html',
-        controller: 'UserListCtrl',
-        resolve: {
-            users: function($route, UserService) {
-                var q = $route.current.params.query;
-                var qId = $route.current.params.queryId;
-                return UserService.filter(q, qId);
-            }
-        }
-    });
-    $routeProvider.when('/users/:userId', {
-        templateUrl: 'detail.html',
-        controller: 'UserDetailCtrl',
-        resolve: {
-            user: function($route, UserService) {
-                var userId = $route.current.params.userId;
-                return UserService.get(userId);
-            }
-        }
-
-    });
-    $routeProvider.when('/events/calendar', {
-        templateUrl: 'http://localhost:8000/events/calendar/2013/11/'
+    $routeProvider.when('/events/calendar/', {
+        templateUrl: 'profile-calendar.html',
+        controller: 'ProfileCalendarCtrl'
     });
     $routeProvider.when('/events/calendar/rsvp', {
-        templateUrl: 'http://localhost:8000/events/calendar/2013/11/?rsvp=true'
+        templateUrl: 'http://localhost:8000/events/calendar/2013/11/?rsvp=true&profile=true'
     });
-    $routeProvider.otherwise({redirectTo: '/users'});
+    $routeProvider.otherwise({redirectTo: '/events/calendar'});
 }]);
+
+
+
+userApp.controller('ProfileCalendarCtrl', [
+    '$scope',
+    '$http',
+    '$modal',
+    '$sce',
+    '$route',
+    'filterFilter',
+    'GlobalService',
+    function (
+        $scope,
+        $http,
+        $modal,
+        $sce,
+        $route,
+        filterFilter,
+        GlobalService
+        ) {
+
+        $scope.globals = GlobalService;
+        //$scope.year = $route.current.params.year;
+        //$scope.month = $route.current.params.month;
+        //$scope.day = $route.current.params.day;
+        //$scope.calendar.day = 10;
+
+        $scope.getCal = function(year, month) {
+            var cal_url = '/events/calendar/' + year + '/' + month + '/';   // + $scope.day + '/';
+            $http.get(cal_url).success(function(data) {
+                console.log(data);
+                $scope.calendar = {
+                    cal: data,
+                    html: $sce.trustAsHtml(data.calendar),
+                    year: year,
+                    month: month
+                };
+                console.log($scope.calendar);
+            });
+        };
+
+        $scope.cal = {
+            year: 2013,
+            month: 12
+        };
+        $scope.calMonthUp = function() {
+            if($scope.cal.month < 12) {
+                $scope.cal.month += 1;
+            } else {
+                $scope.cal.month = 1;
+                $scope.cal.year += 1;
+            }
+            $scope.getCal($scope.cal.year, $scope.cal.month);
+        };
+        $scope.calMonthDown = function() {
+            if($scope.cal.month > 2) {
+                $scope.cal.month -= 1;
+            } else {
+                $scope.cal.month = 12;
+                $scope.cal.year -= 1;
+            }
+            $scope.getCal($scope.cal.year, $scope.cal.month);
+        };
+
+        $scope.getCal($scope.cal.year, $scope.cal.month);
+
+        console.log($scope.calendar);
+
+
+    }]);
+
+
+
+

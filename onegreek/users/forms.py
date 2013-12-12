@@ -97,3 +97,69 @@ class UserForm(NgModelFormMixin, forms.ModelForm):
         )
 
 
+class UserEditForm(forms.ModelForm):
+
+    class Meta:
+        # Set this form to use the User model.
+        model = User
+
+        # Constrain the UserForm to just these fields.
+        fields = (
+            "first_name",
+            "last_name",
+            #"phone",
+            #"chapter",
+            "gpa",
+            "highschool_gpa",
+            "year",
+            "major",
+            "hometown",
+            #"status"
+        )
+
+    def __init__(self, *args, **kwargs):
+        super(UserEditForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.form_class = 'form-horizontal'
+        self.helper.layout = Layout(
+            Field('first_name', css_class=""),
+            Field('last_name', css_class=""),
+            Fieldset(
+                'Profile Details',
+                Field('year', css_class=""),
+                Field('major', css_class=""),
+                Field('gpa', css_class=""),
+                Field('highschool_gpa', css_class=""),
+                Field('hometown', css_class=""),
+                #Field('phone', css_class=""),
+                #Field('chapter', css_class=""),
+            )
+        )
+
+
+from avatar.forms import UploadAvatarForm, DeleteAvatarForm, PrimaryAvatarForm
+
+
+class UploadAvatarFormNu(UploadAvatarForm):
+
+    def __init__(self, *args, **kwargs):
+        super(UploadAvatarFormNu, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        #self.helper.form_tag = False
+        #self.helper.form_class = 'form-horizontal'
+        self.helper.layout = Layout(
+            Fieldset(
+                'Upload Avatar',
+                Field('avatar', css_class=""),
+            )
+        )
+
+
+class DeleteAvatarFormNu(DeleteAvatarForm):
+    pass
+
+
+
+class PrimaryAvatarFormNu(PrimaryAvatarForm):
+    pass
