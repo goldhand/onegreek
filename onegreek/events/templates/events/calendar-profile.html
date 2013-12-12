@@ -1,0 +1,26 @@
+
+
+<div class="btn-group toggle-view">
+    <a class="btn btn-info" href="#/events"><< List</a>
+    <a class="btn btn-info" href="#/events/calendar/rsvp">RSVPs</a>
+    <a class="btn btn-info" href="#/events/calendar">All</a>
+</div>
+
+<div class="row-fluid">
+        {{ calendar }}
+    </div>
+
+    <style>
+    table.month td.day {
+        height: 80px;
+
+    }
+    </style>
+
+    <script>
+        $(document).ready(function() {
+            $('table').addClass('table table-bordered');
+        });
+
+    </script>
+
