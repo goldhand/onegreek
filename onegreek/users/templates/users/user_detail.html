@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load avatar_tags crispy_forms_tags i18n %}
-{% load static %}
+{% load staticfiles %}
 
 {% block title %}{{ object.get_full_name }}{% endblock %}
 
@@ -184,11 +184,7 @@ Events Calendar
 {% block angular_app_name %}userApp{% endblock angular_app_name %}
 
 {% block angular_modules %}
-    <script src="{% static 'angularjs/app/lib/angular/angular-cookies.js' %}"></script>
-    <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
-    <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
-    <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
-
+    {{ block.super }}
     <script src="{% static 'users/app/lib/angular/angular-dragdrop.min.js' %}"></script>
 {% endblock angular_modules %}
 {% block angular_app %}
