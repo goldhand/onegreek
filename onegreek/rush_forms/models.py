@@ -144,3 +144,11 @@ class FieldEntry(models.Model):
         verbose_name = _("Form field entry")
         verbose_name_plural = _("Form field entries")
 
+    @property
+    def field(self):
+        return self.entry.form.fields.get(id=self.field_id)
+
+    @property
+    def label(self):
+        return self.field.label
+

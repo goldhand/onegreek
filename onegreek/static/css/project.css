@@ -153,3 +153,41 @@
 body {
     padding-bottom: 100px;
 }
+.rush-carousel .events-list {
+    line-height: 20px;
+}
+.rush-carousel .events-list li {
+    margin-bottom: 10px;
+}
+
+.rush-carousel .events-list span {
+    font-weight: bolder;
+}
+
+.rush-carousel .profile-list dd {
+    margin-left: 100px;
+}
+.rush-carousel .profile-list dt {
+    width: 80px;
+}
+
+.rush-carousel .rush-form-list .answer {
+    font-size: 16px;
+    font-weight: lighter;
+    line-height: 20px;
+}
+.rush-carousel .rush-form-list .question {
+    font-weight: bolder;
+    font-size: 17px;
+    margin-right: 5px;
+    line-height: 22px;
+}
+
+.rush-carousel .divider {
+    display: inline-block;
+    width: 100%;
+    clear: both;
+    padding: 5px;
+    border-bottom: 1px solid #e7e7e7;
+}
+

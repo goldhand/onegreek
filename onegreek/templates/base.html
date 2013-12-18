@@ -27,7 +27,7 @@
     {% block javascript %}
         <!-- Latest JQuery -->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-        <script src="{% static 'js/jquery.min.js' %}"></script>
+        <!--script src="{% static 'js/jquery.min.js' %}"></script-->
         <!-- Latest compiled and minified JavaScript -->
         <!--script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script-->
     {% endblock javascript %}
@@ -76,17 +76,16 @@
     {% endblock angular %}
 </head>
 
-<body {% block extra_body_tag_data %}{% endblock extra_body_tag_data %}>
+<body ng-cloak {% block extra_body_tag_data %}{% endblock extra_body_tag_data %}>
 
 {% block header_navbar %}
 {% endblock header_navbar %}
 
 {% block user_panel %}
     {% load avatar_tags i18n %}
-    <div class="panel">
-        {% if request.user.is_authenticated %}
 
-            <div class="">
+        {% if request.user.is_staff %}
+            <div class="panel">
                 <div class="span3">
                     <a class="" ng-click="isCollapsed = !isCollapsed">
                         <img class="thumbnail pull-left" src="{{ request.user.profile_image_url }}">
@@ -116,15 +115,13 @@
                         </ul>
                     </div>
 
-                    {% if request.user.is_staff %}
                     <div class="span2">
                         <ul class="nav nav-list">
-                                <li class="nav-header">Admin</li>
-                                <li><a href="{% url 'api-root' %}">API</a></li>
-                                <li><a href="/admin/">Admin</a></li>
+                            <li class="nav-header">Admin</li>
+                            <li><a href="{% url 'api-root' %}">API</a></li>
+                            <li><a href="/admin/">Admin</a></li>
                         </ul>
                     </div>
-                    {% endif %}
 
                     <div class="span2">
                         <ul class="nav nav-list">
@@ -160,12 +157,66 @@
                 </div>
 
             </div>
-            </div>
-
 
             <div class="clearfix"></div>
         {% else %}
-            <li><a href="{% url 'account_login' %}">{% trans "Log In" %}</a></li>
+
+
+            <div class="container">
+            <div class="row">
+            <div class="span4">
+                    <img class="" src="holder.js/400x100">
+            </div>
+
+        {% if request.user.is_authenticated %}
+
+
+                <div class="span4 offset4">
+                    {% with request.user as user %}
+                    <div class="media">
+                        <a class="pull-left" href="#">
+                            <img class="thumbnail" src="{{ user.profile_image_url }}">
+                        </a>
+                        <div class="media-body">
+                            <h4 class="media-heading center-text">
+                                Welcome, {{ user.get_full_name }} <br/>
+                            </h4>
+                            <p class="center-text">
+                                {{ user.status|title }}{% if user.status != 'rush' %} - {{ user.chapter.fraternity.title }}{% endif %}
+                            <br>
+                                <a href="{% url 'users:detail' request.user.id %}">{% trans "Profile" %}</a> <span class="divider"></span>
+                                <a href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
+                            </p>
+                        </div>
+                    </div>
+                    {% endwith %}
+                </div>
+
+        {% else %}
+
+            <div class="span3 offset5">
+                <div class="media">
+                    <a class="pull-left" href="#">
+                        <img class="thumbnail pull-left" src="holder.js/40x40">
+                    </a>
+                    <div class="media-body">
+                        <h6 class="media-heading">
+                            You are currently not logged in
+                        </h6>
+                        <ul class="inline">
+                            <li>
+                                <a href="{% url 'account_login' %}">{% trans "Connect with Facebook" %}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        {% endif %}
+
+            </div>
+            </div>
+
         {% endif %}
 
 {% endblock user_panel %}

@@ -13,7 +13,38 @@ userControllers.controller('UserGlobalCtrl', [
         var failureCb = function (status) {
             console.log(status);
         };
-        $scope.initialize = function (is_authenticated, user_id, chapter_id, host) {
+        $scope.globals.go = function ( path ) {
+          $location.path( path );
+        };
+
+        $scope.globals.tabs = [
+            {
+                active: true,
+                heading: 'All',
+                status: '!rush',
+                order : 0
+            },
+            {
+                active: false,
+                heading: 'Actives',
+                status: 'active',
+                order: 1
+            },
+            {
+                active: false,
+                heading: 'Pledge',
+                status: 'pledge',
+                order: 2
+            },
+            {
+                active: false,
+                heading: 'Rush',
+                status: 'rush',
+                order: 3
+            }
+        ];
+
+        $scope.initialize = function (is_authenticated, user_id, chapter_id, rush_form_id, host) {
             $scope.globals.is_authenticated = is_authenticated;
             $scope.globals.user_id = user_id;
             if(is_authenticated) {
@@ -26,6 +57,7 @@ userControllers.controller('UserGlobalCtrl', [
                 });
             }
             $scope.globals.chapter_id = chapter_id;
+            $scope.globals.rush_form_id = rush_form_id;
             $scope.globals.host = host;
             console.log(host);
         };
@@ -37,6 +69,7 @@ userControllers.controller('UserListCtrl', [
     '$scope',
     '$http',
     '$modal',
+    '$location',
     'filterFilter',
     'UserService',
     //'GroupService',
@@ -47,6 +80,7 @@ userControllers.controller('UserListCtrl', [
         $scope,
         $http,
         $modal,
+        $location,
         filterFilter,
         UserService,
         GlobalService,
@@ -60,10 +94,13 @@ userControllers.controller('UserListCtrl', [
         $scope.globals = GlobalService;
         $scope.groups = groups;
 
-
         $scope.filterForUserStatus = function(status) {
             $scope.users = filterFilter($scope.globals.users, {status: status});
         };
+        $scope.globals.filterForUserStatus = function(status) {
+            $scope.users = filterFilter($scope.globals.users, {status: status});
+        };
+
         $scope.userStatusOrder = function(user) {
             var userStatusOrderKey = {
                 active_pending: 1,
@@ -131,6 +168,7 @@ userControllers.controller('UserListCtrl', [
                     disabled: false,
                     display: false,
                     rush: false,
+                    call: false,
                     pending: false
                 };
                 var re = /^\w+?\d+?\s/;
@@ -138,6 +176,10 @@ userControllers.controller('UserListCtrl', [
                 if(group.tab.display == "Rush") {
                     group.tab.rush = true;
                     $scope.globals.rushGroup = group;
+                }
+                if(group.tab.display == "Call List") {
+                    group.tab.call = true;
+                    $scope.globals.callGroup = group;
                 }
                 if(group.tab.display == "Pending") {
                     group.tab.pending = true;
@@ -165,6 +207,33 @@ userControllers.controller('UserListCtrl', [
         }
 
         $scope.Search = undefined;
+
+        $scope.goGroup = function ( path, query ) {
+            var group = $scope.filterForGroupName(query);
+            $location.path( path + group.id );
+        };
+
+        $scope.globals.goGroup = function ( path, query ) {
+            var group = $scope.filterForGroupName(query);
+            $location.path( path + group.id );
+        };
+
+        angular.forEach($scope.globals.tabs, function(tab) {
+            tab.select = function() {
+                $scope.filterForUserStatus(tab.status);
+            };
+            if (tab.active) {
+                $scope.filterForUserStatus(tab.status);
+            }
+        });
+
+
+
+
+
+
+
+
 
         $scope.submitPending = function(group) {
             var drop_user_set = [];
@@ -294,19 +363,22 @@ userControllers.controller('UserListCtrl', [
             });
         };
 
-        $scope.openCarouselModal = function (users) {
+        $scope.globals.openCarouselModal = function () {
             var group_name_prefix = 'chapter_' + $scope.globals.chapter_id;
             var call_group = $scope.filterForGroupName(group_name_prefix + ' Call List');
             var modalInstance = $modal.open({
                 templateUrl: 'carousel-modal.html',
                 controller: 'CarouselModalInstanceCtrl',
-                windowClass: 'full-screen-modal',
+                windowClass: 'full-screen-modal rush-carousel',
                 resolve: {
                     users: function () {
-                        return users;
+                        return $scope.users;
                     },
                     call_list: function () {
                         return call_group;
+                    },
+                    rush_form_id: function () {
+                        return $scope.globals.rush_form_id
                     }
                 }
             });
@@ -321,8 +393,18 @@ userControllers.controller('UserListCtrl', [
         };
     }]);
 
-userControllers.controller('UserDetailCtrl', ['$scope', '$http', '$routeParams', 'user', function ($scope, $http, $routeParams, user) {
-    $scope.user = user;
+userControllers.controller('UserDetailCtrl', ['$scope', '$http', '$routeParams', 'GlobalService', 'user',
+    function ($scope, $http, $routeParams, GlobalService, user) {
+        $scope.user = user;
+        $scope.globals = GlobalService;
+
+    angular.forEach($scope.globals.tabs, function(tab) {
+        tab.active = false;
+        tab.select = function() {
+            $scope.globals.go('#/users');
+        }
+    });
+
     $scope.submit = function() {
         $http.post('/api/users/' + $routeParams.userId + '/', $scope.user).success(function(user_data) {
             $scope.users.push(user_data);
@@ -341,6 +423,210 @@ userControllers.controller('UserDetailCtrl', ['$scope', '$http', '$routeParams',
     };
 }]);
 
+userControllers.controller('UserQueryCtrl', [
+    '$scope',
+    '$http',
+    '$modal',
+    '$location',
+    'filterFilter',
+    'UserService',
+    'GlobalService',
+    'users',
+    function (
+        $scope,
+        $http,
+        $modal,
+        $location,
+        filterFilter,
+        UserService,
+        GlobalService,
+        users
+        ) {
+
+        $scope.users = users;
+        $scope.globals = GlobalService;
+
+        angular.forEach($scope.globals.tabs, function(tab) {
+            tab.active = false;
+            tab.select = function() {
+                $scope.globals.go('#/users');
+            }
+        });
+
+
+        $scope.globals.openCarouselModal = function () {
+            var group_name_prefix = 'chapter_' + $scope.globals.chapter_id;
+            var call_group = $scope.globals.callGroup;
+            var modalInstance = $modal.open({
+                templateUrl: 'carousel-modal.html',
+                controller: 'CarouselModalInstanceCtrl',
+                windowClass: 'full-screen-modal',
+                resolve: {
+                    users: function () {
+                        return $scope.users;
+                    },
+                    call_list: function () {
+                        return call_group;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (call_list) {
+                console.log(call_list);
+                angular.forEach(call_list.add, function(user) {
+                    call_group.user_set.push(user);
+                });
+                $scope.submitGroup(call_group);
+            }, function () {});
+        };
+
+
+
+    }]);
+
+
+userControllers.controller('CarouselModalInstanceCtrl', [
+    '$scope',
+    '$timeout',
+    '$modalInstance',
+    '$http',
+    'filterFilter',
+    'users',
+    'call_list',
+    'rush_form_id',
+    function (
+        $scope,
+        $timeout,
+        $modalInstance,
+        $http,
+        filterFilter,
+        users,
+        call_list,
+        rush_form_id
+        ) {
+
+        $scope.users = users;
+        $scope.call_list = call_list;
+        $scope.events = [];
+        $scope.rush_form_id = rush_form_id;
+
+        $scope.getRushEvents = function() {
+            $http.get('/api/events/?rush_week=true&nest=true').success(function(data) {
+                $scope.events = data;
+            });
+        };
+        $scope.getRushEvents();
+
+        $scope.getRushForm = function() {
+            $http.get('/rush/forms/' + $scope.rush_form_id + '/').success(function(data) {
+                console.log('\n\n\n++++++++++++++++++Rush Form ++++++++++++++++++++\n\n\n');
+                console.log(data);
+                angular.forEach(data.fields, function(field) {
+                    field.value = '';
+                });
+                $scope.rushForm = data;
+                console.log($scope.rushForm);
+            });
+        };
+        $scope.getRushForm();
+
+
+        $scope.getEventRsvpForUser = function(user, event) {
+            var rsvp_query_set = filterFilter(event.get_rsvps, {id: user.id});
+            var rsvp = false;
+            if (rsvp_query_set.length > 0) {
+                rsvp = true;
+            }
+
+            return rsvp
+        };
+        $scope.getEventAttendForUser = function(user, event) {
+            var attendee_query_set = filterFilter(event.get_attendees, {id: user.id});
+            var attendee = false;
+            if (attendee_query_set.length > 0) {
+                attendee = true;
+            }
+            return attendee
+        };
+        $scope.getEntryForUser = function(user) {
+            var entry_url = '/rush/forms/' + $scope.rush_form_id + '/' + user.id + '/';
+
+            $http.get(entry_url).success(function(data) {
+                console.log('\n\n\n++++++++++++++++++Entry For User ' + user.get_full_name + ' ++++++++++++++++++++\n\n\n');
+                console.log(data);
+                console.log('\n\n\n++++++++++++++++++Users ++++++++++++++++++++\n\n\n');
+                console.log($scope.users);
+                user.fields = data.entry.fields;
+                //return data;
+            });
+        };
+        $scope.getEntriesForUsers = function() {
+            angular.forEach($scope.users, function(user) {
+                $scope.getEntryForUser(user);
+                console.log(user);
+            });
+        };
+        $scope.getEntriesForUsers();
+
+
+        $scope.callList = function(user, action) {
+            if(action == 'add') {
+                $scope.call_list.user_set.push(user);
+                user.call = true;
+            }
+            if(action == 'remove') {
+                var add_index = $scope.call_list.user_set.indexOf(user);
+                $scope.call_list.user_set.splice(add_index, 1);
+                user.call = false;
+            }
+
+        };
+        $scope.ok = function () {
+            console.log('RushCarouselInstance.ok');
+            $modalInstance.close($scope.call_list);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.close($scope.call_list);
+        };
+    }]);
+
+
+
+
+
+
+
+
+
+//*******************************************
+
+
+
+userControllers.controller('ModalInstanceCtrl', [
+    '$scope',
+    '$timeout',
+    '$modalInstance',
+    'users',
+    function (
+        $scope,
+        $timeout,
+        $modalInstance,
+        users
+        ) {
+
+        $scope.users = users;
+
+        $scope.ok = function () {
+            console.log('myModalInstance.ok');
+            console.log($scope.user);
+            $modalInstance.close($scope.user);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    }]);
 
 userControllers.controller('GroupListCtrl', [
     '$scope',
@@ -396,6 +682,7 @@ userControllers.controller('GroupListCtrl', [
 
 
     }]);
+
 
 userControllers.controller('MyFormCtrl', [
     '$scope',
@@ -456,72 +743,6 @@ userControllers.controller('MyFormCtrl', [
     }]);
 
 
-
-userControllers.controller('ModalInstanceCtrl', [
-    '$scope',
-    '$timeout',
-    '$modalInstance',
-    'group',
-    function (
-        $scope,
-        $timeout,
-        $modalInstance,
-        group
-        ) {
-
-        $scope.group = group;
-
-        $scope.ok = function () {
-            console.log('myModalInstance.ok');
-            console.log($scope.group);
-            $modalInstance.close($scope.group);
-        };
-
-        $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
-        };
-    }]);
-
-
-userControllers.controller('CarouselModalInstanceCtrl', [
-    '$scope',
-    '$timeout',
-    '$modalInstance',
-    'users',
-    'call_list',
-    function (
-        $scope,
-        $timeout,
-        $modalInstance,
-        users,
-        call_list
-        ) {
-
-        $scope.users = users;
-        $scope.call_list = call_list;
-
-
-        $scope.callList = function(user, action) {
-            if(action == 'add') {
-                $scope.call_list.user_set.push(user);
-                user.call = true;
-            }
-            if(action == 'remove') {
-                var add_index = $scope.call_list.user_set.indexOf(user);
-                $scope.call_list.user_set.splice(add_index, 1);
-                user.call = false;
-            }
-
-        };
-        $scope.ok = function () {
-            console.log('RushCarouselInstance.ok');
-            $modalInstance.close($scope.call_list);
-        };
-
-        $scope.cancel = function () {
-            $modalInstance.close($scope.call_list);
-        };
-    }]);
 
 
 

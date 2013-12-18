@@ -8,7 +8,7 @@ var userServices = angular.module('userServices', ['ngResource']);
 userServices.factory('GlobalService', function () {
     var vars = {
         is_authenticated: false
-    }
+    };
     return vars;
 });
 

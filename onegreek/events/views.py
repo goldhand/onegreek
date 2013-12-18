@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.views import generic
@@ -34,6 +36,30 @@ class EventViewSet(viewsets.ModelViewSet):
 
         return EventSerializer
 
+    def get_queryset(self):
+        queryset = super(EventViewSet, self).get_queryset()
+        print queryset
+        if 'rush_week' in self.request.GET:
+            if self.request.GET['rush_week']:
+                now = datetime.datetime.now()
+                start_date = now.replace(day=1, hour=1)
+                end_date = now.replace(day=1, hour=1)
+                if now.month <= 4:
+                    start_date = start_date.replace(month=1)
+                    end_date = end_date.replace(month=6)
+                elif now.month >= 11:
+                    start_date = start_date.replace(year=now.year + 1, month=1)
+                    end_date = end_date.replace(year=now.year + 1, month=6)
+                else:
+                    start_date = start_date.replace(month=7)
+                    end_date = end_date.replace(month=12)
+
+                queryset = queryset.filter(status='rush').filter(start__range=(start_date, end_date))
+
+        print queryset
+        return queryset
+
+
 
 class EventDetail(generic.DetailView):
     model = Event
@@ -58,18 +84,24 @@ def rsvp_event(request, event_id, format=None):
     if event:
         attendees = event.get_attendees_object()
 
+    if 'user_id' in request.GET:
+        user = get_object_or_404(User, pk=request.GET['user_id'])
+    else:
+        user = request.user
+
     if request.method == "POST":
-        if request.user in attendees.rsvps.all():
-            attendees.rsvps.remove(request.user)
+
+        if user in attendees.rsvps.all():
+            attendees.rsvps.remove(user)
         else:
-            attendees.rsvps.add(request.user)
+            attendees.rsvps.add(user)
             response['rsvp'] = True
             response['display'] = 'attending'
         attendees.save()
         response['success'] = True
     else:
         response['success'] = True
-        if request.user in attendees.rsvps.all():
+        if user in attendees.rsvps.all():
             response['rsvp'] = True
             response['display'] = 'attending'
 
@@ -82,7 +114,10 @@ def attend_event(request, event_id, format=None):
     event = get_object_or_404(Event, id=event_id)
     response = {'success': False, 'attend': False, 'display': 'did not attend'}
     attendees = []
-    user = request.user
+    if 'user_id' in request.GET:
+        user = get_object_or_404(User, pk=request.GET['user_id'])
+    else:
+        user = request.user
 
     if event:
         attendees = event.get_attendees_object()

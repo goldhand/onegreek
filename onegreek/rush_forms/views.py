@@ -5,7 +5,7 @@ from django.template import RequestContext
 
 from django.conf import settings
 from .forms import FormForForm
-from .models import Form
+from .models import Form, FormEntry
 from .signals import form_invalid, form_valid
 
 from rest_framework import viewsets
@@ -48,17 +48,47 @@ def rush_form_view(request, pk, format=None):
     Display a built form and handle submission.
     """
     rush_form = get_object_or_404(Form, pk=pk)
-    print request.POST
-    form = FormForForm(rush_form, request.DATA or None, request.FILES or None)
-    if form.is_valid():
-        entry = form.save()
-        entry.user = request.user
-        entry.save()
-        form_valid.send(sender=request, form=form, entry=entry)
-        return Response({'success': True})
+
+    if request.method == "POST":
+        form = FormForForm(rush_form, request.DATA or None, request.FILES or None)
+        if form.is_valid():
+            entry = form.save()
+            entry.user = request.user
+            entry.save()
+            form_valid.send(sender=request, form=form, entry=entry)
+            return Response({'success': True})
+        else:
+            form_invalid.send(sender=request, form=form)
+            return Response({'success': False, 'errors': form.errors, 'data': request.DATA})
     else:
-        form_invalid.send(sender=request, form=form)
-        return Response({'success': False, 'errors': form.errors, 'data': request.DATA})
+        _response = {
+            'success': True,
+            'fields': [{'id': field.id, 'label': field.label} for field in rush_form.fields.all()]
+            }
+        return Response(_response)
+
+
+
+@api_view(['GET', 'POST'])
+@renderer_classes((JSONRenderer,))
+@parser_classes((JSONParser, MultiPartParser))
+def rush_form_user_entry_view(request, pk, user_id, format=None):
+    """
+    Display a built form and handle submission.
+    """
+    rush_form = get_object_or_404(Form, pk=pk)
+    rush_form_entries = rush_form.entries.filter(user_id=user_id)
+    rush_form_entry = rush_form_entries.latest('entry_time')
+
+    user_entry = {
+        'form_id': rush_form.id,
+        'id': rush_form_entry.id,
+        'fields': [{'id': field.id, 'label': field.label, 'value': field.value} for field in rush_form_entry.fields.all()]
+    }
+
+    print user_entry
+    return Response({'success': True, 'entry': user_entry})
+
 
 
 '''

@@ -39,8 +39,8 @@ userApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $htt
         }
     });
     $routeProvider.when('/users/filter/:query/:queryId', {
-        templateUrl: 'list.html',
-        controller: 'UserListCtrl',
+        templateUrl: 'query.html',
+        controller: 'UserQueryCtrl',
         resolve: {
             users: function($route, UserService) {
                 var q = $route.current.params.query;
