@@ -343,7 +343,6 @@
                         </div>
                         <div class="span4">
                             <ul class="unstyled">
-                                <li class="divider"></li>
                                 <li>
                                     <dl class="dl-horizontal profile-list">
                                         <dt>Year</dt>
@@ -371,14 +370,32 @@
                         <div class="span4">
 
                             <ul class="unstyled events-list">
+                                <li>
+                                    <ul class="inline">
+                                        <li><span>Rush Week Events</span></li>
+                                        <li class="pull-right"><span>Attend</span></li>
+                                        <li class="pull-right"><span>Rsvp</span></li>
+                                    </ul>
+                                </li>
+
+                                <li class="divider"></li>
+
                                 <li ng-repeat="event in events">
-                                    <span>{[{ event.title }]}</span>
 
                                     <ul class="inline">
-                                        <li class="label">RSVP</li>
-                                        <li ng-bind="getEventRsvpForUser(user, event)"></li>
-                                        <li class="label">Attended</li>
-                                        <li ng-bind="getEventAttendForUser(user, event)"></li>
+                                        <li><a href="/events/#events/{[{ event.id }]}">{[{ event.title }]}</a></li>
+                                        <li ng-show="getEventAttendForUser(user, event)" class="pull-right">
+                                        <i class="text-success fa fa-check-circle-o fa-lg"></i>
+                                        </li>
+                                        <li ng-hide="getEventAttendForUser(user, event)" class="pull-right">
+                                        <i class="text-error fa fa-times-circle-o fa-lg"></i>
+                                        </li>
+                                        <li ng-show="getEventRsvpForUser(user, event)" class="pull-right">
+                                        <i class="text-success fa fa-check-circle-o fa-lg"></i>
+                                        </li>
+                                        <li ng-hide="getEventRsvpForUser(user, event)" class="pull-right">
+                                        <i class="text-error fa fa-times-circle-o fa-lg"></i>
+                                        </li>
                                         <li class="divider"></li>
                                     </ul>
                                 </li>

@@ -165,7 +165,8 @@ body {
     line-height: 20px;
 }
 .rush-carousel .events-list li {
-    margin-bottom: 10px;
+    min-width: 35px;
+    margin-bottom: 5px;
 }
 
 .rush-carousel .events-list span {
@@ -195,7 +196,6 @@ body {
     display: inline-block;
     width: 100%;
     clear: both;
-    padding: 5px;
     border-bottom: 1px solid #e7e7e7;
 }
 
