@@ -232,6 +232,8 @@ def mod_user_groups(request, format=None):
         new_group = chapter.linked_pledge_group
     elif new_status == 'admin':
         new_group = chapter.linked_admin_group
+    elif new_status == 'call':
+        new_group = chapter.linked_call_group
 
 
     if group:
@@ -244,12 +246,15 @@ def mod_user_groups(request, format=None):
 
                 # rush uses a different 'add' action than other status
                 if status == 'rush':
-                # If action: add and status: rush the user is being added to chapter
-                    user.groups.remove(group.id)
-                    # remove from rush group here because 'add' action won't remove groups otherwise
-                    user.chapter = chapter
-                    # set chapter for new member
-                    user.status = new_status
+                    if new_status != 'call':
+                        # If action: add and status: rush and not new status: call the user is being added to chapter
+                        user.groups.remove(group.id)
+                        # remove from rush group here because 'add' action won't remove groups otherwise
+                        user.chapter = chapter
+                        # set chapter for new member
+                        user.status = new_status
+                    else:
+                        user.groups.add(new_group.id)
                 else:
                     user.status = status
 
@@ -257,18 +262,62 @@ def mod_user_groups(request, format=None):
 
         elif action == "remove":
 
-            user.groups.remove(group.id)
-            user.groups.add(new_group.id)
+            if new_status != 'call':
+                # not removing from call list
+                user.groups.remove(group.id)
+                user.groups.add(new_group.id)
 
-            # If action: remove and status: active_pending the user is being removed permanently
-            if new_status == 'rush':
-                user.chapter = None
+                if new_status == 'rush':
+                    user.chapter = None
 
-                if status == 'active_pending':
-                    user.groups.remove(new_group.id)
+                    # If action: remove and status: active_pending the user is being removed permanently
+                    if status == 'active_pending':
+                        user.groups.remove(new_group.id)
 
-            user.status = new_status
+                user.status = new_status
+            else:
+                # remove from call list
+                user.groups.remove(new_group.id)
         user.save()
         response['success'] = True
 
     return Response(response)
+
+
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def user_in_chapter_group(request, format=None):
+    user_id = request.GET['check_user_id']
+    chapter_id = request.GET['chapter_id']
+    status = request.GET['status']
+    # Not user.status as includes call and admin
+    user = get_object_or_404(User, id=user_id)
+    chapter = get_object_or_404(Chapter, id=chapter_id)
+    group = None
+
+    if status == 'active':
+        group = chapter.linked_active_group
+    elif status == 'active_pending':
+        group = chapter.linked_pending_group
+    elif status == 'rush':
+        group = chapter.linked_rush_group
+    elif status == 'pledge':
+        group = chapter.linked_pledge_group
+    elif status == 'admin':
+        group = chapter.linked_admin_group
+    elif status == 'call':
+        group = chapter.linked_call_group
+
+    _response = {
+        'success': False,
+        'status': status,
+        'chapter': chapter.title,
+        'user': user.get_full_name(),
+        'in_group': False
+    }
+    if group:
+        _response['success'] = True
+        if group in user.groups.all():
+            _response['in_group'] = True
+
+    return Response(_response)

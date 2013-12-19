@@ -144,6 +144,7 @@ eventsApp.controller('EventDetailCtrl', [
         $scope.event.guest_list = {
             attendees: [],
             rsvps: [],
+            all: [],
             display: false
         };
 
@@ -153,6 +154,7 @@ eventsApp.controller('EventDetailCtrl', [
                 $scope.event.guest_list = {
                     attendees: data.get_attendees,
                     rsvps: data.get_rsvps_not_attendees,
+                    all: data.get_rsvps,
                     display: true
                 };
             });

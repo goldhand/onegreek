@@ -53,6 +53,11 @@ urlpatterns = patterns('',
         name='mod-user-groups'
     ),
     url(
+        regex=r'^check/group/$',
+        view='users.views.user_in_chapter_group',
+        name='check-user-in-group'
+    ),
+    url(
         regex=r'^group/call/$',
         view='users.views.call_list',
         name='call-list'

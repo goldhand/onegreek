@@ -16,23 +16,34 @@
 
     {% block css %}
         <!-- Latest compiled and minified CSS -->
-        <!-- link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/2.3.1/css/bootstrap.min.css" -->
-        <!-- link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" -->
-        <!--link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css"-->
         <link href="{% static 'css/project.css' %}" rel="stylesheet">
-        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+        {% if debug %}
+            <!-- link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" -->
+            <!--link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"-->
+            <!--link href="{% static 'css/font-awesome.css' %}" rel="stylesheet"-->
+            <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+        {% else %}
+            <!--link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css"-->
+            <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/2.3.1/css/bootstrap.min.css">
+        {% endif %}
+
 
     {% endblock css %}
 
     {% block javascript %}
-        <!-- Latest JQuery -->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-        <!--script src="{% static 'js/jquery.min.js' %}"></script-->
-        <!-- Latest compiled and minified JavaScript -->
-        <!--script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script-->
+        {% if debug %}
+            <script src="{% static 'js/jquery.min.js' %}"></script>
+        {% else %}
+            <!-- Latest JQuery -->
+            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+            <!-- Latest compiled and minified JavaScript -->
+            <!-- Not needed with Angular -->
+            <!--script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script-->
+        {% endif %}
     {% endblock javascript %}
 
-{% comment %}
+    {% if debug %}
 
     <link rel="stylesheet/less" href="{% static 'less/bootstrap.less' %}">
     <script type="text/javascript">
@@ -52,7 +63,8 @@
         };
     </script>
     <script src="{% static 'js/less-1.5.1.min.js' %}"></script>
-{% endcomment %}
+
+{% endif %}
 
     <script src="{% static 'js/holder.js' %}"></script>
 
@@ -232,6 +244,7 @@
         <div class="row">
             {% for message in messages %}
                 <div data-alert class="alert alert-box radius {{ message.tags }}">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
                     {{ message }}
                 </div><!-- .alert-box -->
             {% endfor %}

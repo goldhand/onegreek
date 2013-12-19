@@ -128,27 +128,49 @@ userControllers.controller('UserListCtrl', [
                     if(data.success) {
                         if(data.status == 'admin') {
                             user.is_chapter_admin = data.action == 'add';
-
                         } else {
-                            if(data.action == 'add') {
-                                user.status = data.status;
+
+                            if(data.new_status == 'call') {
+                                // Call list is special like admin
+                                user.is_call = data.action == 'add';
+
                             } else {
-                                if(data.status == 'active_pending') {
-                                    if(data.new_status == 'rush') {
-                                        var index = $scope.users.indexOf(user);
-                                        $scope.users.splice(index, 1);
+                                if(data.action == 'add') {
+                                    user.status = data.status;
+                                } else {
+                                    if(data.status == 'active_pending') {
+                                        if(data.new_status == 'rush') {
+                                            var index = $scope.users.indexOf(user);
+                                            $scope.users.splice(index, 1);
+                                        }
                                     }
+                                    user.status = data.new_status;
                                 }
-                                user.status = data.new_status;
                             }
                         }
                     }
             });
         };
 
+        $scope.checkUserChapterGroup = function ( user, status ) {
+            // Works better than goGroup for adding groups to tabs
+            $http.get(
+                    '/users/check/group/?check_user_id=' + user.id +
+                        '&chapter_id=' + $scope.globals.chapter_id +
+                        '&status=' + status
+                ).success(function(data) {
+                    console.log(data);
+                    user.is_call = data.in_group;
+                });
+        };
+
+
         $scope.updateUsers = function(users) {
             angular.forEach(users, function(user) {
                 user.status_order = $scope.userStatusOrder(user);
+                if(user.status == 'rush') {
+                    $scope.checkUserChapterGroup(user, 'call');
+                }
             });
         };
 
@@ -216,6 +238,14 @@ userControllers.controller('UserListCtrl', [
         $scope.globals.goGroup = function ( path, query ) {
             var group = $scope.filterForGroupName(query);
             $location.path( path + group.id );
+        };
+
+        $scope.globals.getGroup = function ( path, query ) {
+            // Works better than goGroup for adding groups to tabs
+            var group = $scope.filterForGroupName(query);
+            $http.get('/api/users/?group=' + group.id).success(function(data) {
+                $scope.users = data;
+            });
         };
 
         angular.forEach($scope.globals.tabs, function(tab) {
@@ -377,18 +407,17 @@ userControllers.controller('UserListCtrl', [
                     call_list: function () {
                         return call_group;
                     },
+                    chapter_id: function () {
+                        return $scope.globals.chapter_id
+                    },
                     rush_form_id: function () {
                         return $scope.globals.rush_form_id
                     }
                 }
             });
 
-            modalInstance.result.then(function (call_list) {
-                console.log(call_list);
-                angular.forEach(call_list.add, function(user) {
-                    call_group.user_set.push(user);
-                });
-                $scope.submitGroup(call_group);
+            modalInstance.result.then(function () {
+                $scope.updateUsers($scope.users);
             }, function () {});
         };
     }]);
@@ -494,6 +523,7 @@ userControllers.controller('CarouselModalInstanceCtrl', [
     'users',
     'call_list',
     'rush_form_id',
+    'chapter_id',
     function (
         $scope,
         $timeout,
@@ -502,13 +532,15 @@ userControllers.controller('CarouselModalInstanceCtrl', [
         filterFilter,
         users,
         call_list,
-        rush_form_id
+        rush_form_id,
+        chapter_id
         ) {
 
         $scope.users = users;
         $scope.call_list = call_list;
         $scope.events = [];
         $scope.rush_form_id = rush_form_id;
+        $scope.chapter_id = chapter_id;
 
         $scope.getRushEvents = function() {
             $http.get('/api/events/?rush_week=true&nest=true').success(function(data) {
@@ -569,6 +601,56 @@ userControllers.controller('CarouselModalInstanceCtrl', [
         $scope.getEntriesForUsers();
 
 
+        $scope.modUser = function(user, action, status, new_status) {
+            $http.post('/users/mod/', {
+                user_id: user.id,
+                chapter_id: $scope.chapter_id,
+                action: action,
+                status: status,
+                new_status: new_status
+            }).success(function(data) {
+                    console.log(data);
+                    if(data.success) {
+                        if(data.status == 'admin') {
+                            user.is_chapter_admin = data.action == 'add';
+                        } else {
+
+                            if(data.new_status == 'call') {
+                                // Call list is special like admin
+                                user.is_call = data.action == 'add';
+
+                            } else {
+                                if(data.action == 'add') {
+                                    user.status = data.status;
+                                } else {
+                                    if(data.status == 'active_pending') {
+                                        if(data.new_status == 'rush') {
+                                            var index = $scope.users.indexOf(user);
+                                            $scope.users.splice(index, 1);
+                                        }
+                                    }
+                                    user.status = data.new_status;
+                                }
+                            }
+                        }
+                    }
+                });
+        };
+
+        $scope.checkUserChapterGroup = function ( user, status ) {
+            // Works better than goGroup for adding groups to tabs
+            $http.get(
+                    '/users/check/group/?check_user_id=' + user.id +
+                        '&chapter_id=' + $scope.chapter_id +
+                        '&status=' + status
+                ).success(function(data) {
+                    console.log(data);
+                    user.is_call = data.in_group;
+                });
+        };
+
+
+
         $scope.callList = function(user, action) {
             if(action == 'add') {
                 $scope.call_list.user_set.push(user);
@@ -581,6 +663,7 @@ userControllers.controller('CarouselModalInstanceCtrl', [
             }
 
         };
+
         $scope.ok = function () {
             console.log('RushCarouselInstance.ok');
             $modalInstance.close($scope.call_list);

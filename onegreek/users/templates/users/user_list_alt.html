@@ -65,7 +65,7 @@
                     <a ng-show="{[{ tab.status == 'rush' }]}" ng-click="globals.openCarouselModal()" class="btn btn-info">Slide Show</a>
                 </tab-content>
             </tab>
-            <tab heading="Call List" select="globals.goGroup('/users/filter/group/', 'Call List')">
+            <tab heading="Call List" select="globals.getGroup('/users/filter/group/', 'Call List')">
                 <tab-content>
                     <a ng-click="globals.openCarouselModal()" class="btn btn-info">Slide Show</a>
                 </tab-content>
@@ -76,17 +76,12 @@
     </div>
 
 
-    <script type="text/ng-template" id="list.html">
-
-
+<script type="text/ng-template" id="list.html">
 
 <div ng-controller="GroupListCtrl">
                 <ul class="nav nav-pills nav-stacked">
-
                     <li
                     ng-repeat="user in users | orderBy: 'status_order'">
-
-
 
 
                 <a href="#/users/{[{ user.id }]}" class="user-detail {[{ user.status }]}">
@@ -101,13 +96,13 @@
                                         {[{ user.first_name }]}
                                         {[{ user.last_name }]}
                                </li>
+                               <li>
                            </ul>
                 </a>
 
-
                     <div class="user-edit-menu dropdown btn-group">
-                      <a class="dropdown-toggle btn">
-                        Edit
+                      <a class="dropdown-toggle btn btn-link btn-mini">
+                      <i class="fa fa-cog fa-lg"></i>
                         <span class="caret"></span>
                       </a>
 
@@ -181,6 +176,16 @@
                       </ul>
 
                       <ul class="dropdown-menu" ng-show="user.status == 'rush'">
+                            <li ng-show="user.is_call">
+                                <a ng-click="modUser(user, 'remove', 'rush', 'call')">
+                                Remove from Call List
+                                </a>
+                            </li>
+                            <li ng-hide="user.is_call">
+                                <a ng-click="modUser(user, 'add', 'rush', 'call')">
+                                Add to Call List
+                                </a>
+                            </li>
                             <li ng-hide="user.status == 'active'">
                                 <a ng-click="modUser(user, 'add', 'rush', 'active')">
                                 Make Active
@@ -318,90 +323,87 @@
 
     <script type="text/ng-template" id="carousel-modal.html">
 
+<div class="container top-bar"></div>
 
-<div class="modal-header">
-    <h3>Rush Slide Show</h3>
-</div>
-<div class="modal-body">
+        <carousel interval="5000">
+            <slide ng-repeat="user in users" active="user.active">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="ok()">&times;</button>
+                            <h3>
+                                {[{ user.first_name }]} {[{ user.last_name }]}
+                                <small>  -  {[{ user.status }]}</small>
+                            </h3>
+        </div>
 
- <carousel interval="5000">
-    <slide ng-repeat="user in users" active="user.active">
-    <div class="row">
-        <div class="span4">
-      <img ng-src="{[{user.profile_image_lg_url}]}">
-      </div>
-      <div class="span4">
-      <h5>
-        {[{ user.first_name }]} {[{ user.last_name }]}
-      </h5>
-    <ul class="unstyled">
-                <li class="divider"></li>
-        <li>
-            <dl class="dl-horizontal profile-list">
-                <dt>Year</dt>
-                <dd>{[{ user.year_display }]}</dd>
-                <dt>Major</dt>
-                <dd>{[{ user.major }]}</dd>
-                <dt>GPA</dt>
-                <dd>{[{ user.gpa }]}</dd>
-                <dt>Hometown</dt>
-                <dd>{[{ user.hometown }]}</dd>
-            </dl>
-        </li>
-                <li class="divider"></li>
+                <div class="modal-body">
 
-        <li ng-repeat="field in user.fields">
-            <ul class="inline rush-form-list">
-                <li class="question">{[{ field.label }]}</li>
-                <li class="answer">{[{ field.value }]}</li>
-                <li class="divider"></li>
-            </dl>
-        </li>
-    </ul>
+                    <div class="row">
+                        <div class="span4">
+                            <img ng-src="{[{user.profile_image_lg_url}]}">
+                        </div>
+                        <div class="span4">
+                            <ul class="unstyled">
+                                <li class="divider"></li>
+                                <li>
+                                    <dl class="dl-horizontal profile-list">
+                                        <dt>Year</dt>
+                                        <dd>{[{ user.year_display }]}</dd>
+                                        <dt>Major</dt>
+                                        <dd>{[{ user.major }]}</dd>
+                                        <dt>GPA</dt>
+                                        <dd>{[{ user.gpa }]}</dd>
+                                        <dt>Hometown</dt>
+                                        <dd>{[{ user.hometown }]}</dd>
+                                    </dl>
+                                </li>
+                                <li class="divider"></li>
 
-      </div>
-      <div class="span4">
+                                <li ng-repeat="field in user.fields">
+                                    <ul class="inline rush-form-list">
+                                        <li class="question">{[{ field.label }]}</li>
+                                        <li class="answer">{[{ field.value }]}</li>
+                                        <li class="divider"></li>
+                                        </dl>
+                                </li>
+                            </ul>
 
-      <ul class="unstyled events-list">
-      <li ng-repeat="event in events">
-      <span>{[{ event.title }]}</span>
+                        </div>
+                        <div class="span4">
 
-        <ul class="inline">
-            <li class="label">RSVP</li>
-            <li ng-bind="getEventRsvpForUser(user, event)"></li>
-            <li class="label">Attended</li>
-            <li ng-bind="getEventAttendForUser(user, event)"></li>
-                <li class="divider"></li>
-        </ul>
-      </li>
-      </ul>
+                            <ul class="unstyled events-list">
+                                <li ng-repeat="event in events">
+                                    <span>{[{ event.title }]}</span>
 
-      </div>
-      </div>
+                                    <ul class="inline">
+                                        <li class="label">RSVP</li>
+                                        <li ng-bind="getEventRsvpForUser(user, event)"></li>
+                                        <li class="label">Attended</li>
+                                        <li ng-bind="getEventAttendForUser(user, event)"></li>
+                                        <li class="divider"></li>
+                                    </ul>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" ng-click="modUser(user, 'add', 'rush', 'call')" ng-model="user.is_call" btn-radio="true">
+                        <i class="text-info fa fa-thumbs-o-up fa-lg"></i>
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="modUser(user, 'remove', 'rush', 'call')" ng-model="user.is_call" btn-radio="false">
+                        <i class="text-error fa fa-thumbs-o-down fa-lg"></i>
+                    </button>
+                </div>
 
     </slide>
-  </carousel>
-
-
-</div>
-
-<div class="modal-footer">
-    <div class="btn-group btn-group-vertical">
-        <button type="button" class="btn btn-mini" ng-click="callList(user, 'add')" ng-disabled="user.call">
-                <i class="icon icon-plus"></i>
-        </button>
-        <button type="button" class="btn btn-mini" ng-click="callList(user, 'remove')" ng-disabled="user.call == false">
-                <i class="icon icon-minus"></i>
-        </button>
-
-
-    </div>
-    <button class="btn btn-warning" ng-click="ok()">Save</button>
-</div>
-
+    </carousel>
 
 
 </script>
+
 
     <script type="text/ng-template" id="query.html">
                 <ul class="nav nav-pills nav-stacked">

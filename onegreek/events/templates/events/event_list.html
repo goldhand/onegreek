@@ -11,6 +11,9 @@
 {% block left_content %}
 
     <div class="span3">
+    <h4>
+        <a class="" href="#/events">Events</a>
+    </h4>
         <form class="form-search">
             <div class="controls">
                 <input type="text" id="event-filter" name="event-filter" class="search-query input-medium"
@@ -67,10 +70,9 @@
     </div>
 
         <script type="text/ng-template" id="list.html">
-        <a class="btn btn-info pull-right toggle-view" href="#/events/calendar">Calender</a>
 
             {% if request.user.is_chapter_admin %}
-        <button class="btn btn-primary btn-large pull-right" ng-click="openModal()">Create Event</button>
+        <button class="btn btn-link pull-right" ng-click="openModal()">Create Event</button>
         {% endif %}
 
         <div class="span9">
@@ -128,7 +130,6 @@
                 </span>
                 <br/>
                 <small>
-                {[{ event.status }]}
                 <span>
                             {[{ event.start | date }]}
                 </span>
@@ -254,7 +255,7 @@
         <h4>Other's who are attending</h4>
         <hr>
 
-            <div class="pull-left" ng-repeat="user in event.guest_list.rsvps | filter:rsvpFilter">
+            <div class="pull-left" ng-repeat="user in event.guest_list.all">
             <img class="thumbnail" ng-src="{[{ user.profile_image_url }]}">
             </div>
 
@@ -262,7 +263,6 @@
         <hr>
 
             {% endif %}
-        <a class="" href="#/events"><< Back</a>
         </div>
 
 </script>

@@ -7,6 +7,10 @@
 .center-text {
     text-align: center;
 }
+.modal.full-screen-modal .top-bar {
+    width: 970px;
+    padding: 0;
+}
 
 .modal.full-screen-modal {
     width: 970px;
@@ -14,6 +18,7 @@
 }
 .modal.full-screen-modal .modal-body {
     overflow: hidden;
+    min-height: 400px;
 }
 
 .time-picker-widget {
@@ -58,7 +63,10 @@
 
 .user-edit-menu {
     float: left;
-    padding: 15px 5px;
+    padding: 10px 5px 2px;
+}
+.user-edit-menu .btn-link:hover {
+    text-decoration: none;
 }
 .page-wrapper {
     padding: 0 40px;
@@ -191,3 +199,9 @@ body {
     border-bottom: 1px solid #e7e7e7;
 }
 
+.rush-carousel .carousel {
+    margin-bottom: 0;
+}
+.rush-carousel .carousel .carousel-indicators {
+    display: none;
+}
