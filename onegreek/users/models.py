@@ -167,6 +167,10 @@ class User(AbstractUser, StatusModel):
         if fb_uid:
             return fb_uid[0].socialtoken_set.all()[0]
 
+    def get_fb_extra_data(self):
+        u_social = self.socialaccount_set.all()
+        if u_social:
+            return u_social[0].extra_data
 
     def is_chapter_admin(self):
         if self.chapter:

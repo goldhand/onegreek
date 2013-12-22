@@ -254,7 +254,7 @@
     <div class="span3">
         <img ng-src="{[{user.profile_image_lg_url}]}">
     </div>
-    <div class="span3">
+    <div class="span6">
     <h3>{[{ user.get_full_name }]}
     <small>
         {[{ user.status }]}
@@ -294,10 +294,39 @@
                     <dd>{[{ user.phone }]}</dd>
                 </dl>
             </li>
+            <li>
+              <dl class="dl-horizontal profile-list">
+                <dt ng-show="user.fb_extra_data.bio">Bio:</dt>
+                <dd>{[{ user.fb_extra_data.bio }]}</dd>
+                <dt ng-show="user.fb_extra_data.hometown">hometown:</dt>
+                <dd>{[{ user.fb_extra_data.hometown.name }]}</dd>
+                <dt ng-show="user.fb_extra_data.languages">languages:</dt>
+                <dd>
+                  <ul class="unstyled">
+                    <li ng-repeat="language in user.fb_extra_data.languages">
+                      {[{ language.name }]}
+                    </li>
+                  </ul>
+                </dd>
+                <dt ng-show="user.fb_extra_data.location">location:</dt>
 
+                <dd>{[{ user.fb_extra_data.location.name }]}</dd>
+                <dt ng-show="user.fb_extra_data.education">education:</dt>
+                <dd>
+                  <ul class="unstyled">
+                    <li ng-repeat="education in user.fb_extra_data.education">
+                      <ul class="inline">
+                        <li><span class="badge">{[{ education.type }]}<span></li>
+                        <li>{[{ education.school.name }]}</li>
+                         <li>{[{ education.year.name }]}</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </dd>
         </ul>
 
     </div>
+                    {% comment %}
     <div class="span3" ng-hide="true">
                     <div class="user-edit-menu dropdown btn-group">
                       <a class="dropdown-toggle btn btn-link btn-mini">
@@ -402,13 +431,9 @@
                             </li>
                       </ul>
 
-
-
-
                     </div>
-
-
-    </div>
+        </div>
+                    {% endcomment %}
 </div>
 
 <br/>
