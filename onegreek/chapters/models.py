@@ -109,6 +109,24 @@ class Chapter(Slugged, StatusModel):
     def get_content_type_id(self):
         return ContentType.objects.get_for_model(self).id
 
+    def get_chapter_count(self):
+        return self.user_set.count()
+
+    def get_chapter_rush_count(self):
+        return self.user_set.count() + self.linked_rush_group.user_set.count()
+
+    def get_active_count(self):
+        return self.user_set.filter(status='active').count()
+
+    def get_pledge_count(self):
+        return self.user_set.filter(status='pledge').count()
+
+    def get_rush_count(self):
+        return self.linked_rush_group.user_set.count()
+
+    def get_call_count(self):
+        return self.linked_call_group.user_set.count()
+
 
 @receiver(signals.post_save, sender=Chapter)
 def set_group(sender, **kwargs):

@@ -31,17 +31,18 @@
 
     {% endblock css %}
 
-    {% block javascript %}
-        {% if debug %}
-            <script src="{% static 'js/jquery.min.js' %}"></script>
-        {% else %}
-            <!-- Latest JQuery -->
-            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-            <!-- Latest compiled and minified JavaScript -->
-            <!-- Not needed with Angular -->
-            <!--script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script-->
-        {% endif %}
-    {% endblock javascript %}
+  {% if debug %}
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/holder.js' %}"></script>
+  {% else %}
+    <!-- Latest JQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <!-- Not needed with Angular -->
+    <!--script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script-->
+  {% endif %}
+
+
 
     {% if debug %}
 
@@ -66,10 +67,6 @@
 
 {% endif %}
 
-    <script src="{% static 'js/holder.js' %}"></script>
-
-
-
 
     {% block angular %}
         {% block angular_core %}
@@ -86,6 +83,8 @@
             <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
         {% endblock angular_modules %}
     {% endblock angular %}
+
+
 </head>
 
 <body ng-cloak {% block extra_body_tag_data %}{% endblock extra_body_tag_data %}>
@@ -177,7 +176,7 @@
             <div class="container">
             <div class="row">
             <div class="span4">
-                    <img class="" src="holder.js/400x100">
+                    <img class="" src="holder.js/300x100">
             </div>
 
         {% if request.user.is_authenticated %}
@@ -185,7 +184,7 @@
 
                 <div class="span4 offset4">
                     {% with request.user as user %}
-                    <div class="media">
+                    <div class="user-detail2 media">
                         <a class="pull-left" href="#">
                             <img class="thumbnail" src="{{ user.profile_image_url }}">
                         </a>
@@ -289,6 +288,9 @@
         console.log($scope.isCollapsed);
     }
 </script>
+{% block javascript %}
+{% endblock javascript %}
+
 
 </body>
 </html>

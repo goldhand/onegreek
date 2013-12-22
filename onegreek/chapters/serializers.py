@@ -13,8 +13,12 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     university_id = serializers.Field('university_id')
     fraternity_id = serializers.Field('fraternity_id')
     linked_group_id = serializers.Field('linked_group_id')
-    linked_rush_group_id = serializers.Field('linked_rush_group_id')
+    linked_active_group_id = serializers.Field('linked_active_group_id')
     linked_pending_group_id = serializers.Field('linked_pending_group_id')
+    linked_pledge_group_id = serializers.Field('linked_pledge_group_id')
+    linked_rush_group_id = serializers.Field('linked_rush_group_id')
+    linked_call_group_id = serializers.Field('linked_call_group_id')
+    linked_admin_group_id = serializers.Field('linked_admin_group_id')
     api_url = serializers.SerializerMethodField('get_api_url')
     rush_url = serializers.SerializerMethodField('get_rush_url')
     rush_form_url = serializers.SerializerMethodField('get_rush_form_url')
@@ -22,6 +26,12 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     absolute_url = serializers.Field('get_absolute_url')
     groups = serializers.Field('get_groups')
     user_count = serializers.SerializerMethodField('get_user_count')
+    chapter_count = serializers.Field('get_chapter_count')
+    chapter_rush_count = serializers.Field('get_chapter_rush_count')
+    active_count = serializers.Field('get_active_count')
+    pledge_count = serializers.Field('get_pledge_count')
+    rush_count = serializers.Field('get_rush_count')
+    call_count = serializers.Field('get_call_count')
     ctype_id = serializers.SerializerMethodField('get_content_type_id')
 
     class Meta:
@@ -38,6 +48,12 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
             'title',
             'slug',
             'user_count',
+            'chapter_count',
+            'chapter_rush_count',
+            'active_count',
+            'pledge_count',
+            'rush_count',
+            'call_count',
             'description',
             'awards',
             'philanthropy',
@@ -45,16 +61,18 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
             'cost',
             'gpa',
             'status',
-            #'fraternity',
-            #'university',
             'fraternity_id',
             'fraternity_title',
             'university_id',
             'university_title',
             'groups',
             'linked_group_id',
-            'linked_rush_group_id',
+            'linked_active_group_id',
             'linked_pending_group_id',
+            'linked_pledge_group_id',
+            'linked_rush_group_id',
+            'linked_call_group_id',
+            'linked_admin_group_id',
         ]
 
     def get_api_url(self, obj):

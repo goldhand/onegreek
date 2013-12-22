@@ -1,4 +1,9 @@
 /*! project specific CSS goes here. */
+
+.page-wrapper {
+    min-height: 600px;
+}
+
 .centered {
     display: table;
     margin-right: auto;
@@ -43,6 +48,14 @@
 }
 .user-detail li:first-child {
     margin-left: 0;
+}
+.user-detail .thumbnail {
+    width: auto;
+    max-height: 40px;
+}
+.user-detail2 .thumbnail {
+    width: auto;
+    max-height: 60px;
 }
 
 .toggle-view {
@@ -173,10 +186,10 @@ body {
     font-weight: bolder;
 }
 
-.rush-carousel .profile-list dd {
+.dl-horizontal.profile-list dd {
     margin-left: 100px;
 }
-.rush-carousel .profile-list dt {
+.dl-horizontal.profile-list dt {
     width: 80px;
 }
 
@@ -205,3 +218,9 @@ body {
 .rush-carousel .carousel .carousel-indicators {
     display: none;
 }
+
+.members-tabs .badge {
+    margin-left: 10px;
+
+}
+

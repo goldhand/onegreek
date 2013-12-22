@@ -109,9 +109,9 @@
                 <tabset>
                     <tab heading="Members">
                         <tab-content>
-                        <div class="media" ng-repeat="user in users">
-                            <a href="#/users/{[{ user.id }]}" class="pull-left">
-                                <img class="media-object" ng-src="{[{ user.profile_image_url }]}">
+                        <div class="user-detail media" ng-repeat="user in users">
+                            <a href="/users/~#/users/{[{ user.id }]}" class="pull-left">
+                                <img class="media-object thumbnail" ng-src="{[{ user.profile_image_url }]}">
                             </a>
 
                             <div class="media-body">

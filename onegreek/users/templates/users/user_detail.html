@@ -38,7 +38,19 @@
 
             <div class="span8">
                 <tabset class="tabs-top">
-                    <tab heading="Dashboard">
+                    <tab>
+                      <tab-heading>Dashboard</tab-heading>
+                      <tab-content>
+                        <ul class="nav nav-pills">
+                          <li>
+                            <a href="#/events/calendar/">Calendar</a>
+                          </li>
+                          <li>
+                            <a href="#/{{ request.user.id }}">Profile</a>
+                          </li>
+                        </ul>
+
+                      </tab-content>
                         <div ng-view></div>
                     </tab>
                     <tab heading="Profile">
@@ -49,6 +61,7 @@
                                 <input class="btn btn-primary" type="submit" value="Submit">
                             </div>
                         </form>
+                      </tab>
 
                 </tabset>
             </div>
@@ -113,34 +126,45 @@
                                 </form>
                             </tab>
                             <tab heading="Set Default">
-                                {% if not avatars %}
-                                    <p>{% trans "You haven't uploaded an avatar yet. Please upload one now." %}</p>
-                                {% else %}
-                                    <form method="POST" action="{% url 'avatar_change' %}">
+                                <div id="avatar-change-panel">
+                                  {% if not avatars %}
+                                      <p>{% trans "You haven't uploaded an avatar yet. Please upload one now." %}</p>
+                                  {% else %}
+                                    <form method="POST" action="{% url 'avatar_change' %}"
+                                          id="avatar-change">
                                         {% csrf_token %}
                                         <ul class="avatar-select">
-                                            {{ avatar_primary_form.as_ul }}
+                                          {{ avatar_primary_form.as_ul }}
                                         </ul>
-                                        <input class="btn btn-primary" type="submit"
-                                               value="{% trans "Set as profile image" %}"/>
+                                        <input class="btn btn-primary pull-right" type="submit"
+                                               value="{% trans "Set profile image" %}"/>
+
+                                        <div class="clearfix"></div>
                                     </form>
-                                {% endif %}
+                                  {% endif %}
+                                </div>
 
                             </tab>
                             <tab heading="Delete">
+                              <div id="avatar-delete-panel">
                                 {% if not avatars %}
-                                    <p>{% blocktrans %}You have no avatars to delete. Please
-                                        <a href="{{ avatar_change_url }}">upload one</a> now.{% endblocktrans %}
-                                    </p>
+                                  <p>{% blocktrans %}You have no avatars to delete. Please
+                                    <a href="{{ avatar_change_url }}">upload one</a> now.{% endblocktrans %}
+                                  </p>
                                 {% else %}
-                                    <form method="POST" action="{% url 'avatar_delete' %}">
-                                        <ul class="avatar-select">
-                                            {{ avatar_delete_form.as_ul }}
-                                        </ul>
-                                        <p>{% csrf_token %}<input class="btn btn-danger" type="submit"
-                                                                  value="{% trans "Delete These" %}"/></p>
-                                    </form>
+                                  <form method="POST" action="{% url 'avatar_delete' %}"
+                                        id="avatar-delete">
+                                      {% csrf_token %}
+                                      <ul class="avatar-select">
+                                        {{ avatar_delete_form.as_ul }}
+                                      </ul>
+                                      <input class="btn btn-danger pull-right" type="submit"
+                                             value="{% trans "Delete profile images" %}"/>
+
+                                      <div class="clearfix"></div>
+                                  </form>
                                 {% endif %}
+                              </div>
 
                             </tab>
                         </tabset>
@@ -160,7 +184,7 @@
     {% endif %}
 
 
-    <script type="text/ng-template" id="profile-calendar.html">
+<script type="text/ng-template" id="profile-calendar.html">
 
 <h4>
 <a class="" href="{% url 'events:list' %}">
@@ -175,6 +199,25 @@ Events Calendar
 
 
 </script>
+
+<script type="text/ng-template" id="detail.html">
+<div ng-init="getUser({{ request.user.id }})">
+<h4>
+User Profile
+</h4>
+    <button ng-click="fbPhotos()">Fb photos</button>
+    <ul class="inline">
+    <li ng-repeat="photo in user.photos">
+      <a ng-click="saveProfileImg(user, photo)">
+      <img class="thumbnail" ng-src="{[{ photo.picture }]}">
+      </a>
+    </li>
+    </ul>
+</div>
+
+
+</script>
+
 
 
 
@@ -211,12 +254,16 @@ Events Calendar
     <script type="text/javascript" src="{% static 'js/bootstrap-jasny.min.js' %}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+          $('#avatar-change').find('.avatar-select').on('click', 'input', function (e) {
+            $('#avatar-change').find('.avatar-select').find('.active').removeClass('active');
+            var $this = $(this);
+            $this.siblings('img').toggleClass('active');
 
-            $('.avatar-select input').on('click', function () {
-                var checkedId = $(this, 'input').attr('id');
-                $('#' + checkedId)[0].parent.addClass('active');
-                console.log(checkedId);
-            });
+          });
+          $('#avatar-delete').find('.avatar-select').on('click', 'input', function (e) {
+            var $this = $(this);
+            $this.siblings('img').toggleClass('active');
+          });
         });
     </script>
 {% endblock javascript %}

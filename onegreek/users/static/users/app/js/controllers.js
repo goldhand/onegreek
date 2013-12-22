@@ -279,6 +279,18 @@ userControllers.controller('UserDetailCtrl', ['$scope', '$http', '$routeParams',
 }]);
 
 
+
+
+
+
+
+
+
+
+
+
+//********************************************
+
 userControllers.controller('GroupListCtrl', [
     '$scope',
     '$http',

@@ -17,49 +17,53 @@ userControllers.controller('UserGlobalCtrl', [
           $location.path( path );
         };
 
-        $scope.globals.tabs = [
-            {
-                active: true,
-                heading: 'All',
-                status: '!rush',
-                order : 0
-            },
-            {
-                active: false,
-                heading: 'Actives',
-                status: 'active',
-                order: 1
-            },
-            {
-                active: false,
-                heading: 'Pledge',
-                status: 'pledge',
-                order: 2
-            },
-            {
-                active: false,
-                heading: 'Rush',
-                status: 'rush',
-                order: 3
-            }
-        ];
-
         $scope.initialize = function (is_authenticated, user_id, chapter_id, rush_form_id, host) {
             $scope.globals.is_authenticated = is_authenticated;
             $scope.globals.user_id = user_id;
             if(is_authenticated) {
-                var api_url = "/api/users/";
-                var url = api_url + user_id + "/";
                 $http.get('/api/users/' + user_id + '/').success(function(user_data) {
                     $scope.globals.user = user_data;
-                    console.log(user_data);
-                    console.log($scope.globals.user.status);
+                });
+                $http.get('/api/chapters/' + chapter_id + '/').success(function(chapter_data) {
+                    $scope.globals.chapter = chapter_data;
+                    console.log($scope.globals.chapter);
+                    $scope.globals.tabs = [
+                        {
+                            active: true,
+                            heading: 'All',
+                            status: '!rush',
+                            count: $scope.globals.chapter.chapter_count,
+                            order : 0
+                        },
+                        {
+                            active: false,
+                            heading: 'Actives',
+                            status: 'active',
+                            count: $scope.globals.chapter.active_count,
+                            order: 1
+                        },
+                        {
+                            active: false,
+                            heading: 'Pledge',
+                            status: 'pledge',
+                            count: $scope.globals.chapter.pledge_count,
+                            order: 2
+                        },
+                        {
+                            active: false,
+                            heading: 'Rush',
+                            status: 'rush',
+                            count: $scope.globals.chapter.rush_count,
+                            order: 3
+                        }
+                    ];
+
                 });
             }
             $scope.globals.chapter_id = chapter_id;
             $scope.globals.rush_form_id = rush_form_id;
             $scope.globals.host = host;
-            console.log(host);
+
         };
 
 }]);
@@ -101,6 +105,8 @@ userControllers.controller('UserListCtrl', [
             $scope.users = filterFilter($scope.globals.users, {status: status});
         };
 
+
+
         $scope.userStatusOrder = function(user) {
             var userStatusOrderKey = {
                 active_pending: 1,
@@ -115,6 +121,22 @@ userControllers.controller('UserListCtrl', [
                 return userStatusOrderKey[user.status];
             }
         };
+
+        $scope.globals.userStatusOrder = function(user) {
+            var userStatusOrderKey = {
+                active_pending: 1,
+                admin: 2,
+                active: 3,
+                pledge: 4,
+                rush: 5
+            };
+            if(user.is_chapter_admin) {
+                return userStatusOrderKey['admin'];
+            } else {
+                return userStatusOrderKey[user.status];
+            }
+        };
+
 
         $scope.modUser = function(user, action, status, new_status) {
             $http.post('/users/mod/', {
@@ -152,18 +174,64 @@ userControllers.controller('UserListCtrl', [
             });
         };
 
+        $scope.globals.modUser = function(user, action, status, new_status) {
+            $http.post('/users/mod/', {
+                user_id: user.id,
+                chapter_id: $scope.globals.chapter_id,
+                action: action,
+                status: status,
+                new_status: new_status
+            }).success(function(data) {
+                    console.log(data);
+                    if(data.success) {
+                        if(data.status == 'admin') {
+                            user.is_chapter_admin = data.action == 'add';
+                        } else {
+
+                            if(data.new_status == 'call') {
+                                // Call list is special like admin
+                                user.is_call = data.action == 'add';
+
+                            } else {
+                                if(data.action == 'add') {
+                                    user.status = data.status;
+                                } else {
+                                    if(data.status == 'active_pending') {
+                                        if(data.new_status == 'rush') {
+                                            var index = $scope.users.indexOf(user);
+                                            $scope.users.splice(index, 1);
+                                        }
+                                    }
+                                    user.status = data.new_status;
+                                }
+                            }
+                        }
+                    }
+                });
+        };
+
+
+
+
         $scope.checkUserChapterGroup = function ( user, status ) {
-            // Works better than goGroup for adding groups to tabs
             $http.get(
                     '/users/check/group/?check_user_id=' + user.id +
                         '&chapter_id=' + $scope.globals.chapter_id +
                         '&status=' + status
                 ).success(function(data) {
-                    console.log(data);
                     user.is_call = data.in_group;
                 });
         };
 
+        $scope.globals.checkUserChapterGroup = function ( user, status ) {
+            $http.get(
+                    '/users/check/group/?check_user_id=' + user.id +
+                        '&chapter_id=' + $scope.globals.chapter_id +
+                        '&status=' + status
+                ).success(function(data) {
+                    user.is_call = data.in_group;
+                });
+        };
 
         $scope.updateUsers = function(users) {
             angular.forEach(users, function(user) {
@@ -174,10 +242,17 @@ userControllers.controller('UserListCtrl', [
             });
         };
 
+
+        $scope.globals.updateUsers = function(users) {
+            angular.forEach(users, function(user) {
+                user.status_order = $scope.globals.userStatusOrder(user);
+                if(user.status == 'rush') {
+                    $scope.globals.checkUserChapterGroup(user, 'call');
+                }
+            });
+        };
+
         $scope.updateUsers($scope.users);
-        console.log($scope.users);
-
-
 
         $scope.filterForGroupName = function(group_name) {
             return filterFilter($scope.groups, {name: group_name})[0];
@@ -245,15 +320,17 @@ userControllers.controller('UserListCtrl', [
             var group = $scope.filterForGroupName(query);
             $http.get('/api/users/?group=' + group.id).success(function(data) {
                 $scope.users = data;
+                $scope.globals.updateUsers($scope.users);
             });
         };
 
         angular.forEach($scope.globals.tabs, function(tab) {
             tab.select = function() {
-                $scope.filterForUserStatus(tab.status);
+                $scope.globals.filterForUserStatus(tab.status);
+                $scope.globals.updateUsers($scope.users);
             };
             if (tab.active) {
-                $scope.filterForUserStatus(tab.status);
+                $scope.globals.filterForUserStatus(tab.status);
             }
         });
 
@@ -422,23 +499,44 @@ userControllers.controller('UserListCtrl', [
         };
     }]);
 
+
+
+//*************************** User Detail *************************//
+
+
 userControllers.controller('UserDetailCtrl', ['$scope', '$http', '$routeParams', 'GlobalService', 'user',
     function ($scope, $http, $routeParams, GlobalService, user) {
         $scope.user = user;
+        $scope.user.albums = [];
         $scope.globals = GlobalService;
 
-    angular.forEach($scope.globals.tabs, function(tab) {
-        tab.active = false;
-        tab.select = function() {
-            $scope.globals.go('#/users');
-        }
-    });
-
-    $scope.submit = function() {
-        $http.post('/api/users/' + $routeParams.userId + '/', $scope.user).success(function(user_data) {
-            $scope.users.push(user_data);
+        angular.forEach($scope.globals.tabs, function(tab) {
+            tab.active = false;
+            tab.select = function() {
+                $scope.globals.go('#/users');
+                $scope.globals.updateUsers($scope.users);
+            }
         });
-    };
+
+        $scope.checkUserChapterGroup = function ( user, status ) {
+            $http.get(
+                    '/users/check/group/?check_user_id=' + user.id +
+                        '&chapter_id=' + $scope.chapter_id +
+                        '&status=' + status
+                ).success(function(data) {
+                    console.log(data);
+                    user.is_call = data.in_group;
+                });
+        };
+
+        $scope.submit = function() {
+            $http.put('/api/users/' + $routeParams.userId + '/', $scope.user).success(function(user_data) {
+                console.log(user_data);
+                $scope.user = user_data;
+                $scope.user.albums = [];
+            });
+        };
+
     $scope.callList = function(user, action, group_id) {
 
         $http.post('/users/group/call/', {
@@ -451,67 +549,6 @@ userControllers.controller('UserDetailCtrl', ['$scope', '$http', '$routeParams',
             });
     };
 }]);
-
-userControllers.controller('UserQueryCtrl', [
-    '$scope',
-    '$http',
-    '$modal',
-    '$location',
-    'filterFilter',
-    'UserService',
-    'GlobalService',
-    'users',
-    function (
-        $scope,
-        $http,
-        $modal,
-        $location,
-        filterFilter,
-        UserService,
-        GlobalService,
-        users
-        ) {
-
-        $scope.users = users;
-        $scope.globals = GlobalService;
-
-        angular.forEach($scope.globals.tabs, function(tab) {
-            tab.active = false;
-            tab.select = function() {
-                $scope.globals.go('#/users');
-            }
-        });
-
-
-        $scope.globals.openCarouselModal = function () {
-            var group_name_prefix = 'chapter_' + $scope.globals.chapter_id;
-            var call_group = $scope.globals.callGroup;
-            var modalInstance = $modal.open({
-                templateUrl: 'carousel-modal.html',
-                controller: 'CarouselModalInstanceCtrl',
-                windowClass: 'full-screen-modal',
-                resolve: {
-                    users: function () {
-                        return $scope.users;
-                    },
-                    call_list: function () {
-                        return call_group;
-                    }
-                }
-            });
-
-            modalInstance.result.then(function (call_list) {
-                console.log(call_list);
-                angular.forEach(call_list.add, function(user) {
-                    call_group.user_set.push(user);
-                });
-                $scope.submitGroup(call_group);
-            }, function () {});
-        };
-
-
-
-    }]);
 
 
 userControllers.controller('CarouselModalInstanceCtrl', [
@@ -638,7 +675,6 @@ userControllers.controller('CarouselModalInstanceCtrl', [
         };
 
         $scope.checkUserChapterGroup = function ( user, status ) {
-            // Works better than goGroup for adding groups to tabs
             $http.get(
                     '/users/check/group/?check_user_id=' + user.id +
                         '&chapter_id=' + $scope.chapter_id +
@@ -650,27 +686,12 @@ userControllers.controller('CarouselModalInstanceCtrl', [
         };
 
 
-
-        $scope.callList = function(user, action) {
-            if(action == 'add') {
-                $scope.call_list.user_set.push(user);
-                user.call = true;
-            }
-            if(action == 'remove') {
-                var add_index = $scope.call_list.user_set.indexOf(user);
-                $scope.call_list.user_set.splice(add_index, 1);
-                user.call = false;
-            }
-
-        };
-
         $scope.ok = function () {
-            console.log('RushCarouselInstance.ok');
-            $modalInstance.close($scope.call_list);
+            $modalInstance.close();
         };
 
         $scope.cancel = function () {
-            $modalInstance.close($scope.call_list);
+            $modalInstance.close();
         };
     }]);
 
@@ -683,6 +704,73 @@ userControllers.controller('CarouselModalInstanceCtrl', [
 
 
 //*******************************************
+
+
+
+
+
+userControllers.controller('UserQueryCtrl', [
+    '$scope',
+    '$http',
+    '$modal',
+    '$location',
+    'filterFilter',
+    'UserService',
+    'GlobalService',
+    'users',
+    function (
+        $scope,
+        $http,
+        $modal,
+        $location,
+        filterFilter,
+        UserService,
+        GlobalService,
+        users
+        ) {
+
+        $scope.users = users;
+        $scope.globals = GlobalService;
+
+        angular.forEach($scope.globals.tabs, function(tab) {
+            tab.active = false;
+            tab.select = function() {
+                $scope.globals.go('#/users');
+            }
+        });
+
+
+        $scope.globals.openCarouselModal = function () {
+            var group_name_prefix = 'chapter_' + $scope.globals.chapter_id;
+            var call_group = $scope.globals.callGroup;
+            var modalInstance = $modal.open({
+                templateUrl: 'carousel-modal.html',
+                controller: 'CarouselModalInstanceCtrl',
+                windowClass: 'full-screen-modal',
+                resolve: {
+                    users: function () {
+                        return $scope.users;
+                    },
+                    call_list: function () {
+                        return call_group;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (call_list) {
+                console.log(call_list);
+                angular.forEach(call_list.add, function(user) {
+                    call_group.user_set.push(user);
+                });
+                $scope.submitGroup(call_group);
+            }, function () {});
+        };
+
+
+
+    }]);
+
+
 
 
 

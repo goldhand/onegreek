@@ -249,6 +249,9 @@ class Common(Configuration):
     ACCOUNT_AUTHENTICATION_METHOD = "email"
     ACCOUNT_EMAIL_REQUIRED = True
     ACCOUNT_EMAIL_VERIFICATION = "false"
+    # ACCOUNT_SIGNUP_FORM_CLASS = "users.forms.UserForm"
+    # ACCOUNT_USER_DISPLAY = "users.user.get_full_name"
+    #ACCOUNT_USERNAME_REQUIRED (=True)
     ########## END AUTHENTICATION CONFIGURATION
 
 
@@ -274,17 +277,12 @@ class Common(Configuration):
 
     SOCIALACCOUNT_PROVIDERS = \
         { 'facebook':
-              { 'SCOPE': ['email', 'publish_stream'],
+              { 'SCOPE': ['email', 'publish_stream', 'user_photos', 'user_hometown'],
                 'AUTH_PARAMS': { 'auth_type': 'reauthenticate' },
-                'METHOD': 'js_sdk'}
+                'METHOD': 'js_sdk',
+                'VERIFIED_EMAIL': True
+              }
         }
-
-    # ACCOUNT_SIGNUP_FORM_CLASS = "users.forms.UserForm"
-    # def save(user):
-    #   user.save()
-    #ACCOUNT_USER_DISPLAY = "user.get_full_name"
-    #ACCOUNT_USERNAME_REQUIRED (=True)
-
 
     ########## END AUTHENTICATION PROVIDERS
 

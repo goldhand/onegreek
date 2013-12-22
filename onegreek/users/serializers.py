@@ -20,6 +20,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     is_chapter_admin = serializers.Field('is_chapter_admin')
     profile_image_url = serializers.Field('profile_image_url')
     profile_image_lg_url = serializers.Field('profile_image_lg_url')
+    fb_photos = serializers.Field('fb_photos')
+    fb_access_token = serializers.Field('get_fb_access_token')
     ctype_id = serializers.SerializerMethodField('get_content_type_id')
     #text_color_class = serializers.Field('get_status_text_class')
 
@@ -33,8 +35,14 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'first_name',
             'last_name',
             'get_full_name',
+            'profile_img_id',
+            'profile_img_src',
+            'profile_img_pic',
+            'profile_img_select',
             'profile_image_url',
             'profile_image_lg_url',
+            'fb_photos',
+            'fb_access_token',
             'status',
             'position',
             'is_chapter_admin',

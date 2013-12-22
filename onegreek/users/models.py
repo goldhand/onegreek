@@ -66,6 +66,11 @@ class User(AbstractUser, StatusModel):
         (3, 'Senior'),
         (4, 'Other'),
     )
+    PROFILE_IMG_OPTIONS = (
+        (0, 'Facebook Default'),
+        (1, 'Facebook Album'),
+        (2, 'Upload New'),
+    )
 
     university_email = models.EmailField(max_length=255, blank=True)
     phone = models.BigIntegerField(null=True, blank=True)
@@ -80,6 +85,10 @@ class User(AbstractUser, StatusModel):
     university = models.ForeignKey('universities.University', blank=True, null=True)
     fraternity = models.ForeignKey('fraternities.Fraternity', blank=True, null=True)
     position = models.ForeignKey('chapters.Position', blank=True, null=True)
+    profile_img_id = models.CharField(max_length=500, blank=True)
+    profile_img_src = models.URLField(max_length=500, blank=True)
+    profile_img_pic = models.URLField(max_length=500, blank=True)
+    profile_img_select = models.IntegerField(choices=PROFILE_IMG_OPTIONS, default=0)
 
     _tracker = FieldTracker()
 
@@ -94,20 +103,70 @@ class User(AbstractUser, StatusModel):
         return super(User, self).save(*args, **kwargs)
 
     def profile_image_url(self):
-        fb_uid = SocialAccount.objects.filter(user_id=self.id, provider='facebook')
 
-        if len(fb_uid):
-            return "http://graph.facebook.com/{}/picture?width=40&height=40".format(fb_uid[0].uid)
+        if self.profile_img_select == 0:
+            fb_uid = SocialAccount.objects.filter(user_id=self.id, provider='facebook')
+            if len(fb_uid):
+                return "http://graph.facebook.com/{}/picture?width=40&height=40".format(fb_uid[0].uid)
+            else:
+                if self.avatar_set.all():
+                    avatar = self.avatar_set.filter(primary=True)[0]
+                    return avatar.avatar_url(80)
+                else:
+                    return "http://www.gravatar.com/avatar/{}?s=40".format(hashlib.md5(self.email).hexdigest())
 
-        return "http://www.gravatar.com/avatar/{}?s=40".format(hashlib.md5(self.email).hexdigest())
+        elif self.profile_img_select == 1:
+            if self.profile_img_pic:
+                return self.profile_img_pic
+            else:
+                fb_uid = SocialAccount.objects.filter(user_id=self.id, provider='facebook')
+                if len(fb_uid):
+                    return "http://graph.facebook.com/{}/picture?width=40&height=40".format(fb_uid[0].uid)
+        else:
+            if self.avatar_set.all():
+                avatar = self.avatar_set.filter(primary=True)[0]
+                return avatar.avatar_url(80)
+            else:
+                return "http://www.gravatar.com/avatar/{}?s=40".format(hashlib.md5(self.email).hexdigest())
 
     def profile_image_lg_url(self):
+        if self.profile_img_select == 0:
+            fb_uid = SocialAccount.objects.filter(user_id=self.id, provider='facebook')
+            if len(fb_uid):
+                return "http://graph.facebook.com/{}/picture?width=300&height=300".format(fb_uid[0].uid)
+            if self.avatar_set.all():
+                avatar = self.avatar_set.filter(primary=True)
+                if avatar:
+                    return avatar[0].avatar_url(300)
+            else:
+                return "http://www.gravatar.com/avatar/{}?s=300".format(hashlib.md5(self.email).hexdigest())
+
+        elif self.profile_img_select == 1:
+            if self.profile_img_src:
+                return self.profile_img_src
+            else:
+                fb_uid = SocialAccount.objects.filter(user_id=self.id, provider='facebook')
+                if len(fb_uid):
+                    return "http://graph.facebook.com/{}/picture?width=300&height=300".format(fb_uid[0].uid)
+        else:
+            if self.avatar_set.all():
+                avatar = self.avatar_set.filter(primary=True)
+                if avatar:
+                    return avatar[0].avatar_url(300)
+            else:
+                return "http://www.gravatar.com/avatar/{}?s=300".format(hashlib.md5(self.email).hexdigest())
+
+    def fb_photos(self):
         fb_uid = SocialAccount.objects.filter(user_id=self.id, provider='facebook')
 
         if len(fb_uid):
-            return "http://graph.facebook.com/{}/picture?width=300&height=360".format(fb_uid[0].uid)
+            return "https://graph.facebook.com/{}/?fields=albums".format(fb_uid[0].uid)
 
-        return "http://www.gravatar.com/avatar/{}?s=40".format(hashlib.md5(self.email).hexdigest())
+    def get_fb_access_token(self):
+        fb_uid = SocialAccount.objects.filter(user_id=self.id, provider='facebook')
+        if fb_uid:
+            return fb_uid[0].socialtoken_set.all()[0]
+
 
     def is_chapter_admin(self):
         if self.chapter:

@@ -56,18 +56,23 @@
     </div>
 
     <div class="span9">
-        <tabset class="tabs-top">
+        <tabset class="tabs-top members-tabs">
             <tab ng-repeat="tab in globals.tabs | orderBy:'order'"
                  active="tab.active"
-                 heading="{[{ tab.heading }]}"
                  select="tab.select()">
+                <tab-heading>
+                    {[{ tab.heading }]}  <span class="badge badge-info">{[{ tab.count }]}</span>
+                </tab-heading>
                 <tab-content>
-                    <a ng-show="{[{ tab.status == 'rush' }]}" ng-click="globals.openCarouselModal()" class="btn btn-info">Slide Show</a>
+                    <a ng-show="{[{ tab.status == 'rush' }]}" ng-click="globals.openCarouselModal()" class="btn btn-link pull-right">Slide Show</a>
                 </tab-content>
             </tab>
-            <tab heading="Call List" select="globals.getGroup('/users/filter/group/', 'Call List')">
+            <tab select="globals.getGroup('/users/filter/group/', 'Call List')">
+                <tab-heading>
+                     Call List  <span class="badge badge-info">{[{ globals.chapter.call_count }]}</span>
+                </tab-heading>
                 <tab-content>
-                    <a ng-click="globals.openCarouselModal()" class="btn btn-info">Slide Show</a>
+                   <a ng-click="globals.openCarouselModal()" class="btn btn-link pull-right">Slide Show</a>
                 </tab-content>
             </tab>
 
@@ -244,77 +249,171 @@
 
     <script type="text/ng-template" id="detail.html">
 
-        <a class="" href="#/users"><< Back</a>
-        <div class="row">
-        <div class="span5">
-    <h2>
-        <span>
-                        {[{ user.first_name }]}
-                        {[{ user.last_name }]}
-        </span>
-        <small>
-         - {[{ user.status }]}
-        </small>
-    </h2>
-        <img class="" src="{[{ user.profile_image_lg_url }]}">
-        </div>
-        <div class="span4">
-                <div class="btn-group" ng-show="user.status == 'rush'">
-                    <button type="button" class="btn btn-mini"
-                    ng-click="callList(user, 'add', {{ user.chapter.linked_call_group.id }})">
-                            <i class="icon icon-plus"></i>
-                    </button>
-                    <button type="button" class="btn btn-mini"
-                    ng-click="callList(user, 'remove', {{ user.chapter.linked_call_group.id }})">
-                            <i class="icon icon-minus"></i>
-                    </button>
-                </div>
-    <dl class="dl-horizontal">
-    <dt>
-    Email:
-    </dt>
-    <dd>
-        {[{ user.email }]}
-    </dd>
-    <dt>
-    Phone:
-    </dt>
-    <dd>
-        {[{ user.phone }]}
-    </dd>
-    <dt>
-    Year:
-    </dt>
-    <dd>
-        {[{ user.year }]}
-    </dd>
-    <dt>
-    Major:
-    </dt>
-    <dd>
-        {[{ user.major }]}
-    </dd>
-    <dt>
-    Home Town:
-    </dt>
-    <dd>
-        {[{ user.hometown }]}
-    </dd>
-    <dt>
-    Highschool GPA:
-    </dt>
-    <dd>
-        {[{ user.highschool_gpa }]}
-    </dd>
-    <dt>
-    GPA:
-    </dt>
-    <dd>
-        {[{ user.gpa }]}
-    </dd>
-        </div>
+
+<div class="row">
+    <div class="span3">
+        <img ng-src="{[{user.profile_image_lg_url}]}">
+    </div>
+    <div class="span3">
+    <h3>{[{ user.get_full_name }]}
+    <small>
+        {[{ user.status }]}
+    </small>
+    </h3>
+    <button ng-click="getFbAlbums()">Fb photos</button>
+    <ul class="nav nav-pills nav-stacked">
+    <li ng-repeat="album in user.albums">
+      <a ng-click="expandFbAlbum(user, album)">
+      {[{ album.name }]} <span class="badge badge-info pull-right">{[{ album.count }]}</span>
+      </a>
+      <ul class="nav nav-pills nav-stacked" collapse="album.collapse">
+        <li ng-repeat="photo in album.photos">
+          <a ng-click="saveProfileImg(user, photo)">
+          <img src="{[{ photo.picture }]}">
+          </a>
+        </li>
+      </ul>
+    </li>
+    </ul>
+
+
+        <ul class="unstyled">
+            <li>
+                <dl class="dl-horizontal profile-list">
+                    <dt>Year</dt>
+                    <dd>{[{ user.year_display }]}</dd>
+                    <dt>Major</dt>
+                    <dd>{[{ user.major }]}</dd>
+                    <dt>GPA</dt>
+                    <dd>{[{ user.gpa }]}</dd>
+                    <dt>Hometown</dt>
+                    <dd>{[{ user.hometown }]}</dd>
+                    <dt>Email</dt>
+                    <dd>{[{ user.email }]}</dd>
+                    <dt>Phone</dt>
+                    <dd>{[{ user.phone }]}</dd>
+                </dl>
+            </li>
+
+        </ul>
 
     </div>
+    <div class="span3" ng-hide="true">
+                    <div class="user-edit-menu dropdown btn-group">
+                      <a class="dropdown-toggle btn btn-link btn-mini">
+                      <i class="fa fa-cog fa-lg"></i>
+                        <span class="caret"></span>
+                      </a>
+
+                      <ul class="dropdown-menu" ng-show="user.status == 'active_pending'">
+                            <li>
+                            <a ng-click="globals.modUser(user, 'remove', 'active_pending', 'active')">
+                            Approve
+                            </a>
+                            </li>
+                            <li>
+                            <a ng-click="globals.modUser(user, 'remove', 'active_pending', 'rush')">
+                            Remove
+                            </a>
+                            </li>
+                      </ul>
+
+                      <ul class="dropdown-menu" ng-show="user.status == 'active'">
+                            <li ng-hide="user.is_chapter_admin">
+                                <a ng-click="globals.modUser(user, 'add', 'admin', 'admin')">
+                                Make Admin
+                                </a>
+                            </li>
+                            <li ng-show="user.is_chapter_admin">
+                                <a ng-click="globals.modUser(user, 'remove', 'admin', 'active')">
+                                Remove From Admin
+                                </a>
+                            </li>
+                            <li ng-hide="user.status == 'pledge'">
+                                <a ng-click="globals.modUser(user, 'remove', 'active', 'pledge')">
+                                Make Pledge
+                                </a>
+                            </li>
+                            <li ng-show="user.status == 'active'">
+                                <a ng-click="globals.modUser(user, 'remove', 'active', 'rush')">
+                                Make Rush
+                                </a>
+                            </li>
+                            <li ng-show="user.status == 'active'">
+                                <a ng-click="globals.modUser(user, 'remove', 'active', 'active_pending')">
+                                Delete
+                                </a>
+                            </li>
+                      </ul>
+
+                      <ul class="dropdown-menu" ng-show="user.status == 'pledge'">
+                            <li ng-hide="user.is_chapter_admin">
+                                <a ng-click="globals.modUser(user, 'add', 'admin', 'admin')">
+                                Make Admin
+                                </a>
+                            </li>
+                            <li ng-show="user.is_chapter_admin">
+                                <a ng-click="globals.modUser(user, 'remove', 'admin', 'pledge')">
+                                Remove From Admin
+                                </a>
+                            </li>
+                            <li ng-hide="user.status == 'active'">
+                                <a ng-click="globals.modUser(user, 'remove', 'pledge', 'active')">
+                                Make Active
+                                </a>
+                            </li>
+                            <li ng-show="user.status == 'pledge'">
+                                <a ng-click="globals.modUser(user, 'remove', 'pledge', 'rush')">
+                                Make Rush
+                                </a>
+                            </li>
+                            <li ng-show="user.status == 'pledge'">
+                                <a ng-click="globals.modUser(user, 'remove', 'pledge', 'active_pending')">
+                                Delete
+                                </a>
+                            </li>
+                      </ul>
+
+                      <ul class="dropdown-menu" ng-show="user.status == 'rush'">
+                            <li ng-show="user.is_call">
+                                <a ng-click="globals.modUser(user, 'remove', 'rush', 'call')">
+                                Remove from Call List
+                                </a>
+                            </li>
+                            <li ng-hide="user.is_call">
+                                <a ng-click="globals.modUser(user, 'add', 'rush', 'call')">
+                                Add to Call List
+                                </a>
+                            </li>
+                            <li ng-hide="user.status == 'active'">
+                                <a ng-click="globals.modUser(user, 'add', 'rush', 'active')">
+                                Make Active
+                                </a>
+                            </li>
+                            <li ng-hide="user.status == 'pledge'">
+                                <a ng-click="globals.modUser(user, 'add', 'rush', 'pledge')">
+                                Make Pledge
+                                </a>
+                            </li>
+                            <li ng-show="user.status == 'rush'">
+                                <a ng-click="globals.modUser(user, 'remove', 'active_pending', 'rush')">
+                                Delete
+                                </a>
+                            </li>
+                      </ul>
+
+
+
+
+                    </div>
+
+
+    </div>
+</div>
+
+<br/>
+<br/>
+
 </script>
 
     <script type="text/ng-template" id="group-display.html">
@@ -420,6 +519,27 @@
 
 
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     <script type="text/ng-template" id="query.html">
@@ -650,129 +770,9 @@
 {% block css %}
     {{ block.super }}
     <style>
-        .tabs-left > .nav-tabs > li > a {
-            line-height: 40px;
-        }
-
         .nav > li > a > img {
             max-width: 40px;
         }
     </style>
 {% endblock css %}
-
-<div class="col-xs-9">
-    <h2>Users</h2>
-</div>
-
-<div class="row">
-    <div class="col-lg-9">
-        <div class="list-group">
-            {% for user in user_list %}
-                <a href="{% url 'users:detail' user.username %}" class="list-group-item">
-                    <h4 class="list-group-item-heading">{% avatar user %} {{ user.username }}</h4>
-
-                    <p class="list-group-item-text">{{ maker.tagline }}</p>
-                </a>
-            {% endfor %}
-
-        </div>
-    </div>
-</div>
-
-
-{% comment %}
-
-
-        <tab ng-repeat="group in globals.groups"
-        active="group.tab.active"
-        data-drop="true" ng-model='group.user_set'
-        jqyoui-droppable="{multiple:false}"
-        jqyoui-options="{accept:'[ng-model=globals.users]'}"
-        >
-        <tab-heading>
-        <group-display group="group"></group-diplay>
-        </tab-heading>
-        <tab-content>
-
-
-        <ul class="nav nav-pills nav-stacked">
-            <li ng-repeat="user in group.user_set"
-                        data-drag="true"
-                        jqyoui-draggable="{index: {[{$index}]}, animate:true, placeholder: 'keep', onStart: 'startDragUser(user)'}"
-                        data-jqyoui-options="{revert: 'invalid', helper: 'clone'}"
-                        >
-
-                <div class="btn-group btn-group-vertical pending-active-select" ng-show="group.tab.pending">
-                        <button type="button" class="btn btn-mini" ng-model="user.pending" btn-radio="'active'">
-                        <i class="icon icon-ok"></i>
-                        </button>
-                        <button type="button" class="btn btn-mini" ng-model="user.pending" btn-radio="'drop'">
-                        <i class="icon icon-remove"></i>
-                        </button>
-                </div>
-
-                <div class="btn-group btn-group-vertical pending-active-select" ng-show="group.tab.rush">
-                    <button type="button" class="btn btn-mini" ng-disabled="user.call == true"
-                    ng-click="callList(user, 'add')">
-                            <i class="icon icon-plus"></i>
-                    </button>
-                    <button type="button" class="btn btn-mini" ng-disabled="user.call == false"
-                    ng-click="callList(user, 'remove')">
-                            <i class="icon icon-minus"></i>
-                    </button>
-                </div>
-
-                <a href="#/users/{[{ user.id }]}" class="user-detail">
-                           <ul class="inline">
-                               <li>
-                                        <img class="pull-left thumbnail" ng-src="{[{ user.profile_image_url }]}">
-                               </li>
-                               <li>
-                                        {[{ user.first_name }]}
-                                        {[{ user.last_name }]}
-                               </li>
-                               <li>
-                                        {[{ user.status }]}
-                               </li>
-                           </ul>
-                </a>
-            </li>
-        </ul>
-        <div class="clear-fix">
-        <a ng-hide="group.tab.pending" ng-click="submitGroup(group)" class="btn btn-primary">Save Changes</a>
-        <a ng-show="group.tab.pending" ng-click="submitPending(group)" class="btn btn-info">Save Changes</a>
-        <a ng-show="group.tab.rush" ng-click="openCarouselModal(group.user_set)" class="btn btn-info">Slide Show</a>
-
-
-        </div>
-        </tab-content>
-        </tab>
-    </tabset>
-
-
-        </tab-content>
-        </tab>
-
-    </tabset>
-
-
-
-
-
-                <div class="pull-right" ng-hide="{[{ user.status != 'active_pending' }]}">
-                            <label for="status-{[{ user.id }]}">Active</label>
-                            <input
-                            id="status-{[{ user.id }]}"
-                            ng-model="user.status"
-                            type="checkbox"
-                            ng-true-value="active",
-                            ng-false-value="active_pending",
-                            >
-                </div>
-                <a href="#/users/{[{ user.id }]}">
-                            <img ng-src="user.profile_image_url">
-                {[{ user.last_name }]}, {[{ user.first_name }]}
-                </a>
-           {% endcomment %}
-
 
