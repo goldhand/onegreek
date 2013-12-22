@@ -48,12 +48,15 @@ userApp.controller('ProfileImgCtrl', [
     '$http',
     '$route',
     '$window',
+    'GlobalService',
     function(
         $scope,
         $http,
         $route,
-        $window
+        $window,
+        GlobalService
         ) {
+        $scope.globals = GlobalService;
         $scope.showProfileImgPreview = false;
 
         $scope.getUser = function(user_id) {
@@ -72,12 +75,18 @@ userApp.controller('ProfileImgCtrl', [
         $scope.submit = function() {
             $http.put('/api/users/' + $scope.user.id + '/', $scope.user).success(function(user_data) {
                 console.log(user_data);
-                $scope.user = user_data;
-                $scope.user.albums = [];
-                $window.location.href = '/chapters/';
+                $scope.globals.addAlert("success", "Profile image updated. Refresh to see changes.")
             });
         };
 
+        $scope.submitRedirect = function(target) {
+            $http.put('/api/users/' + $scope.user.id + '/', $scope.user).success(function(user_data) {
+                console.log(user_data);
+                $scope.user = user_data;
+                $scope.user.albums = [];
+                $window.location.href = target;
+            });
+        };
 
         $scope.getFbAlbums = function() {
             $http.get($scope.user.fb_photos + '&access_token=' + $scope.user.fb_access_token).success(function(data) {
@@ -115,6 +124,28 @@ userApp.controller('ProfileImgCtrl', [
 
     }]);
 
+userApp.controller('AlertCtrl', [
+    '$scope',
+    'GlobalService',
+    function(
+        $scope,
+        GlobalService
+        ) {
+        $scope.globals = GlobalService;
+        $scope.globals.alerts = [];
+
+        $scope.globals.closeAlert = function(index) {
+            $scope.globals.alerts.splice(index, 1);
+
+        };
+
+        $scope.globals.addAlert = function(type, msg) {
+            $scope.globals.alerts.push({type: type, msg: msg});
+            if ($scope.globals.alerts.length >= 6) {
+                $scope.globals.closeAlert(0);
+            }
+        };
+    }]);
 
 userApp.controller('ProfileCalendarCtrl', [
     '$scope',

@@ -277,7 +277,8 @@ class Common(Configuration):
 
     SOCIALACCOUNT_PROVIDERS = \
         { 'facebook':
-              { 'SCOPE': ['email', 'publish_stream', 'user_photos', 'user_hometown'],
+              { 'SCOPE': ['email', 'publish_stream',
+                          'user_photos', 'user_hometown', 'user_location', 'photo_upload', 'status_update'],
                 'AUTH_PARAMS': { 'auth_type': 'reauthenticate' },
                 'METHOD': 'js_sdk',
                 'VERIFIED_EMAIL': True

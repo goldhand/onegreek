@@ -8,7 +8,7 @@
     <hr>
     <div class="row">
         <div class="span2">
-            {% avatar object %}
+          <img class="thumbnail" src="{{ user.profile_image_url }}">
         </div>
         <div class="span10">
             <h2>
@@ -33,6 +33,9 @@
 
     {% if object == request.user %}
         <!-- Action buttons -->
+      <div ng-controller="AlertCtrl">
+        <alert ng-repeat="alert in globals.alerts" type="alert.type" close="globals.closeAlert($index)">{[{ alert.msg }]}</alert>
+      </div>
 
         <div class="row">
 
@@ -45,13 +48,10 @@
                           <li>
                             <a href="#/events/calendar/">Calendar</a>
                           </li>
-                          <li>
-                            <a href="#/{{ request.user.id }}">Profile</a>
-                          </li>
                         </ul>
 
-                      </tab-content>
                         <div ng-view></div>
+                      </tab-content>
                     </tab>
                     <tab heading="Profile">
                         <form class="form-horizontal" method="post"
@@ -87,6 +87,9 @@
                                            href="{% url 'chapters:detail' object.chapter_id %}">{{ object.chapter.fraternity.title }}</a>
                                     </li>
                                 {% endif %}
+                                <li>
+                                  <a href="{% url 'chapters:list' %}">Chapters List</a>
+                                </li>
                             </ul>
                         </fieldset>
                     </div>
@@ -102,6 +105,79 @@
                 </div>
                 <div class="row">
                     <div class="span4">
+
+
+                      <div ng-controller="ProfileImgCtrl">
+
+                        <tabset type="nav-pills">
+                          <tab ng-hide="true"></tab>
+                          <tab class="nav-stacked" heading="Uploaded Photos" select="setUserImg(0)">
+                            <tab-content>
+                              {% if not avatars %}
+                                <p>{% trans "You haven't uploaded an avatar yet. Please upload one now." %}</p>
+                              {% else %}
+                                <form method="POST" action="{% url 'avatar_change' %}?next={{ request.path }}" id="avatar-change">
+                                  <input class="btn btn-primary btn-small pull-right" type="submit" value="{% trans "Save" %}" ng-click="submit()"/>
+                                    <div id="avatar-change-panel">
+                                      {% csrf_token %}
+                                      <ul class="avatar-select">
+                                        {{ avatar_primary_form.as_ul }}
+                                      </ul>
+                                      <div class="clearfix"></div>
+                                    </div>
+                                </form>
+                              {% endif %}
+
+                            </tab-content>
+                          </tab>
+                          <tab class="nav-stacked" heading="Upload New Photo" select="setUserImg(2)">
+                            <tab-content>
+                              <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}?next={{ request.path }}" id="avatar-add">
+                                <input class="btn btn-primary btn-small pull-right" type="submit" value="{% trans "Save" %}" ng-click="submit()" />
+                                {{ avatar_upload_form }}
+                                {% csrf_token %}
+                              </form>
+                            </tab-content>
+                          </tab>
+                          <tab class="nav-stacked" heading="Facebook Photo Albums" select="setUserImg(1)">
+                            <tab-content>
+                              <div id="fb-select">
+                                  <div ng-init="getUser({{ request.user.id }})">
+                                        <button ng-hide="showProfileImgPreview" class="btn btn-info btn-small" ng-click="getFbAlbums()">Choose Photo</button>
+                                        <button class="btn btn-primary btn-small pull-right" ng-click="submit()">Save</button>
+                                        <img ng-show="showProfileImgPreview" src="{[{ user.profile_img_pic }]}" class="thumbnail">
+                                      <div class="clearfix"></div>
+
+                                        <ul class="nav nav-pills nav-stacked">
+                                          <li ng-repeat="album in user.albums">
+                                            <a ng-click="expandFbAlbum(user, album)">
+                                              {[{ album.name }]} <span class="badge badge-info pull-right">{[{ album.count }]}</span>
+                                            </a>
+                                            <ul class="nav nav-pills nav-stacked" collapse="album.collapse">
+                                              <li ng-repeat="photo in album.photos">
+                                                <a ng-click="saveProfileImg(user, photo)">
+                                                  <img ng-src="{[{ photo.picture }]}">
+                                                </a>
+                                              </li>
+                                            </ul>
+                                          </li>
+                                        </ul>
+
+                                  </div>
+                                </div>
+
+                            </tab-content>
+                          </tab>
+
+                        </tabset>
+                      </div>
+
+
+
+
+{% comment %}
+
+
                         <tabset class="tabs-top">
                             <tab heading="Upload New">
                                 <form enctype="multipart/form-data" method="POST"
@@ -168,6 +244,7 @@
 
                             </tab>
                         </tabset>
+{% endcomment %}
                     </div>
                 </div>
             </div>
