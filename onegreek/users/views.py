@@ -21,7 +21,7 @@ from rest_framework.response import Response
 
 from avatar.forms import UploadAvatarForm, DeleteAvatarForm, PrimaryAvatarForm
 
-from .forms import UserForm, UserEditForm, UploadAvatarFormNu, DeleteAvatarFormNu, PrimaryAvatarFormNu
+from .forms import UserForm, UserRegisterForm, UploadAvatarFormNu, DeleteAvatarFormNu, PrimaryAvatarFormNu
 
 # Import the customized User model
 User = get_user_model() # use this function for swapping user model
@@ -30,7 +30,7 @@ from django.contrib.auth.models import Group
 
 class UserDetailView(LoginRequiredMixin, FormMixin, DetailView):
     model = User
-    form_class = UserEditForm
+    form_class = UserForm
     # These next two lines tell the view to index lookups by username
     slug_field = "pk"
     slug_url_kwarg = "pk"
@@ -89,6 +89,9 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     def get_object(self):
         # Only get the User record for the user making the request
         return User.objects.get(pk=self.request.user.pk)
+
+
+
 
 
 class UserListView(LoginRequiredMixin, ListView):

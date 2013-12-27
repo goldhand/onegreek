@@ -6,6 +6,7 @@ var chapterApp = angular.module('chapterApp', [
     'ui.bootstrap',
     'ngCookies',
     'ngRoute',
+    'ngAnimate',
     'chapterControllers',
     'chapterServices',
     'chapterDirectives'

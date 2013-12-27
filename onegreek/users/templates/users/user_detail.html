@@ -144,7 +144,7 @@
                               <div id="fb-select">
                                   <div ng-init="getUser({{ request.user.id }})">
                                         <button ng-hide="showProfileImgPreview" class="btn btn-info btn-small" ng-click="getFbAlbums()">Choose Photo</button>
-                                        <button class="btn btn-primary btn-small pull-right" ng-click="submit()">Save</button>
+                                        <button data-loading-text="Loading..." class="btn btn-primary btn-small pull-right" ng-click="submit()">Save</button>
                                         <img ng-show="showProfileImgPreview" src="{[{ user.profile_img_pic }]}" class="thumbnail">
                                       <div class="clearfix"></div>
 

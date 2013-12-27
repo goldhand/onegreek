@@ -7,6 +7,8 @@ from crispy_forms.layout import Layout, Div, Field, Submit, Button, Fieldset, HT
 
 from djangular.forms.angular_model import NgModelFormMixin
 
+from phonenumber_field.formfields import PhoneNumberField
+
 from .models import User
 
 rush_or_active_toggle_widget = \
@@ -23,7 +25,8 @@ rush_or_active_toggle_widget = \
     '</div>'
 
 
-class UserForm(NgModelFormMixin, forms.ModelForm):
+class UserRegisterForm(NgModelFormMixin, forms.ModelForm):
+    phone = PhoneNumberField()
 
     class Meta:
         # Set this form to use the User model.
@@ -33,7 +36,7 @@ class UserForm(NgModelFormMixin, forms.ModelForm):
         fields = (
             "first_name",
             "last_name",
-            #"phone",
+            "phone",
             "chapter",
             "highschool_gpa",
             "year",
@@ -45,7 +48,7 @@ class UserForm(NgModelFormMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         kwargs.update(scope_prefix='globals.user')
-        super(UserForm, self).__init__(*args, **kwargs)
+        super(UserRegisterForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.form_class = 'form-horizontal'
@@ -55,6 +58,7 @@ class UserForm(NgModelFormMixin, forms.ModelForm):
                     Field('first_name', css_class=""),
                     Field('last_name', css_class=""),
                     Field('year', css_class=""),
+                    Field('phone', css_class=""),
                     HTML(rush_or_active_toggle_widget),
                     css_class="span6"
                 ),
@@ -97,7 +101,8 @@ class UserForm(NgModelFormMixin, forms.ModelForm):
         )
 
 
-class UserEditForm(forms.ModelForm):
+class UserForm(forms.ModelForm):
+    phone = PhoneNumberField()
 
     class Meta:
         # Set this form to use the User model.
@@ -107,7 +112,7 @@ class UserEditForm(forms.ModelForm):
         fields = (
             "first_name",
             "last_name",
-            #"phone",
+            "phone",
             #"chapter",
             "gpa",
             "highschool_gpa",
@@ -118,7 +123,7 @@ class UserEditForm(forms.ModelForm):
         )
 
     def __init__(self, *args, **kwargs):
-        super(UserEditForm, self).__init__(*args, **kwargs)
+        super(UserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.form_class = 'form-horizontal'
@@ -127,6 +132,7 @@ class UserEditForm(forms.ModelForm):
             Field('last_name', css_class=""),
             Fieldset(
                 'Profile Details',
+                Field('phone', css_class=""),
                 Field('year', css_class=""),
                 Field('major', css_class=""),
                 Field('gpa', css_class=""),
@@ -134,7 +140,7 @@ class UserEditForm(forms.ModelForm):
                 Field('hometown', css_class=""),
                 #Field('phone', css_class=""),
                 #Field('chapter', css_class=""),
-            )
+            ),
         )
 
 

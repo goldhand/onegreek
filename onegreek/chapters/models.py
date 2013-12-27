@@ -79,6 +79,13 @@ class Chapter(Slugged, StatusModel):
             self.university_title = self.university.title
         return super(Chapter, self).save(*args, **kwargs)
 
+    def has_admin(self):
+        if self.linked_admin_group:
+            if self.linked_admin_group.user_set.count():
+                return True
+        else:
+            return False
+
     def get_rush_form(self, *args, **kwargs):
         if not self.rush_form:
             self.rush_form = Form.objects.create()

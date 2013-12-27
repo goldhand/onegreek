@@ -83,10 +83,16 @@ chapterControllers.controller('ChapterDetailCtrl', [
         GlobalService
         ) {
         $scope.globals = GlobalService;
+        $scope.globals.ogLoading = {
+            chapter: false,
+            rush: false,
+            users: false,
+            comments: false,
+            images: false
+        };
 
         $scope.getChapterRush = function(rush_url) {
             $http.get(rush_url).success(function(data) {
-                console.log(data);
                 $scope.chapter.rush = {
                     title: data.title,
                     hide: data.hide,
@@ -94,6 +100,7 @@ chapterControllers.controller('ChapterDetailCtrl', [
                     message: { hide: true, text: data.message },
                     rushing: data.rushing
                 };
+                $scope.globals.ogLoading.rush = true;
             });
         };
 
@@ -107,25 +114,31 @@ chapterControllers.controller('ChapterDetailCtrl', [
                     $scope.getComments(data.ctype_id, data.id);
                     $scope.getImages(data.ctype_id, data.id);
                 }
+                // filters events for chapter
                 $scope.globals.filterForChapter(data.id);
+                // chapter loading done
+                $scope.globals.ogLoading.chapter = true;
             });
         };
 
         $scope.getUsers = function(chapter_id) {
             $http.get('/api/users/?chapter=' + chapter_id).success(function(data) {
                 $scope.users = data;
+                $scope.globals.ogLoading.users = true;
             });
         };
 
         $scope.getComments = function(ctype, obj) {
             $http.get('/api/comments/?ctype=' + ctype + '&obj=' + obj).success(function(data) {
                 $scope.comments = data;
+                $scope.globals.ogLoading.comments = true;
             });
         };
         $scope.getImages = function(ctype, obj) {
             $http.get('/api/images/?ctype=' + ctype + '&obj=' + obj).success(function(data) {
                 console.log(data);
                 $scope.images = data;
+                $scope.globals.ogLoading.images = true;
             });
         };
 
@@ -162,25 +175,27 @@ chapterControllers.controller('ChapterDetailCtrl', [
         $scope.rush_form = {};
 
         $scope.openModal = function () {
-            if(!($scope.chapter.rush.rushing)) {
+            if(!($scope.chapter.rush.disabled)) {
+                if(!($scope.chapter.rush.rushing)) {
 
-                var modalInstance = $modal.open({
-                    templateUrl: 'RushFormModal.html',
-                    controller: 'ModalInstanceCtrl',
-                    resolve: {
-                        rush_form: function () {
-                            return $scope.rush_form;
+                    var modalInstance = $modal.open({
+                        templateUrl: 'RushFormModal.html',
+                        controller: 'ModalInstanceCtrl',
+                        resolve: {
+                            rush_form: function () {
+                                return $scope.rush_form;
+                            }
                         }
-                    }
-                });
+                    });
 
-                modalInstance.result.then(function (rush_form) {
-                    $scope.rush_form = rush_form;
-                    $scope.rushFormSubmit();
+                    modalInstance.result.then(function (rush_form) {
+                        $scope.rush_form = rush_form;
+                        $scope.rushFormSubmit();
+                        $scope.rushSubmit();
+                    }, function () {});
+                } else {
                     $scope.rushSubmit();
-                }, function () {});
-            } else {
-                $scope.rushSubmit();
+                }
             }
         };
 

@@ -38,6 +38,7 @@ eventsControllers.controller('EventListCtrl', [
     '$scope',
     '$http',
     '$modal',
+    '$window',
     'filterFilter',
     'EventService',
     'GlobalService',
@@ -46,6 +47,7 @@ eventsControllers.controller('EventListCtrl', [
         $scope,
         $http,
         $modal,
+        $window,
         filterFilter,
         EventService,
         GlobalService,
@@ -106,7 +108,14 @@ eventsControllers.controller('EventListCtrl', [
         $scope.submit = function() {
             EventService.save($scope.event).then(function(data) {
                 $scope.globals.events.push(data);
+                console.log();
+                if($scope.event.redirect) {
+                    console.log($scope.event);
+                    var target = '/gallery/upload/' + data.ctype_id + '/' + data.id + '/';
+                    $window.location.href = target;
+                }
                 $scope.event = {};
+
             }, function(status) {
                 console.log(status);
             });
@@ -127,6 +136,7 @@ eventsControllers.controller('EventListCtrl', [
 
             modalInstance.result.then(function (newEvent) {
                 $scope.event = newEvent;
+                console.log(newEvent);
                 $scope.submit();
             }, function () {});
         };
@@ -227,58 +237,14 @@ eventsApp.controller('EventDetailCtrl', [
                 }
             });
 
-            modalInstance.result.then(function (newEvent) {
+            modalInstance.result.then(function (newEvent, redirect) {
                 $scope.event = newEvent;
-                $scope.submit();
+                $scope.submit(redirect);
             }, function () {});
         };
 
 }]);
 
-
-eventsControllers.controller('MyFormCtrl', [
-    '$scope',
-    '$http',
-    '$modal',
-    'GlobalService',
-    'EventService',
-    function (
-        $scope,
-        $http,
-        $modal,
-        GlobalService,
-        EventService
-        ) {
-        $scope.event = {};
-        $scope.globals = GlobalService;
-        $scope.submit = function() {
-            EventService.save($scope.event).then(function(data) {
-                $scope.globals.events.push(data);
-                $scope.event = {};
-            }, function(status) {
-                console.log(status);
-            });
-        };
-
-
-        $scope.openModal = function () {
-            var modalInstance = $modal.open({
-                templateUrl: 'newEventModal.html',
-                controller: 'ModalInstanceCtrl',
-                windowClass: 'full-screen-modal',
-                resolve: {
-                    event: function () {
-                        return $scope.event;
-                    }
-                }
-            });
-
-            modalInstance.result.then(function (newEvent) {
-                $scope.event = newEvent;
-                $scope.submit();
-            }, function () {});
-        };
-}]);
 
 eventsControllers.controller('ModalInstanceCtrl', [
     '$scope',
@@ -313,6 +279,11 @@ eventsControllers.controller('ModalInstanceCtrl', [
         $scope.event = event;
 
             $scope.ok = function () {
+                $scope.event.redirect = false;
+                $modalInstance.close($scope.event);
+            };
+            $scope.addImages = function () {
+                $scope.event.redirect = true;
                 $modalInstance.close($scope.event);
             };
 
@@ -320,3 +291,68 @@ eventsControllers.controller('ModalInstanceCtrl', [
                 $modalInstance.dismiss('cancel');
             };
     }]);
+
+
+
+
+
+
+
+
+
+
+
+
+//***************************************
+
+eventsControllers.controller('MyFormCtrl', [
+    '$scope',
+    '$http',
+    '$modal',
+    'GlobalService',
+    'EventService',
+    function (
+        $scope,
+        $http,
+        $modal,
+        GlobalService,
+        EventService
+        ) {
+        $scope.event = {};
+        $scope.globals = GlobalService;
+        $scope.submit = function(redirect) {
+            EventService.save($scope.event).then(function(data) {
+                $scope.globals.events.push(data);
+                $scope.event = {};
+                if(redirect) {
+                    console.log('redirect');
+                    //var target = data.ctype_id + '/' + data.id + '/';
+                    //$window.location.href = target;
+                    //<a href="{% url 'imagestore:upload'  %}{[{ event.ctype_id }]}/{[{ event.id }]}/">Add Images</a>
+                }
+
+
+            }, function(status) {
+                console.log(status);
+            });
+        };
+
+
+        $scope.openModal = function () {
+            var modalInstance = $modal.open({
+                templateUrl: 'newEventModal.html',
+                controller: 'ModalInstanceCtrl',
+                windowClass: 'full-screen-modal',
+                resolve: {
+                    event: function () {
+                        return $scope.event;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (newEvent) {
+                $scope.event = newEvent;
+            }, function () {});
+        };
+    }]);
+

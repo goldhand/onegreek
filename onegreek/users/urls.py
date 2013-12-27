@@ -2,7 +2,7 @@
 from django.conf.urls import patterns, url
 
 from users import views
-from .forms import UserEditForm
+from .forms import UserRegisterForm
 
 urlpatterns = patterns('',
     # URL pattern for the UserListView
@@ -18,7 +18,7 @@ urlpatterns = patterns('',
     ),
     # URL pattern for the UserRedirectView
     url(
-        regex=r'^$',
+        regex=r'^~redirect/$',
         view=views.UserRedirectView.as_view(),
         name='redirect'
     ),
@@ -32,8 +32,7 @@ urlpatterns = patterns('',
     url(
         regex=r'^~edit/$',
         view=views.UserUpdateView.as_view(
-            template_name='users/user_edit.html',
-            form_class=UserEditForm),
+            template_name='users/user_edit.html',),
         name='edit'
     ),
     # URL pattern for the UserUpdateView
@@ -41,6 +40,14 @@ urlpatterns = patterns('',
         regex=r'^~update/$',
         view=views.UserUpdateView.as_view(),
         name='update'
+    ),
+    url(
+        regex=r'^~register/$',
+        view=views.UserUpdateView.as_view(
+            form_class=UserRegisterForm,
+            template_name='users/user_register.html',
+            ),
+        name='register'
     ),
     url(
         regex=r'^group/mod/$',

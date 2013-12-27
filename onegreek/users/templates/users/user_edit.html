@@ -7,9 +7,12 @@
 <div class="span9" ng-controller="UserFormCtrl">
         <div class="col-lg-12">
             <h1>{% block header %}Edit Profile{% endblock %}</h1>
-            <form class="form-horizontal" method="post" action="{% url 'users:update' %}{[{ userForm.next }]}">
+            <form class="form-horizontal" method="post">
                 {% csrf_token %}
                 {% crispy form %}
+              <div class="form-actions">
+                <input type="submit" value="Submit" name="submit">
+              </div>
             </form>
         </div>
 </div>

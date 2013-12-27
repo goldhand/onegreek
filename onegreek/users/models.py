@@ -15,6 +15,8 @@ from django.utils.translation import ugettext_lazy as _
 from model_utils import Choices, FieldTracker
 from model_utils.models import StatusModel
 
+from phonenumber_field.modelfields import PhoneNumberField
+
 
 def color_key(status, component=None):
     if status == "active":
@@ -73,7 +75,7 @@ class User(AbstractUser, StatusModel):
     )
 
     university_email = models.EmailField(max_length=255, blank=True)
-    phone = models.BigIntegerField(null=True, blank=True)
+    phone = PhoneNumberField(null=True, blank=True)
     highschool_gpa = models.FloatField(null=True, blank=True)
     gpa = models.FloatField(null=True, blank=True)
     year = models.IntegerField(choices=COLLEGE_YEARS, default=0)

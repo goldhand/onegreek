@@ -260,21 +260,6 @@
         {[{ user.status }]}
     </small>
     </h3>
-    <button ng-click="getFbAlbums()">Fb photos</button>
-    <ul class="nav nav-pills nav-stacked">
-    <li ng-repeat="album in user.albums">
-      <a ng-click="expandFbAlbum(user, album)">
-      {[{ album.name }]} <span class="badge badge-info pull-right">{[{ album.count }]}</span>
-      </a>
-      <ul class="nav nav-pills nav-stacked" collapse="album.collapse">
-        <li ng-repeat="photo in album.photos">
-          <a ng-click="saveProfileImg(user, photo)">
-          <img src="{[{ photo.picture }]}">
-          </a>
-        </li>
-      </ul>
-    </li>
-    </ul>
 
 
         <ul class="unstyled">
@@ -530,6 +515,15 @@
                 </div>
                 <div class="modal-footer">
 
+                    <button ng-hide="user.is_call" type="button" class="btn btn-default" ng-click="modUser(user, 'add', 'rush', 'call')" ng-model="user.is_call" btn-radio="true">
+                        Add to call list
+                    </button>
+                    <button ng-show="user.is_call" type="button" class="btn btn-default" ng-click="modUser(user, 'remove', 'rush', 'call')" ng-model="user.is_call" btn-radio="false">
+                        Remove from call list
+                    </button>
+
+            {% comment %}
+            {# Thumbs up / down call list functionality #}
                 <div class="btn-group">
                     <button type="button" class="btn btn-default" ng-click="modUser(user, 'add', 'rush', 'call')" ng-model="user.is_call" btn-radio="true">
                         <i class="text-info fa fa-thumbs-o-up fa-lg"></i>
@@ -538,6 +532,10 @@
                         <i class="text-error fa fa-thumbs-o-down fa-lg"></i>
                     </button>
                 </div>
+            {% endcomment %}
+
+
+            </div>
 
     </slide>
     </carousel>

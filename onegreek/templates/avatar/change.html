@@ -25,7 +25,7 @@
         </div>
       </div>
       <div class="span3">
-        <input class="btn btn-primary btn-large" type="submit" value="{% trans "Save & Continue" %}" ng-click="submitRedirect('/chapters/')"/>
+        <input class="btn btn-primary btn-large" type="submit" value="{% trans "Save & Continue" %}" ng-click="submitRedirect('/')"/>
       </div>
           </form>
         {% endif %}
@@ -41,7 +41,7 @@
           {% csrf_token %}
         </div>
         <div class="span3">
-          <input class="btn btn-primary btn-large" type="submit" value="{% trans "Save & Continue" %}" ng-click="submitRedirect('/chapters/')" />
+          <input class="btn btn-primary btn-large" type="submit" value="{% trans "Save & Continue" %}" ng-click="submitRedirect('/')" />
         </div>
         </form>
       </tab-content>
@@ -82,7 +82,7 @@
           </div>
         </div>
         <div class="span3">
-          <button class="btn btn-primary btn-large" ng-click="submitRedirect('/chapters/')">Save & Continue</button>
+          <button class="btn btn-primary btn-large" ng-click="submitRedirect('/')">Save & Continue</button>
         </div>
         </div>
 

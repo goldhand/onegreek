@@ -12,8 +12,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-                       url(r'^$', include("users.urls")),
-                       url(r'^home$', TemplateView.as_view(template_name='pages/home.html'), name="home"),
+                       url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name="home"),
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^users/', include("users.urls", namespace="users")),
                        url(r'^accounts/', include('allauth.urls')),

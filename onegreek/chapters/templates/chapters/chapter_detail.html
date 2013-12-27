@@ -6,7 +6,7 @@
 
     <div ng-controller="ChapterDetailCtrl">
     <div class="span9">
-        <h1 class="page-header">
+        <h1 ng-show="globals.ogLoading.chapter" class="page-header" ng-cloak>
             {[{ chapter.fraternity_title }]}
             <br/>
             <small>
@@ -20,12 +20,12 @@
                 <div class="chapter-carousel">
                 <carousel>
                     <slide ng-repeat="image in images">
-                        <img class="image-responsive" src="{[{ image.lg_img_url }]}">
+                        <img class="image-responsive" ng-src="{[{ image.lg_img_url }]}">
                     </slide>
                 </carousel>
                 </div>
 
-                <dl>
+                <dl ng-show="globals.ogLoading.chapter">
                     <dt>
                         Description:
                     </dt>
@@ -67,36 +67,16 @@
             </div>
             <div class="span4">
                {% if not request.user.chapter_id %}
+                 <div ng-show="globals.ogLoading.rush">
 
                 <div ng-hide="chapter.rush.hide" style="display: table; margin-left: auto; margin-right: auto; margin-bottom: 30px;">
                     <a ng-disabled="chapter.rush.disabled" ng-click="openModal()" class="btn btn-primary btn-large" > {[{ chapter.rush.title }]} </a>
                 </div>
                 <p ng-hide="chapter.rush.message.hide">{[{ chapter.rush.message.text }]}</p>
+
                     {{ chapter.rush_form.content }}
-    <script type="text/ng-template" id="RushFormModal.html">
 
-    <div class="modal-header">
-        <h3 ng-model="event.title">Rush {{ chapter.title }}</h3>
-    </div>
-    <div class="modal-body form form-horizontal">
-                        {% csrf_token %}
-                        {% for field in rush_form %}
-                        <div class="control-group">
-                        {{ field.errors }}
-                        <label for="{{ field.id_for_label }}" class="control-label">{{ field.label }}</label>
-                        <div class="controls">
-                        {{ field }}
-                        </div>
-                        </div>
-                        {% endfor %}
-    </div>
-
-    <div class="modal-footer">
-        <button class="btn btn-primary" ng-click="ok()">{{ chapter.rush_form.button_text }}</button>
-        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-    </div>
-
-    </script>
+                 </div>
                 {% endif %}
 
                 {% if chapter.fb_status %}
@@ -106,8 +86,8 @@
                 </div>
                 {% endif %}
 
-                <tabset>
-                    <tab heading="Members">
+                <tabset ng-cloak>
+                    <tab ng-show="globals.ogLoading.users" heading="Members">
                         <tab-content>
                         <div class="user-detail media" ng-repeat="user in users">
                             <a href="{[{ user.extra_data.link }]}" target="_blank" class="pull-left">
@@ -124,7 +104,7 @@
                         </div>
                         </tab-content>
                     </tab>
-                    <tab heading="Comments">
+                    <tab ng-show="globals.ogLoading.comments" heading="Comments">
                         <tab-content>
                             <div ng-repeat="comment in comments" class="media">
 
@@ -147,7 +127,7 @@
                             {% endif %}
                         </tab-content>
                     </tab>
-                    <tab heading="Info">
+                    <tab ng-show="globals.ogLoading.chapter" heading="Info">
                         <tab-content>
                             <dl>
                                 <dt>
@@ -171,6 +151,45 @@
         </div>
     </div>
     </div>
+
+  <script type="text/ng-template" id="RushFormModal.html">
+
+    <div class="modal-header">
+        <h3 ng-model="event.title">Rush {{ chapter.fraternity_title }}</h3>
+    </div>
+    <div class="modal-body">
+    {% if chapter.has_admin %}
+      <div class="form form-horizontal">
+                        {% csrf_token %}
+                        {% for field in rush_form %}
+                        <div class="control-group">
+                        {{ field.errors }}
+                        <label for="{{ field.id_for_label }}" class="control-label">{{ field.label }}</label>
+                        <div class="controls">
+                        {{ field }}
+                        </div>
+                        </div>
+                        {% endfor %}
+        </div>
+    {% else %}
+    <p class="center-text">
+    {{ chapter.fraternity_title }} has not yet registered with onegreek.
+    <br>
+    <small>
+    Are you the {{ chapter.fraternity_title }} President, then <a href="#">register {{ chapter.fraternity_title }}.</a>
+    </small>
+    </p>
+    {% endif %}
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">{{ chapter.rush_form.button_text }}</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+
+    </script>
+
+
 
 {% endblock content %}
 

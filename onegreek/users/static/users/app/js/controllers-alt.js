@@ -697,6 +697,35 @@ userControllers.controller('CarouselModalInstanceCtrl', [
 
 
 
+userControllers.controller('UserFormCtrl', [
+    '$scope',
+    '$http',
+    'filterFilter',
+    'GlobalService',
+    function (
+        $scope,
+        $http,
+        filterFilter,
+        GlobalService
+        //GroupService,
+        ) {
+
+        $scope.globals = GlobalService;
+        $scope.user = $scope.globals.user;
+        $scope.userForm = {
+            part2: false,
+            next: '?next=/avatar/change/'
+        };
+        $scope.userForm.reveal = function(status) {
+            $scope.userForm.part2 = true;
+            if(status == 'active') {
+                $scope.userForm.next = '';
+            } else {
+                $scope.userForm.next = '?next=/avatar/change/';
+            }
+        };
+
+    }]);
 
 
 
