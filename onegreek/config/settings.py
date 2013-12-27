@@ -57,6 +57,7 @@ class Common(Configuration):
         'model_utils',
         'sorl.thumbnail',
         'tagging',
+        'phonenumber_field',
     )
 
     # Apps specific for this project go here.
@@ -290,7 +291,7 @@ class Common(Configuration):
 
     ########## Custom user app defaults
     # Select the correct user model
-    #AUTH_USER_MODEL = "users.User"
+    AUTH_USER_MODEL = "users.User"
     LOGIN_REDIRECT_URL = "users:redirect"
     ########## END Custom user app defaults
 
