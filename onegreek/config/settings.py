@@ -124,7 +124,7 @@ class Common(Configuration):
         join(BASE_DIR, 'fixtures'),
     )
     ########## END FIXTURE CONFIGURATION
-    
+
     ########## EMAIL CONFIGURATION
     EMAIL_BACKEND = values.Value('django.core.mail.backends.smtp.EmailBackend')
     ########## END EMAIL CONFIGURATION
