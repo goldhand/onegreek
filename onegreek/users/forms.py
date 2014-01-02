@@ -9,7 +9,19 @@ from djangular.forms.angular_model import NgModelFormMixin
 
 from phonenumber_field.formfields import PhoneNumberField
 
+from django.core.exceptions import ValidationError
+
 from .models import User
+
+
+def validate_phone_number(value):
+    if len(value) != 10:
+        raise ValidationError(u'%s is not a ten digit phone number' % value)
+
+def validate_gpa(value):
+    if value < 0 or value > 4:
+        raise ValidationError(u'%s is not a valid gpa between 0.0 and 4.0' % value)
+
 
 rush_or_active_toggle_widget = \
     '<div class="control-group">' \
@@ -26,7 +38,10 @@ rush_or_active_toggle_widget = \
 
 
 class UserRegisterForm(NgModelFormMixin, forms.ModelForm):
-    phone = PhoneNumberField()
+    phone = forms.CharField(validators=[validate_phone_number], required=True)
+    highschool_gpa = forms.IntegerField(validators=[validate_gpa])
+    first_name = forms.CharField(required=True)
+    last_name = forms.CharField(required=True)
 
     class Meta:
         # Set this form to use the User model.

@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load avatar_tags crispy_forms_tags i18n %}
 {% load staticfiles %}
+{% block extra_body_tag_data %} ng-controller="UserGlobalCtrl"
+  ng-init="initialize(
+  '{{ user.is_authenticated }}', '{{ user.id }}', '{{ user.chapter_id }}', '{{ user.chapter.get_rush_form.id }}', '{{ request.get_host }}'
+  )"{% endblock extra_body_tag_data %}
 
 {% block title %}{{ object.get_full_name }}{% endblock %}
 
@@ -44,12 +48,13 @@
                     <tab>
                       <tab-heading>Dashboard</tab-heading>
                       <tab-content>
+                        {% comment %}
                         <ul class="nav nav-pills">
                           <li>
                             <a href="#/events/calendar/">Calendar</a>
                           </li>
                         </ul>
-
+                        {% endcomment %}
                         <div ng-view></div>
                       </tab-content>
                     </tab>
@@ -299,48 +304,238 @@ User Profile
 
 
 
+
+<script type="text/ng-template" id="list.html">
+                              <div class="alert-success calAlert" ng-show="alertMessage != undefined && alertMessage != ''">
+                                <h4>{[{ alertMessage }]}</h4>
+                              </div>
+                          <div class="calendar" ng-model="eventSources" calendar="allCalendar" config="uiConfig.calendar" ui-calendar="uiConfig.calendar"></div>
+
+    </script>
+
+<script type="text/ng-template" id="detail.html">
+        <div class="span3">
+
+                <div class="chapter-carousel">
+                <carousel>
+                    <slide ng-repeat="image in event.images">
+                        <img class="image-responsive" src="{[{ image.md_img_url }]}">
+                    </slide>
+                </carousel>
+                </div>
+        </div>
+        <div class="span3">
+
+            <h4>
+                <span class="{[{ event.text_color_class }]}">
+                {[{ event.title }]}
+                </span>
+                <br/>
+                <small>
+                <span>
+                            {[{ event.start | date }]}
+                </span>
+                -
+                <span>
+                            {[{ event.end | date }]}
+                </span>
+                </small>
+            </h4>
+
+
+            {% if request.user.is_chapter_admin %}
+            <ul class="nav nav-pills">
+                <li class="dropdown">
+                    <a class="dropdown-toggle">Admin <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    <li>
+                    <a ng-click="openModal()">Edit Event</a>
+                    </li>
+                    <li>
+                    <a href="{% url 'imagestore:upload'  %}{[{ event.ctype_id }]}/{[{ event.id }]}/">Add Images</a>
+                    </li>
+                    <li>
+                    <a ng-click="getAttendees()">Refresh Guest List</a>
+                    </li>
+                    </ul>
+                </li>
+              </ul>
+            {% endif %}
+            <ul class="inline">
+                <li ng-show="event.rsvp.rsvp">
+                    I'm currently: <a class="btn btn-primary" ng-click="postRsvp()">{[{ event.rsvp.display }]}</a>
+                </li>
+                <li ng-hide="event.rsvp.rsvp">
+                   I'm currently: <a class="btn btn-primary" ng-click="postRsvp()">{[{ event.rsvp.display }]}</a>
+                </li>
+            </ul>
+
+
+        </div>
+        <div class="span3">
+
+            <p>
+                {[{ event.description }]}
+            </p>
+
+
+        </div>
+        <div class="span9">
+            {% if request.user.is_chapter_admin %}
+            <div ng-show="event.guest_list.display" class="row">
+
+            <div class="span4">
+                <h4>RSVPS</h4>
+
+                <form class="form-search">
+                    <div class="controls">
+                        <input type="text" id="rsvp-filter" name="rsvp-filter" class="search-query input-block-level"
+                               ng-model="rsvpFilter"
+                               placeholder="Search"
+                               typeahead="user in event.guest_list.rsvps | filter:$viewValue"
+                               >
+                    </div>
+                </form>
+            <p>Click name to check in</p>
+
+                <ul class="nav nav-stacked nav-tabs">
+                    <li ng-repeat="user in event.guest_list.rsvps | filter:rsvpFilter">
+                        <a ng-click="postAttend(user)" class="user-detail"
+                        style="width: 90%;">
+                           <ul class="inline">
+                               <li>
+                                        <img class="pull-left thumbnail" ng-src="{[{ user.profile_image_url }]}">
+                               </li>
+                               <li>
+                                        {[{ user.first_name }]}
+                                        {[{ user.last_name }]}
+                               </li>
+                               <li>
+                                        {[{ user.status }]}
+                               </li>
+                           </ul>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="span4">
+                <h4>Attendees</h4>
+
+                <form class="form-search">
+                    <div class="controls">
+                        <input type="text" id="attendee-filter" name="attendee-filter" class="search-query input-block-level"
+                               ng-model="attendeeFilter"
+                               placeholder="Search"
+                               typeahead="user in event.guest_list.attendees | filter:$viewValue"
+                               >
+                    </div>
+                </form>
+
+                <ul class="nav nav-stacked nav-tabs">
+                    <li ng-repeat="user in event.guest_list.attendees | filter:attendeeFilter">
+                        <a ng-click="postAttend(user)" class="user-detail"
+                        style="width: 90%;">
+                           <ul class="inline">
+                               <li>
+                                        <img class="pull-left thumbnail" ng-src="{[{ user.profile_image_url }]}">
+                               </li>
+                               <li>
+                                        {[{ user.first_name }]}
+                                        {[{ user.last_name }]}
+                               </li>
+                               <li>
+                                        {[{ user.status }]}
+                               </li>
+                           </ul>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        {% else %}
+
+        <h4>Other's who are attending</h4>
+        <hr>
+
+            <div class="pull-left" ng-repeat="user in event.guest_list.all">
+            <img class="thumbnail" ng-src="{[{ user.profile_image_url }]}">
+            </div>
+
+        <div class="clearfix"></div>
+        <hr>
+
+            {% endif %}
+        </div>
+
+</script>
+
+
+
+
+
+
 {% endblock content %}
+
+{% block jquery %}
+  <script type="text/javascript" src="{% static 'ui-calendar-master/bower_components/jquery/jquery.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ui-calendar-master/bower_components/jquery-ui/ui/jquery-ui.js' %}"></script>
+{% endblock jquery %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static 'ui-calendar-master/bower_components/fullcalendar/fullcalendar.css' %}">
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/bootstrap-jasny.css' %}">
+{% endblock css %}
 
 {% block angular_app_name %}userApp{% endblock angular_app_name %}
 
+{% block angular_core %}
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js"></script>
+{% endblock angular_core %}
+
+{% block angular_ext %}
+  <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.6.0.js"></script>
+  <script type="text/javascript" src="{% static 'ui-calendar-master/bower_components/fullcalendar/fullcalendar.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ui-calendar-master/bower_components/fullcalendar/gcal.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ui-calendar-master/src/calendar.js' %}"></script>
+{% endblock angular_ext %}
+
 {% block angular_modules %}
-    {{ block.super }}
-    <script src="{% static 'users/app/lib/angular/angular-dragdrop.min.js' %}"></script>
+
+  <script src="{% static 'angularjs/app/lib/angular/angular-cookies.js' %}"></script>
+  <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
+  <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
+  <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
+
+
 {% endblock angular_modules %}
+
+
 {% block angular_app %}
-    <script src="{% static 'users/app/js/app-profile.js' %}"></script>
-    <script src="{% static 'users/app/js/controllers.js' %}"></script>
-    <script src="{% static 'users/app/js/services.js' %}"></script>
-    <script src="{% static 'users/app/js/directives.js' %}"></script>
-    <script src="{% static 'users/app/js/filters.js' %}"></script>
+  <script src="{% static 'users/app/js/app-profile.js' %}"></script>
+  <script src="{% static 'users/app/js/controllers-alt.js' %}"></script>
+  <script src="{% static 'users/app/js/services.js' %}"></script>
+  <script src="{% static 'users/app/js/directives.js' %}"></script>
+  <script src="{% static 'users/app/js/filters.js' %}"></script>
+
 {% endblock angular_app %}
 
-{% block css %}
-    <link rel="stylesheet" href="{% static 'css/bootstrap-jasny.css' %}">
-    <style>
-        table.month td.day {
-            height: 80px;
-
-        }
-    </style>
-    {{ block.super }}
-{% endblock css %}
-
 {% block javascript %}
-    {{ block.super }}
-    <script type="text/javascript" src="{% static 'js/bootstrap-jasny.min.js' %}"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-          $('#avatar-change').find('.avatar-select').on('click', 'input', function (e) {
-            $('#avatar-change').find('.avatar-select').find('.active').removeClass('active');
-            var $this = $(this);
-            $this.siblings('img').toggleClass('active');
+  {{ block.super }}
+  <script type="text/javascript" src="{% static 'js/bootstrap-jasny.min.js' %}"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#avatar-change').find('.avatar-select').on('click', 'input', function (e) {
+        $('#avatar-change').find('.avatar-select').find('.active').removeClass('active');
+        var $this = $(this);
+        $this.siblings('img').toggleClass('active');
 
-          });
-          $('#avatar-delete').find('.avatar-select').on('click', 'input', function (e) {
-            var $this = $(this);
-            $this.siblings('img').toggleClass('active');
-          });
-        });
-    </script>
+      });
+      $('#avatar-delete').find('.avatar-select').on('click', 'input', function (e) {
+        var $this = $(this);
+        $this.siblings('img').toggleClass('active');
+      });
+    });
+  </script>
 {% endblock javascript %}

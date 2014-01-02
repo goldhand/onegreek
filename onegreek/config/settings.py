@@ -58,6 +58,7 @@ class Common(Configuration):
         'sorl.thumbnail',
         'tagging',
         'phonenumber_field',
+        'jsonview',
     )
 
     # Apps specific for this project go here.

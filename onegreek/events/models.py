@@ -41,14 +41,14 @@ def color_key(status, component=None):
 class Event(TimeFramedModel, StatusModel, Slugged):
     owner = models.ForeignKey('users.User', null=True, blank=True, related_name='events')
     STATUS = Choices(
-        ('draft', 'Draft'),
-        ('public', 'Public'),
-        ('chapter', 'Your Chapter'),
-        ('rush', 'Rushes'),
+        ('rush', 'Rushees'),
         ('pledge', 'Pledges'),
-        ('active', 'Actives')
+        ('active', 'Actives'),
+        ('call', 'Call List'),
+        ('public', 'Public'),
     )
     description = SplitField()
+    all_day = models.BooleanField(default=False)
     #attendees = models.ManyToManyField('users.User', null=True, blank=True, related_name='attending')
 
     enable_comments = models.BooleanField("Enable comments", default=True)

@@ -1,0 +1,31 @@
+{% extends "imagestore/base.html" %}
+{% load i18n %}
+{% load thumbnail %}
+{% load url from future %}
+
+{% block title %}
+    {% trans "Upload image" %}
+{% endblock %}
+
+{% block imagestore-breadcrumb %}
+    <li>{% trans "Upload image" %}</li>
+{% endblock %}
+
+{% block content %}
+    <h1>{% trans "Upload image set" %}</h1>
+<form method="POST" enctype="multipart/form-data">
+    {{ formset.management_form }}
+    {% for form in formset %}
+        {{ form.id }}
+        <ul>
+          <li>{{ form.image }}</li>
+            {% if formset.can_delete %}
+                <li>{{ form.DELETE }}</li>
+            {% endif %}
+        </ul>
+    {% endfor %}
+  {% csrf_token %}
+  <input type="submit" value="Submit" name="submit">
+</form>
+{% endblock content %}
+{% block angular %}{% endblock angular %}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags staticfiles %}
+
+{% block content %}
+
+  <form method="POST" action="{% url 'events:create' %}" id="event-create-form">
+  {% csrf_token %}
+  {{ form }}
+  <div class="form-action">
+    <input type="submit" value="Submit" name="submit">
+  </div>
+  </form>
+  <form method="POST" action="{% url 'imagestore:upload' %}?next=/events/" enctype="multipart/form-data">
+    {% csrf_token %}
+  <div id="image-upload-form"></div>
+  {{ image_formset }}
+
+  </form>
+
+
+{% endblock content %}
+
+{% block javascript %}
+  {{ block.super }}
+  <script src="http://netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+  {{ form.media }}
+
+  <script>
+
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = jQuery.trim(cookies[i]);
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) == (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+}
+
+    $(function() {
+      $('#event-create-form').on('submit', function(e) {
+        e.preventDefault();
+        var $this = $(this);
+        var cookie = 'csrfmiddlewaretoken=' + getCookie('csrftoken') + '&';
+        console.log(cookie + $(this).serialize());
+
+        $.ajax({
+          url: "{% url 'events:create_json' %}",
+          type: "POST",
+          data: cookie + $(this).serialize(),
+          success: function (data) {
+            console.log(data);
+            if (!(data['success'])) {
+              $this.replaceWith(data['form_html']);
+            }
+            else {
+              //alert('success id:' + data.id + ' ctype: ' + data.ctype_id);
+              console.log(data.image_form_html);
+              $('#image-upload-form').replaceWith(data.image_form_html);
+            }
+          },
+          error: function () {
+            $this.find('.error-message').show();
+            alert('error')
+          }
+        });
+        return false;
+
+      });
+
+    });
+  </script>
+{% endblock javascript %}

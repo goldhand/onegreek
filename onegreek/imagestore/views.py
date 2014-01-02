@@ -1,11 +1,12 @@
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
+from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from imagestore.models import Album, Image
 from imagestore.models import image_applabel, image_classname
 from imagestore.models import album_applabel, album_classname
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render_to_response
 from django.http import Http404, HttpResponseRedirect
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -13,12 +14,15 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.forms.formsets import formset_factory
+from django.forms.models import modelformset_factory
 from rest_framework import viewsets, filters
 from rest_framework.response import Response
 from tagging.models import TaggedItem
 from tagging.utils import get_tag
 from utils import load_class
 from django.db.models import Q
+from forms import ImageFormCrispy
 
 try:
     from django.contrib.auth import get_user_model
@@ -81,6 +85,33 @@ def get_images_queryset(self):
     return images
 
 
+def nu_get_images_queryset(self):
+    images = Image.objects.all()
+    self.e_context = dict()
+    if 'tag' in self.kwargs:
+        tag_instance = get_tag(self.kwargs['tag'])
+        if tag_instance is None:
+            raise Http404(_('No Tag found matching "%s".') % self.kwargs['tag'])
+        self.e_context['tag'] = tag_instance
+        images = TaggedItem.objects.get_by_model(images, tag_instance)
+    if 'pk' in self.kwargs:
+        images = images.filter(pk=self.kwargs['pk'])
+    if 'user_pk' in self.kwargs:
+        user = get_object_or_404(**{'klass': User, 'pk': self.kwargs['user_pk']})
+        self.e_context['view_user'] = user
+        images = images.filter(user=user)
+    if 'album_id' in self.kwargs:
+        album = get_object_or_404(Album, id=self.kwargs['album_id'])
+        self.e_context['album'] = album
+        images = images.filter(album=album)
+        if (not album.is_public) and \
+                (self.request.user != album.user) and \
+                (not self.request.user.has_perm('imagestore.moderate_albums')):
+            raise PermissionDenied
+    return images
+
+
+
 class ImageListView(ListView):
     context_object_name = 'image_list'
     template_name = 'imagestore/image_list.html'
@@ -99,7 +130,7 @@ class ImageView(DetailView):
     context_object_name = 'image'
     template_name = 'imagestore/image.html'
 
-    get_queryset = get_images_queryset
+    get_queryset = nu_get_images_queryset
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -215,16 +246,56 @@ class CreateImage(CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.user = self.request.user
-
-        # Very explicit use of ctype/obj id. Should be made more modular to support more than chapters
-        chapter = self.request.user.chapter
-
-        self.object.content_type = ContentType.objects.get_for_model(chapter)
-        self.object.object_pk = chapter.id
         self.object.save()
+        _next = self.get_success_url()
+        if 'next' in self.request.GET:
+            _next = self.request.GET['next']
         if self.object.album:
             self.object.album.save()
-        return HttpResponseRedirect(self.get_success_url())
+        return HttpResponseRedirect(_next)
+
+
+def create_image_set(request):
+    image_form_set = modelformset_factory(Image)
+    if request.method == 'POST':
+        formset = image_form_set(request.POST, request.FILES)
+        if formset.is_valid():
+            formset.save()
+            if 'next' in request.GET:
+                _next = request.GET['next']
+            else:
+                _next = request.get_full_path()
+            return HttpResponseRedirect(_next)
+    else:
+        formset = image_form_set()
+    return render_to_response("imagestore/forms/image_form_set.html", {
+        "formset": formset,
+        }, context_instance=RequestContext(request))
+
+class CreateImageSet(CreateView):
+    template_name = 'imagestore/forms/image_formset.html'
+    model = Image
+    form_class = ImageForm
+    formset_class = modelformset_factory(Image, ImageForm)
+
+    @method_decorator(login_required)
+    @method_decorator(permission_required('%s.add_%s' % (image_applabel, image_classname)))
+    def dispatch(self, *args, **kwargs):
+        return super(CreateImageSet, self).dispatch(*args, **kwargs)
+
+    def get_form(self, form_class):
+        return form_class(user=self.request.user, **self.get_form_kwargs())
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.save()
+        _next = self.get_success_url()
+        if 'next' in self.request.GET:
+            _next = self.request.GET['next']
+        if self.object.album:
+            self.object.album.save()
+        return HttpResponseRedirect(_next)
 
 
 def get_edit_image_queryset(self):

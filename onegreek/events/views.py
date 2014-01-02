@@ -1,21 +1,27 @@
 import datetime
+from crispy_forms.utils import render_crispy_form
 
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
-
-from rest_framework import viewsets, filters
+from django.forms.formsets import formset_factory
 
 from guardian.shortcuts import get_objects_for_user
+
+from rest_framework import viewsets, filters
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
+from jsonview.decorators import json_view
+
+from imagestore.forms import ImageForm, ImageFormCrispy
+
 from .serializers import EventSerializer, EventNestedSerializer
 from .models import Event, EventCalendar, Attendees
 from .permissions import EventObjectPermissions
-from .forms import EventForm
+from .forms import EventForm, EventFormFlat
 
 User = get_user_model()
 
@@ -38,7 +44,6 @@ class EventViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super(EventViewSet, self).get_queryset()
-        print queryset
         if 'rush_week' in self.request.GET:
             if self.request.GET['rush_week']:
                 now = datetime.datetime.now()
@@ -56,13 +61,64 @@ class EventViewSet(viewsets.ModelViewSet):
 
                 queryset = queryset.filter(status='rush').filter(start__range=(start_date, end_date))
 
-        print queryset
         return queryset
-
 
 
 class EventDetail(generic.DetailView):
     model = Event
+
+
+class EventCreate(generic.CreateView):
+    model = Event
+    form_class = EventFormFlat
+
+    def get_context_data(self, **kwargs):
+        context = super(EventCreate, self).get_context_data(**kwargs)
+        context['image_form'] = ImageFormCrispy(user=self.request.user, **self.get_form_kwargs())
+        context['image_formset'] = formset_factory(ImageFormCrispy(user=self.request.user, **self.get_form_kwargs()))
+        context.update(**kwargs)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        return super(EventCreate, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super(EventCreate, self).form_valid(form)
+
+
+class EventCreateJSON(generic.CreateView):
+    model = Event
+    form_class = EventFormFlat
+
+    @json_view
+    def dispatch(self, *args, **kwargs):
+        return super(EventCreateJSON, self).dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        form.save()
+        image_form_html = render_crispy_form(
+            ImageFormCrispy(
+                user=self.request.user,
+                content_type=form.instance.get_content_type_id(),
+                object_pk=form.instance.id
+            ))
+        context = {'success': True,
+                   'image_form_html': image_form_html,
+                   'id': form.instance.id,
+                   'ctype_id': form.instance.get_content_type_id()}
+        #return super(EventCreateJSON, self).form_valid(form)
+        return context
+
+    def form_invalid(self, form):
+        form_html = render_crispy_form(form)
+        return {'success': False, 'form_html': form_html}
+
+    def get(self, request, *args, **kwargs):
+        form_html = render_crispy_form(self.form_class)
+        context = {'form_html': form_html}
+        return context
 
 
 class EventList(generic.ListView):
@@ -72,6 +128,7 @@ class EventList(generic.ListView):
         context = super(EventList, self).get_context_data(**kwargs)
         context.update(event_form=EventForm())
         return context
+
 
 
 @api_view(['GET', 'POST'])

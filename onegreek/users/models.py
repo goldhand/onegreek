@@ -47,10 +47,10 @@ def get_status_text_class(self):
 class User(AbstractUser, StatusModel):
     STATUS = Choices(
         ('Rushing', [
-            ('rush', _('Rushing')),
+            ('rush', _('Rushee')),
         ]),
         ('Pledge', [
-            ('pledge', _('Pledging')),
+            ('pledge', _('Pledge')),
             ('pledge_dropped', _('Dropped from Pledge'))
         ]),
         ('Active', [
@@ -75,7 +75,7 @@ class User(AbstractUser, StatusModel):
     )
 
     university_email = models.EmailField(max_length=255, blank=True)
-    phone = PhoneNumberField(null=True, blank=True)
+    phone = models.CharField(max_length=10, blank=True)
     highschool_gpa = models.FloatField(null=True, blank=True)
     gpa = models.FloatField(null=True, blank=True)
     year = models.IntegerField(choices=COLLEGE_YEARS, default=0)

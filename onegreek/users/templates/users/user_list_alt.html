@@ -265,17 +265,17 @@
         <ul class="unstyled">
             <li>
                 <dl class="dl-horizontal profile-list">
-                    <dt>Year</dt>
+                    <dt ng-show="user.year">Year</dt>
                     <dd>{[{ user.year_display }]}</dd>
-                    <dt>Major</dt>
+                    <dt ng-show="user.major">Major</dt>
                     <dd>{[{ user.major }]}</dd>
-                    <dt>GPA</dt>
+                    <dt ng-show="user.gpa">GPA</dt>
                     <dd>{[{ user.gpa }]}</dd>
-                    <dt>Hometown</dt>
+                    <dt ng-show="user.hometown">Hometown</dt>
                     <dd>{[{ user.hometown }]}</dd>
-                    <dt>Email</dt>
+                    <dt ng-show="user.email">Email</dt>
                     <dd>{[{ user.email }]}</dd>
-                    <dt>Phone</dt>
+                    <dt ng-show="user.phone">Phone</dt>
                     <dd>{[{ user.phone }]}</dd>
                 </dl>
             </li>
@@ -454,15 +454,23 @@
                             <ul class="unstyled">
                                 <li>
                                     <dl class="dl-horizontal profile-list">
-                                        <dt>Year</dt>
+                                        <dt ng-show="user.year_display">Year</dt>
                                         <dd>{[{ user.year_display }]}</dd>
-                                        <dt>Major</dt>
+                                        <dt ng-show="user.major">Major</dt>
                                         <dd>{[{ user.major }]}</dd>
-                                        <dt>GPA</dt>
+                                        <dt ng-show="user.highschool_gpa">HS GPA</dt>
+                                        <dd>{[{ user.highschool_gpa }]}</dd>
+                                        <dt ng-show="user.gpa">GPA</dt>
                                         <dd>{[{ user.gpa }]}</dd>
-                                        <dt>Hometown</dt>
+                                        <dt ng-show="user.hometown">Hometown</dt>
                                         <dd>{[{ user.hometown }]}</dd>
+                                        <dt ng-show="user.email">Email</dt>
+                                        <dd>{[{ user.email }]}</dd>
+                                        <dt ng-show="user.phone">Phone</dt>
+                                        <dd>{[{ user.phone }]}</dd>
                                     </dl>
+
+
                                 </li>
                                 <li class="divider"></li>
 

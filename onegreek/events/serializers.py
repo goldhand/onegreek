@@ -17,6 +17,7 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
     text_color_class = serializers.Field('get_status_text_class')
     ctype_id = serializers.SerializerMethodField('get_content_type_id')
     #api_url = serializers.SerializerMethodField('get_api_url')
+    allDay = serializers.Field(source='all_day')
 
     class Meta:
         model = Event
@@ -33,6 +34,7 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
             'description',
             'start',
             'end',
+            'allDay',
             'owner',
             'attend_url',
             'rsvp_url',
@@ -63,6 +65,7 @@ class EventNestedSerializer(serializers.HyperlinkedModelSerializer):
     get_attendees = UserSerializer(many=True)
     get_rsvps = UserSerializer(many=True)
     get_rsvps_not_attendees = UserSerializer(many=True)
+    allDay = serializers.Field(source='all_day')
 
     class Meta:
         model = Event
@@ -75,6 +78,7 @@ class EventNestedSerializer(serializers.HyperlinkedModelSerializer):
             'description',
             'start',
             'end',
+            'allDay',
             'owner',
             'attend_url',
             'rsvp_url',

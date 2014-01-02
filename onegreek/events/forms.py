@@ -7,6 +7,7 @@ from crispy_forms.layout import Layout, Div, Field, Submit, Button, Fieldset, HT
 from djangular.forms.angular_model import NgModelFormMixin
 
 from .models import Event
+from .widgets import BootstrapDateTimeInput
 
 
 def date_time_widget(ng_model, ng_label):
@@ -26,12 +27,22 @@ def date_time_widget(ng_model, ng_label):
     '</div>' \
     % (ng_label, ng_model, ng_label, ng_model)
 
+def status_widget():
+    return \
+    '<div class="btn-group">' \
+    '<button type="button" class="btn btn-primary" ng-model="event.status" btn-radio="\'rush\'">Rushee</button>' \
+    '<button type="button" class="btn btn-primary" ng-model="event.status" btn-radio="\'call\'">Call</button>' \
+    '<button type="button" class="btn btn-primary" ng-model="event.status" btn-radio="\'pledge\'">Pledge</button>' \
+    '<button type="button" class="btn btn-primary" ng-model="event.status" btn-radio="\'active\'">Active</button>' \
+    '<button type="button" class="btn btn-primary" ng-model="event.status" btn-radio="\'public\'">Public</button>' \
+    '</div>'
+
 class EventForm(NgModelFormMixin, forms.ModelForm):
     class Meta:
         model = Event
         fields = [
             'title', 'description', 'enable_comments',
-            'owner', 'slug', 'status'
+            'owner', 'slug'
         ]
         widgets = {
             'owner': forms.HiddenInput(),
@@ -49,13 +60,13 @@ class EventForm(NgModelFormMixin, forms.ModelForm):
             Div(
                 Div(
                     HTML(date_time_widget('event.start', 'Start')),
+                    HTML(date_time_widget('event.end', 'End')),
                     Field('title', css_class="input-block-level"),
-                    Field('status', css_class="input-block-level"),
+                    HTML(status_widget()),
                     Field('enable_comments'),
                     css_class="span6"
                 ),
                 Div(
-                HTML(date_time_widget('event.end', 'End')),
                 Field('description', css_class="input-block-level"),
                 css_class="span6"
                 ),
@@ -63,3 +74,22 @@ class EventForm(NgModelFormMixin, forms.ModelForm):
 
             )
         )
+
+
+class EventFormFlat(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = [
+            'title', 'description', 'enable_comments',
+            'owner', 'slug', 'start', 'end'
+        ]
+        widgets = {
+            'owner': forms.HiddenInput(),
+            'slug': forms.HiddenInput(),
+            'enable_comments': forms.HiddenInput(),
+            'start': BootstrapDateTimeInput(),
+            'end': BootstrapDateTimeInput(),
+            }
+
+    def __init__(self, *args, **kwargs):
+        super(EventFormFlat, self).__init__(*args, **kwargs)

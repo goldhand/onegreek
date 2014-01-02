@@ -11,6 +11,10 @@
 {% block left_content %}
 
     <div class="span3">
+
+
+
+
     <h4>
         <a class="" href="#/events">Events</a>
     </h4>
@@ -77,37 +81,32 @@
         {% endif %}
 
         <div class="span9">
-         <tabset>
-            <tab
-            ng-repeat="tab in tabs"
-            ng-hide="tab.hidden"
-            heading="{[{tab.title}]}"
-            active="tab.active"
-            disabled="tab.disabled"
-            select="filterForGroup(tab.status)"
-            >
-              {[{tab.content}]}
-            </tab>
-         </tabset>
 
 
 
-            <ul class="unstyled">
-                <li ng-repeat="event in events | filter:eventFilter | orderBy:'start'">
-                    <h2>
-                        <a href="#/events/{[{ event.id }]}">
-                <span class="{[{ event.text_color_class }]}">
-                            {[{ event.title }]}
-                </span>
-                        </a>
-                            <small>
-                                {[{ event.start | date }]} -
-                                {[{ event.end | date }]}
-                            </small>
-                    </h2>
-                    <p>{[{ event.description }]}
-                </li>
-            </ul>
+        <tabset>
+                            <tab
+                              ng-repeat="tab in tabs"
+                              ng-hide="tab.hidden"
+                              heading="{[{tab.title}]}"
+                              active="tab.active"
+                              disabled="tab.disabled"
+                              select="renderCalendar(tab.calendar);">
+                              <tab-content>
+
+
+                              <div class="alert-success calAlert" ng-show="alertMessage != undefined && alertMessage != ''">
+                                <h4>{[{ alertMessage }]}</h4>
+                              </div>
+                            <div class="calendar" ng-model="eventSources" calendar="tab.calendar" config="uiConfig.calendar" ui-calendar="uiConfig.calendar"></div>
+                            </tab-content>
+                           </tab>
+
+        </tabset>
+
+
+
+
         </div>
 
     </script>
@@ -142,7 +141,6 @@
             </h4>
 
 
-
             {% if request.user.is_chapter_admin %}
             <ul class="nav nav-pills">
                 <li class="dropdown">
@@ -171,7 +169,6 @@
             </ul>
 
 
-
         </div>
         <div class="span3">
 
@@ -183,7 +180,6 @@
         </div>
         <div class="span9">
             {% if request.user.is_chapter_admin %}
-
             <div ng-show="event.guest_list.display" class="row">
 
             <div class="span4">
@@ -279,17 +275,41 @@
 
 {% endblock content %}
 
+{% block jquery %}
+  <script type="text/javascript" src="{% static 'ui-calendar-master/bower_components/jquery/jquery.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ui-calendar-master/bower_components/jquery-ui/ui/jquery-ui.js' %}"></script>
+{% endblock jquery %}
+
+{% block css %}
+ <link rel="stylesheet" href="{% static 'ui-calendar-master/bower_components/fullcalendar/fullcalendar.css' %}">
+  {{ block.super }}
+{% endblock css %}
+
 {% block angular_app_name %}eventsApp{% endblock angular_app_name %}
 
+{% block angular_core %}
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js"></script>
+{% endblock angular_core %}
+
+{% block angular_ext %}
+  <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.6.0.js"></script>
+  <script type="text/javascript" src="{% static 'ui-calendar-master/bower_components/fullcalendar/fullcalendar.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ui-calendar-master/bower_components/fullcalendar/gcal.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ui-calendar-master/src/calendar.js' %}"></script>
+{% endblock angular_ext %}
+
 {% block angular_modules %}
-    <script src="{% static 'angularjs/app/lib/angular/angular-cookies.js' %}"></script>
-    <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
-    <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
-    <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
+
+  <script src="{% static 'angularjs/app/lib/angular/angular-cookies.js' %}"></script>
+  <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
+  <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
+  <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
+
+
 {% endblock angular_modules %}
 {% block angular_app %}
-    <script src="{% static 'events/app/js/app.js' %}"></script>
-    <script src="{% static 'events/app/js/controllers.js' %}"></script>
+    <script src="{% static 'events/app/js/calendar-app.js' %}"></script>
+    <script src="{% static 'events/app/js/calendar-controllers.js' %}"></script>
     <script src="{% static 'events/app/js/services.js' %}"></script>
     <script src="{% static 'events/app/js/directives.js' %}"></script>
     <script src="{% static 'events/app/js/filters.js' %}"></script>

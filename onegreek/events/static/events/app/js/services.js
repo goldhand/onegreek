@@ -9,7 +9,7 @@ eventServices.factory('GlobalService', function () {
     var vars = {
         is_authenticated: false
     }
-	return vars;
+    return vars;
 });
 
 
@@ -33,7 +33,6 @@ eventServices.factory('EventService', function ($http, $q) {
             $http({method: 'GET', url: api_url, isArray:true}).
                 success(function (data, status, headers, config) {
                     defer.resolve(data);
-                    console.log(data);
                 }).error(function (data, status, headers, config) {
                     defer.reject(status);
                 });

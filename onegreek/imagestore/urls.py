@@ -22,6 +22,7 @@ urlpatterns = patterns('imagestore.views',
                        url(r'^user/(?P<pk>\d+)/$', ImageListView.as_view(), name='user-images'),
 
                        url(r'^upload/$', CreateImage.as_view(), name='upload'),
+                       url(r'^upload/set/$', 'create_image_set', name='upload-set'),
                        url(r'^upload/(?P<ctype_id>\d+)/(?P<obj_id>\d+)/$', CreateImageFor.as_view(), name='upload-for'),
 
                        url(r'^image/(?P<pk>\d+)/$', ImageView.as_view(), name='image'),
