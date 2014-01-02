@@ -99,8 +99,13 @@ class Event(TimeFramedModel, StatusModel, Slugged):
     def get_content_type_id(self):
         return ContentType.objects.get_for_model(self).id
 
+    @property
+    def name(self):
+        return self.title
 
 
+
+#TODO: ADD this to event create view. no longer needed
 @receiver(signals.post_save, sender=Event)
 def set_group(sender, **kwargs):
     event = kwargs.get('instance')

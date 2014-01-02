@@ -81,8 +81,9 @@ class EventFormFlat(forms.ModelForm):
         model = Event
         fields = [
             'title', 'description', 'enable_comments',
-            'owner', 'slug', 'start', 'end'
+            'owner', 'slug', 'start', 'end', 'status'
         ]
+        exclude = ('status',)
         widgets = {
             'owner': forms.HiddenInput(),
             'slug': forms.HiddenInput(),

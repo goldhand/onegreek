@@ -6,9 +6,21 @@
   <form method="POST" action="{% url 'events:create' %}" id="event-create-form">
   {% csrf_token %}
   {{ form }}
+    <label for="status_rush">Rushees</label>
+      <input type="checkbox" name="id_status" value="rush">
+    <label for="id_status_call">Call List</label>
+    <input type="checkbox" name="id_status" value="call">
+    <label for="id_status_pledge">Pledges</label>
+      <input type="checkbox" name="id_status" value="pledge">
+    <label for="id_status_active">Actives</label>
+      <input type="checkbox" name="id_status" value="active">
+    <label for="id_status_public">Public</label>
+      <input type="checkbox" name="id_status" value="public">
   <div class="form-action">
     <input type="submit" value="Submit" name="submit">
   </div>
+
+
   </form>
   <form method="POST" action="{% url 'imagestore:upload' %}?next=/events/" enctype="multipart/form-data">
     {% csrf_token %}

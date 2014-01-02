@@ -19,7 +19,7 @@ def validate_phone_number(value):
         raise ValidationError(u'%s is not a ten digit phone number' % value)
 
 def validate_gpa(value):
-    if value < 0 or value > 4:
+    if value < 0 or value > 5:
         raise ValidationError(u'%s is not a valid gpa between 0.0 and 4.0' % value)
 
 
@@ -39,7 +39,9 @@ rush_or_active_toggle_widget = \
 
 class UserRegisterForm(NgModelFormMixin, forms.ModelForm):
     phone = forms.CharField(validators=[validate_phone_number], required=True)
-    highschool_gpa = forms.IntegerField(validators=[validate_gpa])
+    highschool_gpa = forms.IntegerField(validators=[validate_gpa], required=False)
+    gpa = forms.IntegerField(validators=[validate_gpa], label='Current College GPA (if applicable)', required=False)
+
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
 
@@ -53,6 +55,7 @@ class UserRegisterForm(NgModelFormMixin, forms.ModelForm):
             "last_name",
             "phone",
             "chapter",
+            'gpa',
             "highschool_gpa",
             "year",
             "major",
@@ -81,18 +84,17 @@ class UserRegisterForm(NgModelFormMixin, forms.ModelForm):
                 HTML('<div ng-show="user.rush">'),
                 Div(
                     Field('major', css_class=""),
+                    Field('gpa', css_class=""),
                     Field('highschool_gpa', css_class=""),
                     Field('hometown', css_class=""),
                     #Field('phone', css_class=""),
                     #Field('chapter', css_class=""),
                     #Field('gpa', css_class=""),
                     HTML(
-                        '<div ng-show="globals.user.major.length">'
-                        + '<div ng-show="globals.user.highschool_gpa != null">'
-                        + '<div class="form-actions">'
-                        + '<input class="btn btn-primary pull-right" type="submit" value="Continue" '
-                        + 'ng-show="globals.user.hometown.length">'
-                        + '</div></div></div>'
+                        '<div ng-show="globals.user.hometown.length">'
+                        + '<div class="form-actions" ng-show="globals.user.major.length">'
+                        + '<input class="btn btn-primary pull-right" type="submit" value="Continue">'
+                        + '</div></div>'
                     ),
                     css_class="span6"
                 ),

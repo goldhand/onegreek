@@ -8,6 +8,7 @@ var userApp = angular.module('userApp', [
     'ngCookies',
     'ngRoute',
     'userControllers',
+    'leftContentControllers',
     'userServices'
     //'userDirectives'
     //'groupControllers',

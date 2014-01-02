@@ -9,38 +9,7 @@
     )"
 {% endblock extra_body_tag_data %}
 {% block left_content %}
-
-    <div class="span3">
-
-
-
-
-    <h4>
-        <a class="" href="#/events">Events</a>
-    </h4>
-        <form class="form-search">
-            <div class="controls">
-                <input type="text" id="event-filter" name="event-filter" class="search-query input-medium"
-                       placeholder="Search" ng-model="eventFilter"
-                       typeahead="event.title for event in globals.events | filter:$viewValue | limitTo:8"/>
-            </div>
-        </form>
-        <ul class="nav nav-pills nav-stacked">
-            <li ng-repeat="event in globals.events | filter:eventFilter | orderBy:'start'">
-                <a href="#/events/{[{ event.id }]}">
-                    {[{ event.title }]}
-                    <br/>
-                    <small>
-                        {[{ event.start | date }]} -
-                        {[{ event.end | date }]}
-                    </small>
-                </a>
-            </li>
-        </ul>
-
-
-    </div>
-
+  {% include 'includes/left_content.html' %}
 {% endblock left_content %}
 
 {% block content %}
@@ -310,6 +279,7 @@
 {% block angular_app %}
     <script src="{% static 'events/app/js/calendar-app.js' %}"></script>
     <script src="{% static 'events/app/js/calendar-controllers.js' %}"></script>
+    <script src="{% static 'chapters/app/js/left-content-controllers.js' %}"></script>
     <script src="{% static 'events/app/js/services.js' %}"></script>
     <script src="{% static 'events/app/js/directives.js' %}"></script>
     <script src="{% static 'events/app/js/filters.js' %}"></script>

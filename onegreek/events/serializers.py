@@ -16,8 +16,9 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
     rsvp_url = serializers.Field('get_rsvp_url')
     text_color_class = serializers.Field('get_status_text_class')
     ctype_id = serializers.SerializerMethodField('get_content_type_id')
-    #api_url = serializers.SerializerMethodField('get_api_url')
     allDay = serializers.Field(source='all_day')
+    name = serializers.Field('name')
+    api_url = serializers.Field('get_api_url')
 
     class Meta:
         model = Event
@@ -25,6 +26,8 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'ctype_id',
             'url',
+            'api_url',
+            'name',
             'title',
             'slug',
             'chapter',
@@ -66,12 +69,16 @@ class EventNestedSerializer(serializers.HyperlinkedModelSerializer):
     get_rsvps = UserSerializer(many=True)
     get_rsvps_not_attendees = UserSerializer(many=True)
     allDay = serializers.Field(source='all_day')
+    name = serializers.Field('name')
+    api_url = serializers.Field('get_api_url')
 
     class Meta:
         model = Event
         fields = [
             'id',
             'url',
+            'api_url',
+            'name',
             'title',
             'slug',
             'status',

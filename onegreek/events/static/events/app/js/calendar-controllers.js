@@ -259,6 +259,10 @@ eventsControllers.controller('EventListCtrl', [
         $scope.renderCalendar = function(calendar) {
             calendar.fullCalendar('render');
         };
+        $scope.rerenderCalendar = function(calendar) {
+            calendar.fullCalendar('renderEvents');
+        };
+
 
         /* event sources array*/
         $scope.eventSources = [$scope.events];
@@ -276,9 +280,12 @@ eventsControllers.controller('EventListCtrl', [
                 },
                 dayClick: $scope.alertEventOnClick,
                 eventDrop: $scope.alertOnDrop,
-                eventResize: $scope.alertOnResize
+                eventResize: $scope.alertOnResize,
+                defaultView: 'agendaWeek'
             }
         };
+
+
 
 
 }]);
@@ -323,12 +330,6 @@ eventsApp.controller('EventDetailCtrl', [
 
         $scope.getAttendees();
         $scope.getImages($scope.event.ctype_id, $scope.event.id);
-
-
-        if ($scope.globals.user.is_chapter_admin) {
-        } else {
-            $scope.submit = function () {};
-        }
 
         $scope.getRsvp = function() {
             $http.get($scope.event.rsvp_url).success(function(data) {

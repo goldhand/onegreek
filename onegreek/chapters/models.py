@@ -134,6 +134,13 @@ class Chapter(Slugged, StatusModel):
     def get_call_count(self):
         return self.linked_call_group.user_set.count()
 
+    def name(self):
+        return self.fraternity_title + ' - ' + self.title + ' chapter'
+
+    def get_api_url(self):
+        return "/chapters/#/chapters/%d" % self.id
+
+
 
 @receiver(signals.post_save, sender=Chapter)
 def set_group(sender, **kwargs):

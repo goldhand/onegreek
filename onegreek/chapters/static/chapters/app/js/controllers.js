@@ -234,3 +234,15 @@ chapterControllers.controller('ModalInstanceCtrl', [
             $modalInstance.dismiss('cancel');
         };
     }]);
+
+
+
+
+
+
+
+
+
+
+
+

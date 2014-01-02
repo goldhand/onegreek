@@ -15,7 +15,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     year_display = serializers.Field('get_year_display')
     chapter_id = serializers.Field('chapter_id')
     position = serializers.Field('position.title')
-    api_url = serializers.SerializerMethodField('get_api_url')
     get_full_name = serializers.Field('get_full_name')
     is_chapter_admin = serializers.Field('is_chapter_admin')
     profile_image_url = serializers.Field('profile_image_url')
@@ -25,13 +24,16 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     fb_extra_data = serializers.Field('get_fb_extra_data')
     ctype_id = serializers.SerializerMethodField('get_content_type_id')
     #text_color_class = serializers.Field('get_status_text_class')
+    name = serializers.Field('name')
+    api_url = serializers.Field('get_api_url')
 
     class Meta:
         model = User
         fields = [
+            'id',
             'url',
             'api_url',
-            'id',
+            'name',
             'ctype_id',
             'first_name',
             'last_name',
@@ -62,11 +64,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             #'groups',
         ]
 
-    def get_api_url(self, obj):
-        if obj:
-            return "/users/#/users/%s" % obj.id
-        else:
-            return "/users/#/users/"
 
     def get_content_type_id(self, obj):
         return ContentType.objects.get_for_model(User).id

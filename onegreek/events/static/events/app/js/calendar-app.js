@@ -8,6 +8,7 @@ var eventsApp = angular.module('eventsApp', [
     'ngCookies',
     'ngRoute',
     'eventsControllers',
+    'leftContentControllers',
     'eventServices'
     //'myApp.filters',
     //'myApp.services',
@@ -29,7 +30,11 @@ eventsApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $h
         resolve: {
             events: function(EventService) {
                 return EventService.list();
+            },
+            calendar: function(EventService) {
+                return EventService.list()
             }
+
         }
     });
     $routeProvider.when('/events/:eventId', {

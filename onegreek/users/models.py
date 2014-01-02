@@ -186,6 +186,14 @@ class User(AbstractUser, StatusModel):
     def get_rsvps(self):
         return self.rsvps.filter(active=True)
 
+    @property
+    def name(self):
+        return self.get_full_name()
+
+    def get_api_url(self):
+        return "/users/~#/users/%d" % self.id
+
+
 
 @receiver(signals.post_save, sender=User)
 def set_new_user_config(sender, **kwargs):

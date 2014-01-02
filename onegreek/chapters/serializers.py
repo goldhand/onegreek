@@ -19,7 +19,6 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     linked_rush_group_id = serializers.Field('linked_rush_group_id')
     linked_call_group_id = serializers.Field('linked_call_group_id')
     linked_admin_group_id = serializers.Field('linked_admin_group_id')
-    api_url = serializers.SerializerMethodField('get_api_url')
     rush_url = serializers.SerializerMethodField('get_rush_url')
     rush_form_url = serializers.SerializerMethodField('get_rush_form_url')
     rush_form_id = serializers.SerializerMethodField('get_rush_form_id')
@@ -33,6 +32,8 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     rush_count = serializers.Field('get_rush_count')
     call_count = serializers.Field('get_call_count')
     ctype_id = serializers.SerializerMethodField('get_content_type_id')
+    name = serializers.Field('name')
+    api_url = serializers.Field('get_api_url')
 
     class Meta:
         model = Chapter
@@ -75,9 +76,6 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
             'linked_admin_group_id',
         ]
 
-    def get_api_url(self, obj):
-        if obj:
-            return "#/chapters/%s" % obj.id
 
     def get_rush_url(self, obj):
         if obj:

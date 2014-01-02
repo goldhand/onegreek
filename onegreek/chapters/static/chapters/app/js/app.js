@@ -8,6 +8,7 @@ var chapterApp = angular.module('chapterApp', [
     'ngRoute',
     'ngAnimate',
     'chapterControllers',
+    'leftContentControllers',
     'chapterServices',
     'chapterDirectives'
 ],
