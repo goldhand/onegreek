@@ -46,7 +46,7 @@
         <script type="text/ng-template" id="list.html">
 
             {% if request.user.is_chapter_admin %}
-        <button class="btn btn-link pull-right" ng-click="openModal()">Create Event</button>
+        <a href='{% url "events:create" %}' class="btn btn-link pull-right">Create Event</a>
         {% endif %}
 
         <div class="span9">

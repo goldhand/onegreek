@@ -74,12 +74,14 @@ chapterControllers.controller('ChapterDetailCtrl', [
     '$http',
     '$modal',
     '$routeParams',
+    'filterFilter',
     'GlobalService',
     function (
         $scope,
         $http,
         $modal,
         $routeParams,
+        filterFilter,
         GlobalService
         ) {
         $scope.globals = GlobalService;
@@ -89,6 +91,13 @@ chapterControllers.controller('ChapterDetailCtrl', [
             users: false,
             comments: false,
             images: false
+        };
+        $scope.globals.filterForChapter = function(chapter) {
+            if(!(chapter)){
+                $scope.events = $scope.globals.events;
+            } else {
+                $scope.events = filterFilter($scope.globals.events, {chapter_id: chapter.id});
+            }
         };
 
         $scope.getChapterRush = function(rush_url) {

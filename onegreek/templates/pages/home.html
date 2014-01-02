@@ -25,58 +25,7 @@
 {% endblock content %}
 
 {% block left_content %}
-  <div class="span3">
-    <div ng-controller="ChapterListCtrl">
-      <form class="form-search">
-        <div class="controls">
-          <input type="text" id="chapter-filter" name="chapter-filter" class="search-query input-medium"
-                 placeholder="Search" ng-model="chapterFilter"
-                 typeahead="chapter.fraternity_title for chapter in chapters | filter:$viewValue | limitTo:8"/>
-        </div>
-      </form>
-      <ul class="nav nav-pills nav-stacked chapter-list">
-        <li ng-repeat="chapter in chapters | filter:chapterFilter | orderBy:'start'">
-          <a ng-href="{[{ chapter.absolute_url }]}"
-             data-popover="
-                                {[{ chapter.university_title }]}
-                                <br/>
-                                {[{ chapter.fraternity_title }]}
-                                "
-             data-popover-title="{[{ chapter.fraternity_title }]}"
-             data-popover-placement="right"
-             data-popover-trigger="mouseenter"
-             data-popover-popup-delay="500"
-             ng-bind="chapter.fraternity_title">
-          </a>
-        </li>
-      </ul>
-
-      {% block chapter_event_carousel %}
-        <div class="row">
-          <div class="event-carousel">
-            <carousel interval=5000>
-              <slide ng-repeat="event in events" active="event.active">
-                <div class="span3">
-                  <h4>
-                    <a href="/events/#/events/{[{ event.id }]}">
-                <span class="{[{ event.text_color_class }]}">
-                            {[{ event.title }]}
-                </span>
-                    </a>
-                  </h4>
-                  <small>{[{ event.start | date }]} - {[{ event.end | date }]}</small>
-                  <p>{[{ event.description }]}</p>
-
-                </div>
-
-              </slide>
-            </carousel>
-          </div>
-        </div>
-      {% endblock chapter_event_carousel %}
-    </div>
-  </div>
-
+  {% include 'includes/left_content.html' %}
 {% endblock left_content %}
 
 
@@ -93,6 +42,7 @@
 {% block angular_app %}
   <script src="{% static 'chapters/app/js/app.js' %}"></script>
   <script src="{% static 'chapters/app/js/controllers.js' %}"></script>
+  <script src="{% static 'chapters/app/js/left-content-controllers.js' %}"></script>
   <script src="{% static 'chapters/app/js/services.js' %}"></script>
   <script src="{% static 'chapters/app/js/directives.js' %}"></script>
   <script src="{% static 'chapters/app/js/filters.js' %}"></script>

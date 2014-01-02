@@ -166,7 +166,7 @@ def set_group(sender, **kwargs):
             assign_perm('rest_comments.view_restcomment', v)
             assign_perm('rush_forms.view_form', v)
             if k == 'admin_group':
-                assign_perm('chapters.change_chapter', v, chapter)
+                #assign_perm('chapters.change_chapter', v, chapter)
                 assign_perm('events.add_event', v)
                 assign_perm('events.delete_event', v)
                 assign_perm('events.change_event', v)

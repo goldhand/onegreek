@@ -3,7 +3,6 @@ from crispy_forms.utils import render_crispy_form
 
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
-from django.template import RequestContext
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from django.forms.formsets import formset_factory
@@ -106,10 +105,10 @@ class EventCreateJSON(generic.CreateView):
                 content_type=form.instance.get_content_type_id(),
                 object_pk=form.instance.id
             ))
-        context = RequestContext(self.request, {'success': True,
+        context = {'success': True,
                    'image_form_html': image_form_html,
                    'id': form.instance.id,
-                   'ctype_id': form.instance.get_content_type_id()})
+                   'ctype_id': form.instance.get_content_type_id()}
         #return super(EventCreateJSON, self).form_valid(form)
         return context
 
