@@ -75,7 +75,6 @@ class EventCreate(generic.CreateView):
     def get_context_data(self, **kwargs):
         context = super(EventCreate, self).get_context_data(**kwargs)
         context['image_form'] = ImageFormCrispy(user=self.request.user, **self.get_form_kwargs())
-        context['image_formset'] = formset_factory(ImageFormCrispy(user=self.request.user, **self.get_form_kwargs()))
         context.update(**kwargs)
         return context
 
@@ -112,8 +111,7 @@ class EventCreateJSON(generic.CreateView):
         return context
 
     def form_invalid(self, form):
-        form_html = render_crispy_form(form)
-        return {'success': False, 'form_html': form_html}
+        return {'success': False}
 
     def get(self, request, *args, **kwargs):
         form_html = render_crispy_form(self.form_class)
