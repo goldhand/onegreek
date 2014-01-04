@@ -50,3 +50,4 @@ django-tagging==0.3.1
 django-fancy-autocomplete==0.1a1
 django-phonenumber-field==0.2a3
 phonenumbers==5.9.2
+django-jsonview==0.3.0
