@@ -2,7 +2,7 @@ import datetime
 from crispy_forms.utils import render_crispy_form
 
 from django.contrib.auth import get_user_model
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from django.forms.formsets import formset_factory
@@ -120,6 +120,10 @@ class EventCreateJSON(generic.CreateView):
         context = {'form_html': form_html}
         return context
 
+
+class EventDelete(generic.DeleteView):
+    model = Event
+    success_url = reverse_lazy("events:list")
 
 class EventList(generic.ListView):
     model = Event

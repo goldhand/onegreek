@@ -10,6 +10,7 @@ __author__ = 'zeus'
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.contenttypes.models import ContentType
 
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
@@ -34,7 +35,9 @@ class ImageForm(forms.ModelForm):
 
     def __init__(self, user, *args, **kwargs):
         super(ImageForm, self).__init__(*args, **kwargs)
-        self.fields['album'].queryset = Album.objects.filter(user=user)
+        #self.fields['album'].queryset = Album.objects.filter(user=user)
+        self.fields['album'].queryset = Album.objects.filter(
+            content_type_id=user.chapter.get_content_type_id()).filter(object_pk=user.chapter_id)
         self.fields['album'].required = True
         if AUTOCOMPLETE_LIGHT_INSTALLED:
             self.fields['tags'].widget = autocomplete_light.TextWidget('TagAutocomplete')
@@ -57,7 +60,8 @@ class ImageFormCrispy(forms.ModelForm):
 
     def __init__(self, user, content_type=None, object_pk=None, *args, **kwargs):
         super(ImageFormCrispy, self).__init__(*args, **kwargs)
-        self.fields['album'].queryset = Album.objects.filter(user=user)
+        self.fields['album'].queryset = Album.objects.filter(
+            content_type_id=user.chapter.get_content_type_id()).filter(object_pk=user.chapter_id)
         self.fields['album'].required = True
         self.fields['status'].initial = 'public'
         if content_type:

@@ -184,13 +184,13 @@ class CreateAlbum(CreateView):
     form_class = AlbumForm
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('%s.add_%s' % (album_applabel, album_classname)))
+    #@method_decorator(permission_required('%s.add_%s' % (album_applabel, album_classname)))
     def dispatch(self, *args, **kwargs):
         return super(CreateAlbum, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.user = self.request.user
+        #self.object.user = self.request.user
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -210,7 +210,7 @@ class UpdateAlbum(UpdateView):
     get_queryset = filter_album_queryset
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('%s.add_%s' % (album_applabel, album_classname)))
+    #@method_decorator(permission_required('%s.add_%s' % (album_applabel, album_classname)))
     def dispatch(self, *args, **kwargs):
         return super(UpdateAlbum, self).dispatch(*args, **kwargs)
 
@@ -225,7 +225,7 @@ class DeleteAlbum(DeleteView):
     get_queryset = filter_album_queryset
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('%s.change_%s' % (album_applabel, album_classname)))
+    #@method_decorator(permission_required('%s.change_%s' % (album_applabel, album_classname)))
     def dispatch(self, *args, **kwargs):
         return super(DeleteAlbum, self).dispatch(*args, **kwargs)
 
@@ -235,8 +235,8 @@ class CreateImage(CreateView):
     model = Image
     form_class = ImageForm
 
+    #@method_decorator(permission_required('%s.add_%s' % (image_applabel, image_classname)))
     @method_decorator(login_required)
-    @method_decorator(permission_required('%s.add_%s' % (image_applabel, image_classname)))
     def dispatch(self, *args, **kwargs):
         return super(CreateImage, self).dispatch(*args, **kwargs)
 
@@ -279,7 +279,7 @@ class CreateImageSet(CreateView):
     formset_class = modelformset_factory(Image, ImageForm)
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('%s.add_%s' % (image_applabel, image_classname)))
+    #@method_decorator(permission_required('%s.add_%s' % (image_applabel, image_classname)))
     def dispatch(self, *args, **kwargs):
         return super(CreateImageSet, self).dispatch(*args, **kwargs)
 
@@ -316,7 +316,7 @@ class UpdateImage(UpdateView):
         return form_class(user=self.object.user, **self.get_form_kwargs())
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('%s.change_%s' % (image_applabel, image_classname)))
+    #@method_decorator(permission_required('%s.change_%s' % (image_applabel, image_classname)))
     def dispatch(self, *args, **kwargs):
         return super(UpdateImage, self).dispatch(*args, **kwargs)
 
@@ -331,7 +331,7 @@ class DeleteImage(DeleteView):
     get_queryset = get_edit_image_queryset
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('%s.delete_%s' % (image_applabel, image_classname)))
+    #@method_decorator(permission_required('%s.delete_%s' % (image_applabel, image_classname)))
     def dispatch(self, *args, **kwargs):
         return super(DeleteImage, self).dispatch(*args, **kwargs)
 

@@ -58,6 +58,13 @@ eventsControllers.controller('EventListCtrl', [
         $scope.globals = GlobalService;
         $scope.globals.events = events;
 
+        $scope.globals.getEvents = function() {
+            $http.get('/api/events').success(function(data) {
+                $scope.events = data;
+            });
+        };
+
+
         $scope.formatCalendarEvents = function(events) {
             angular.forEach(events, function(event) {
                 event.start = new Date(event.start);
@@ -296,8 +303,8 @@ eventsControllers.controller('EventListCtrl', [
 
 
 eventsApp.controller('EventDetailCtrl', [
-    '$scope', '$http', '$modal', '$routeParams', 'EventService', 'GlobalService', 'event',
-    function ($scope, $http, $modal, $routeParams, EventService, GlobalService, event) {
+    '$scope', '$http', '$modal', '$routeParams', '$location', 'EventService', 'GlobalService', 'event',
+    function ($scope, $http, $modal, $routeParams, $location, EventService, GlobalService, event) {
 
         $scope.globals = GlobalService;
         $scope.event = event;
@@ -322,7 +329,6 @@ eventsApp.controller('EventDetailCtrl', [
 
         $scope.getImages = function(ctype, obj) {
             $http.get('/api/images/?ctype=' + ctype + '&obj=' + obj).success(function(data) {
-                console.log(data);
                 $scope.event.images = data;
             });
         };
@@ -334,7 +340,6 @@ eventsApp.controller('EventDetailCtrl', [
         $scope.getRsvp = function() {
             $http.get($scope.event.rsvp_url).success(function(data) {
                 $scope.event.rsvp = data;
-                console.log(data);
             });
         };
         $scope.getRsvp();
@@ -342,12 +347,10 @@ eventsApp.controller('EventDetailCtrl', [
         $scope.postRsvp = function() {
             $http.post($scope.event.rsvp_url, {}).success(function(data) {
                     $scope.event.rsvp = data;
-                    console.log(data);
                 });
         };
         $scope.postAttend = function(attendee) {
             $http.post($scope.event.attend_url + '?attendee=' + attendee.id, {}).success(function(data) {
-                console.log(data);
                 if (data.attend) {
                     $scope.event.guest_list.attendees.push(attendee);
                     var index = $scope.event.guest_list.rsvps.indexOf(attendee);
@@ -364,6 +367,8 @@ eventsApp.controller('EventDetailCtrl', [
             EventService.update($scope.event).then(function(data) {
                 $scope.event = data;
                 $scope.getRsvp();
+                $scope.getAttendees();
+                $scope.getImages($scope.event.ctype_id, $scope.event.id);
             }, function(status) {
                 console.log(status);
             });
@@ -386,6 +391,12 @@ eventsApp.controller('EventDetailCtrl', [
                 $scope.submit(redirect);
             }, function () {});
         };
+        $scope.deleteEvent = function () {
+            $http.post('/events/' + $scope.event.id + '/delete/', '').success(function() {
+                $scope.globals.getEvents();
+                $location.path('/events');
+            })
+        }
 
 }]);
 
