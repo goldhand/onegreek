@@ -469,7 +469,7 @@ class Production(Common):
     }
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
-    STATIC_URL = 'https://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
+    STATIC_URL = 'https://%s.s3.amazonaws.com/' % DJANGO_AWS_STORAGE_BUCKET_NAME
     ########## END STORAGE CONFIGURATION
 
     ########## EMAIL
