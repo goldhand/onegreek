@@ -458,6 +458,7 @@ class Production(Common):
     AWS_ACCESS_KEY_ID = values.SecretValue()
     AWS_SECRET_ACCESS_KEY = values.SecretValue()
     AWS_STORAGE_BUCKET_NAME = values.SecretValue()
+    DJANGO_AWS_STORAGE_BUCKET_NAME = values.SecretValue()
     AWS_AUTO_CREATE_BUCKET = True
     AWS_QUERYSTRING_AUTH = False
 
