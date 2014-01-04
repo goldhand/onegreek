@@ -1,6 +1,6 @@
 # Bleeding edge Django
 #https://github.com/django/django/archive/1.6b4.tar.gz
-django==1.6
+django==1.6.1
 
 # Configuration
 django-configurations==0.5.1
@@ -24,7 +24,8 @@ Pillow==2.1.0
 
 # For user registration, either via email or social
 # Well-built with regular release cycles!
-django-allauth==0.13.0
+git+git://github.com/goldhand/django-allauth
+#django-allauth==0.15.0
 
 # For the persistance stores
 psycopg2==2.5
