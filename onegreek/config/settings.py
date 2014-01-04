@@ -73,8 +73,8 @@ class Common(Configuration):
         'rush_forms',
         'chapters',
         'users',  # custom users app
-        'django_comments',
-        'rest_comments',
+        #'django_comments',
+        #'rest_comments',
         'events',
         #'images',
     )
