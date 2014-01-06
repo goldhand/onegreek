@@ -9,10 +9,12 @@ from django.views.generic import TemplateView
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
-                       url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name="home"),
+                       #url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name="home"),
+                       url(r'^$', 'config.views.home_view', name="home"),
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^users/', include("users.urls", namespace="users")),
                        url(r'^accounts/', include('allauth.urls')),

@@ -113,7 +113,8 @@ class EventCreateJSON(generic.CreateView):
         return context
 
     def form_invalid(self, form):
-        return {'success': False}
+        image_form_html = render_crispy_form(form)
+        return {'success': False, 'form_html': image_form_html}
 
     def get(self, request, *args, **kwargs):
         form_html = render_crispy_form(self.form_class)
