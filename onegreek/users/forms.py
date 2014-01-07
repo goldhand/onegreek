@@ -39,8 +39,8 @@ rush_or_active_toggle_widget = \
 
 class UserRegisterForm(NgModelFormMixin, forms.ModelForm):
     phone = forms.CharField(validators=[validate_phone_number], required=True)
-    highschool_gpa = forms.IntegerField(validators=[validate_gpa], required=False)
-    gpa = forms.IntegerField(validators=[validate_gpa], label='Current College GPA (if applicable)', required=False)
+    highschool_gpa = forms.FloatField(validators=[validate_gpa], required=False)
+    gpa = forms.FloatField(validators=[validate_gpa], label='Current College GPA (if applicable)', required=False)
 
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
@@ -119,7 +119,7 @@ class UserRegisterForm(NgModelFormMixin, forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
-    phone = PhoneNumberField()
+    phone = forms.CharField(validators=[validate_phone_number], required=True)
 
     class Meta:
         # Set this form to use the User model.

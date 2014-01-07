@@ -1,33 +1,68 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags staticfiles %}
 
+{% block css %}
+  {{ block.super }}
+  <style>
+
+    .btn-group>label>input {
+      display: none;
+    }
+  </style>
+{% endblock css %}
+
 {% block content %}
 
   <form method="POST" action="{% url 'events:create' %}" id="event-create-form">
-  {% csrf_token %}
+  <div class="span6">
   {{ form }}
-    <label for="status_rush">Rushees</label>
-      <input type="checkbox" name="id_status" value="rush">
-    <label for="id_status_call">Call List</label>
-    <input type="checkbox" name="id_status" value="call">
-    <label for="id_status_pledge">Pledges</label>
-      <input type="checkbox" name="id_status" value="pledge">
-    <label for="id_status_active">Actives</label>
-      <input type="checkbox" name="id_status" value="active">
-    <label for="id_status_public">Public</label>
-      <input type="checkbox" name="id_status" value="public">
-  <div class="form-action">
-    <input type="submit" value="Submit" name="submit">
   </div>
+    <div class="span6">
+    <div class="btn-group" data-toggle="buttons-radio">
+
+     <label for="id_status" class="control-label input-group">Event Type</label>
+    <label class="btn btn-primary">
+      <input type="radio" name="id_status" value="rush">
+      Rush
+    </label>
+    <label class="btn btn-primary">
+      <input type="radio" name="id_status" value="call">
+      Call List
+    </label>
+    <label class="btn btn-primary">
+      <input type="radio" name="id_status" value="pledge">
+      Pledge
+    </label>
+    <label class="btn btn-primary">
+      <input type="radio" name="id_status" value="active">
+      Actives Only
+    </label>
+    <label class="btn btn-primary">
+      <input type="radio" name="id_status" value="active">
+      Greeklife Only
+    </label>
+    <label class="btn btn-primary">
+      <input type="radio" name="id_status" value="public">
+      Public
+    </label>
+
+
+      </div>
+  <div class="form-actions">
+    <input class="btn btn-primary" type="submit" value="Add Image" name="submit">
+  </div>
+    </div>
 
 
   </form>
+  <div class="span6">
   <form method="POST" action="{% url 'imagestore:upload' %}?next=/events/" enctype="multipart/form-data">
     {% csrf_token %}
   <div id="image-upload-form"></div>
   {{ image_formset }}
 
   </form>
+  </div>
 
 
 {% endblock content %}
@@ -85,6 +120,10 @@
         return false;
 
       });
+
+      $('.btn-group>label>input').on('click', function(e) {
+        $(this).toggleClass('active');
+      })
 
     });
   </script>

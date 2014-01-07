@@ -38,7 +38,7 @@ class ImageForm(forms.ModelForm):
         #self.fields['album'].queryset = Album.objects.filter(user=user)
         self.fields['album'].queryset = Album.objects.filter(
             content_type_id=user.chapter.get_content_type_id()).filter(object_pk=user.chapter_id)
-        self.fields['album'].required = True
+        self.fields['album'].required = False
         if AUTOCOMPLETE_LIGHT_INSTALLED:
             self.fields['tags'].widget = autocomplete_light.TextWidget('TagAutocomplete')
 
@@ -46,9 +46,9 @@ class ImageForm(forms.ModelForm):
 class ImageFormCrispy(forms.ModelForm):
     class Meta(object):
         model = Image
-        exclude = ('user', 'order', 'status_changed',
+        exclude = ('user', 'order', 'album', 'status_changed', 'content_type', 'object_pk',
                    )
-        fields = ['image', 'album', 'content_type', 'object_pk', 'status']
+        fields = ['image', 'status']
         widgets = {
             'status': forms.HiddenInput(),
             'content_type': forms.HiddenInput(),
@@ -60,9 +60,6 @@ class ImageFormCrispy(forms.ModelForm):
 
     def __init__(self, user, content_type=None, object_pk=None, *args, **kwargs):
         super(ImageFormCrispy, self).__init__(*args, **kwargs)
-        self.fields['album'].queryset = Album.objects.filter(
-            content_type_id=user.chapter.get_content_type_id()).filter(object_pk=user.chapter_id)
-        self.fields['album'].required = True
         self.fields['status'].initial = 'public'
         if content_type:
             self.fields['content_type'].initial = content_type

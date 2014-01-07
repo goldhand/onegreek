@@ -362,7 +362,7 @@ class ImageViewSet(viewsets.ModelViewSet):
 class CreateImageFor(CreateImage):
     template_name = 'imagestore/forms/image_form.html'
     model = Image
-    form_class = ImageForm
+    form_class = ImageFormCrispy
 
     @method_decorator(login_required)
     @method_decorator(permission_required('%s.add_%s' % (image_applabel, image_classname)))

@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ObjectDoesNotExist
 from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Avg
 
 from guardian.shortcuts import assign_perm, get_perms
 
@@ -35,6 +36,15 @@ class Chapter(Slugged, StatusModel):
     fb_status = models.TextField(blank=True)
     cost = models.IntegerField(blank=True, null=True)
     gpa = models.FloatField(blank=True, null=True)
+
+    chapter_website = models.URLField(blank=True)
+    founding_year = models.IntegerField(blank=True, null=True)
+    chapter_address = models.TextField(blank=True)
+
+
+
+
+
     groups = models.ManyToManyField(Group, null=True, blank=True,
                                     help_text='Leave blank to have this field auto-populated')
     linked_group = models.OneToOneField(Group, null=True, blank=True, related_name='linked_chapter',
@@ -134,8 +144,11 @@ class Chapter(Slugged, StatusModel):
     def get_call_count(self):
         return self.linked_call_group.user_set.count()
 
+    def get_chapter_gpa(self):
+        return self.linked_active_group.user_set.all().aggregate(Avg('gpa'))
+
     def name(self):
-        return self.fraternity_title + ' - ' + self.title + ' chapter'
+        return self.fraternity_title
 
     def get_api_url(self):
         return "/chapters/#/chapters/%d" % self.id

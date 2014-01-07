@@ -27,7 +27,6 @@
 
             <div class="modal-footer">
                 <button class="btn btn-primary" ng-click="ok()">Save</button>
-                <button class="btn btn-primary" ng-click="addImages()">Add Images</button>
                 <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
             </div>
 
@@ -46,11 +45,15 @@
         <script type="text/ng-template" id="list.html">
 
             {% if request.user.is_chapter_admin %}
-        <a href='{% url "events:create" %}' class="btn btn-link pull-right">Create Event</a>
+            <br>
+        <a href='{% url "events:create" %}' class="btn btn-primary pull-right">Create Event</a>
+        <br>
+        <br>
         {% endif %}
 
         <div class="span9">
 
+                            <div class="calendar" ng-model="eventSources" calendar="tab.calendar" config="uiConfig.calendar" ui-calendar="uiConfig.calendar"></div>
 
 
         <tabset>
@@ -67,7 +70,6 @@
                               <div class="alert-success calAlert" ng-show="alertMessage != undefined && alertMessage != ''">
                                 <h4>{[{ alertMessage }]}</h4>
                               </div>
-                            <div class="calendar" ng-model="eventSources" calendar="tab.calendar" config="uiConfig.calendar" ui-calendar="uiConfig.calendar"></div>
                             </tab-content>
                            </tab>
 
@@ -133,10 +135,10 @@
             {% endif %}
             <ul class="inline">
                 <li ng-show="event.rsvp.rsvp">
-                    I'm currently: <a class="btn btn-primary" ng-click="postRsvp()">{[{ event.rsvp.display }]}</a>
+                    <a class="btn btn-primary" ng-click="postRsvp()">{[{ event.rsvp.display }]}</a>
                 </li>
                 <li ng-hide="event.rsvp.rsvp">
-                   I'm currently: <a class="btn btn-primary" ng-click="postRsvp()">{[{ event.rsvp.display }]}</a>
+                   <a class="btn btn-primary" ng-click="postRsvp()">{[{ event.rsvp.display }]}</a>
                 </li>
             </ul>
 

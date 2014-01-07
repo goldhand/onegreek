@@ -41,15 +41,18 @@ def color_key(status, component=None):
 class Event(TimeFramedModel, StatusModel, Slugged):
     owner = models.ForeignKey('users.User', null=True, blank=True, related_name='events')
     STATUS = Choices(
-        ('rush', 'Rushees'),
-        ('pledge', 'Pledges'),
-        ('active', 'Actives'),
-        ('call', 'Call List'),
-        ('public', 'Public'),
+        ('rush', 'Rush Event'),
+        ('pledge', 'Pledge Event'),
+        ('active', 'Actives Only Event'),
+        ('call', 'Call List Event'),
+        ('active', 'Greeklife Only'),
+        ('public', 'Public Event'),
     )
     description = SplitField()
     all_day = models.BooleanField(default=False)
-    #attendees = models.ManyToManyField('users.User', null=True, blank=True, related_name='attending')
+    chapter_id = models.CharField(max_length=255, blank=True)
+    chapter_title = models.CharField(max_length=255, blank=True)
+    fraternity_title = models.CharField(max_length=255, blank=True)
 
     enable_comments = models.BooleanField("Enable comments", default=True)
 
@@ -64,7 +67,10 @@ class Event(TimeFramedModel, StatusModel, Slugged):
 
     def get_chapter(self):
         if self.owner:
-            return self.owner.chapter
+            if self.owner.chapter:
+                return self.owner.chapter
+            else:
+                return None
         else:
             return None
 

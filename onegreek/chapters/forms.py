@@ -17,19 +17,14 @@ class ChapterForm(forms.ModelForm):
             'title', 'description', 'university', 'fraternity',
             'cost', 'gpa',
             'description', 'awards', 'philanthropy', 'potential_new_members',
-            'slug', 'groups',
             ]
-        widgets = {
-            'groups': forms.HiddenInput(),
-            'slug': forms.HiddenInput(),
-        }
 
     def __init__(self, *args, **kwargs):
         #kwargs.update(scope_prefix='event')
         super(ChapterForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        #self.helper.form_tag = False
-        #self.helper.form_action =
+        self.helper.form_tag = True
+        #self.helper.form_action = '.'
         self.helper.form_class = 'form-horizontal'
         self.helper.layout = Layout(
             Div(
@@ -46,7 +41,6 @@ class ChapterForm(forms.ModelForm):
                     Field('awards', css_class="input-block-level", rows='6'),
                     Field('philanthropy', css_class="input-block-level", rows='6'),
                     Field('potential_new_members', css_class="input-block-level", rows='6'),
-                    'slug', 'groups',
                     css_class="span6"
                 ),
                 css_class='row',

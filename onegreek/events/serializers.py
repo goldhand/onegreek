@@ -10,8 +10,6 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
     title = serializers.WritableField(source='title', blank=True)
     description = serializers.WritableField(source='description', blank=True)
     chapter = serializers.HyperlinkedRelatedField('get_chapter', view_name='chapter-detail', read_only=True)
-    chapter_id = serializers.SerializerMethodField('get_chapter_id')
-    chapter_title = serializers.Field('get_chapter')
     attend_url = serializers.Field('get_attend_url')
     rsvp_url = serializers.Field('get_rsvp_url')
     text_color_class = serializers.Field('get_status_text_class')
@@ -32,6 +30,7 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
             'slug',
             'chapter',
             'chapter_title',
+            'fraternity_title',
             'chapter_id',
             'status',
             'description',

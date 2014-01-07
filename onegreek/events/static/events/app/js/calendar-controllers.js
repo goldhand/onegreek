@@ -279,7 +279,7 @@ eventsControllers.controller('EventListCtrl', [
         $scope.uiConfig = {
             calendar:{
                 height: 450,
-                editable: true,
+                editable: false,
                 header:{
                     left: 'title',
                     center: '',
@@ -288,7 +288,7 @@ eventsControllers.controller('EventListCtrl', [
                 dayClick: $scope.alertEventOnClick,
                 eventDrop: $scope.alertOnDrop,
                 eventResize: $scope.alertOnResize,
-                defaultView: 'agendaWeek'
+                defaultView: 'month'
             }
         };
 

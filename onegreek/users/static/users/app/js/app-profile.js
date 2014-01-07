@@ -3,7 +3,6 @@
 
 // Declare app level module which depends on filters, and services
 var userApp = angular.module('userApp', [
-    'ui.calendar',
     'ui.bootstrap',
     'ngCookies',
     'ngRoute',

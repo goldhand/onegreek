@@ -3,6 +3,7 @@
 {% load url from future %}
 
 {% block content %}
+  <p>Chapters will use this photo to identify you during rush week. Please select a picture that closely resembles a head shot.</p>
   <div ng-controller="ProfileImgCtrl">
 
   <tabset>
@@ -10,7 +11,13 @@
     <tab heading="Use Facebook Default" select="setUserImg(0)">
       <tab-content>
         {% if not avatars %}
-          <p>{% trans "You haven't uploaded an avatar yet. Please upload one now." %}</p>
+          <div class="span9">
+          <p>{% trans "Make sure your facebook default clearly displays your face" %}</p>
+          </div>
+          <div class="span3">
+            <input class="btn btn-primary btn-large" type="submit" value="{% trans "Save & Continue" %}" ng-click="submitRedirect('/')"/>
+          </div>
+
         {% else %}
           <form method="POST" action="{% url 'avatar_change' %}?next=/" id="avatar-change">
 
@@ -97,16 +104,36 @@
 
 {% block angular_app_name %}userApp{% endblock angular_app_name %}
 
+{% block angular_core %}
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js"></script>
+{% endblock angular_core %}
+
+{% block angular_ext %}
+  <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.6.0.js"></script>
+  <script type="text/javascript" src="{% static 'ui-calendar-master/bower_components/fullcalendar/fullcalendar.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ui-calendar-master/bower_components/fullcalendar/gcal.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ui-calendar-master/src/calendar.js' %}"></script>
+{% endblock angular_ext %}
+
 {% block angular_modules %}
-  {{ block.super }}
-  <script src="{% static 'users/app/lib/angular/angular-dragdrop.min.js' %}"></script>
+
+  <script src="{% static 'angularjs/app/lib/angular/angular-cookies.js' %}"></script>
+  <script src="{% static 'angularjs/app/lib/angular/angular-resource.js' %}"></script>
+  <script src="{% static 'angularjs/app/lib/angular/angular-route.js' %}"></script>
+  <script src="{% static 'angularjs/app/lib/angular/angular-animate.js' %}"></script>
+
+
 {% endblock angular_modules %}
+
+
 {% block angular_app %}
   <script src="{% static 'users/app/js/app-profile.js' %}"></script>
-  <script src="{% static 'users/app/js/controllers.js' %}"></script>
+  <script src="{% static 'users/app/js/controllers-alt.js' %}"></script>
+  <script src="{% static 'chapters/app/js/left-content-controllers.js' %}"></script>
   <script src="{% static 'users/app/js/services.js' %}"></script>
   <script src="{% static 'users/app/js/directives.js' %}"></script>
   <script src="{% static 'users/app/js/filters.js' %}"></script>
+
 {% endblock angular_app %}
 
 {% block css %}
@@ -118,6 +145,9 @@
   .nav-tabs li {
     min-width: 33%;
     text-align: center;
+  }
+  label {
+    display: none !important;
   }
   </style>
   {{ block.super }}

@@ -83,6 +83,9 @@ class EventCreate(generic.CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
+        form.instance.chapter_id = self.request.user.chapter_id
+        form.instance.chapter_title = self.request.user.chapter.title
+        form.instance.fraternity_title = self.request.user.chapter.fraternity_title
         return super(EventCreate, self).form_valid(form)
 
 
@@ -96,6 +99,7 @@ class EventCreateJSON(generic.CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
+        #Todo: EVENTS CALL LIST NOT WORKING
         if 'id_status' in self.request.POST:
             form.instance.status = self.request.POST['id_status']
         form.save()
@@ -135,12 +139,17 @@ class EventList(generic.ListView):
         return context
 
 
+class EventUpdate(generic.UpdateView):
+    model = Event
+    form_class = EventFormFlat
+
+
 
 @api_view(['GET', 'POST'])
 @renderer_classes((JSONRenderer,))
 def rsvp_event(request, event_id, format=None):
     event = get_object_or_404(Event, id=event_id)
-    response = {'success': False, 'rsvp': False, 'display': 'not attending'}
+    response = {'success': False, 'rsvp': False, 'display': 'Attend'}
     attendees = []
 
     if event:
@@ -158,14 +167,14 @@ def rsvp_event(request, event_id, format=None):
         else:
             attendees.rsvps.add(user)
             response['rsvp'] = True
-            response['display'] = 'attending'
+            response['display'] = 'Unattend'
         attendees.save()
         response['success'] = True
     else:
         response['success'] = True
         if user in attendees.rsvps.all():
             response['rsvp'] = True
-            response['display'] = 'attending'
+            response['display'] = 'Unattend'
 
     return Response(response)
 

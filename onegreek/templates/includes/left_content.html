@@ -17,7 +17,9 @@
     </ul>
 
 
-    <a href="{% url 'chapters:list' %}">Chapters</a>
+<h4>
+  <a href="{% url 'chapters:list' %}">Chapters</a>
+</h4>
     <ul class="nav nav-pills nav-stacked" ng-cloak>
       <li ng-repeat="chapter in chapters | filter:chapterFilter | orderBy:'start'">
         <a ng-href="{[{ chapter.absolute_url }]}"
@@ -36,10 +38,12 @@
     </ul>
 
     {% block chapter_event_carousel %}
+      <h4>
       <a href="{% url 'events:list' %}">Events</a>
+      </h4>
       <ul class="nav nav-pills nav-stacked chapter-list">
         <li ng-repeat="event in events" active="event.active">
-          <a href="/events/#/events/{[{ event.id }]}"><span class="{[{ event.text_color_class }]}">{[{ event.title }]}</span></a>
+          <a href="/events/#/events/{[{ event.id }]}"><span class="{[{ event.text_color_class }]}">{[{ event.start | date:'MM/dd' }]} {[{ event.title }]}</span></a>
         </li>
       </ul>
 

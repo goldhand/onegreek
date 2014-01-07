@@ -43,7 +43,6 @@ def get_status_text_class(self):
     return color_key(self.status, "text")
 
 
-
 class User(AbstractUser, StatusModel):
     STATUS = Choices(
         ('Rushing', [
@@ -66,7 +65,6 @@ class User(AbstractUser, StatusModel):
         (1, 'Sophomore'),
         (2, 'Junior'),
         (3, 'Senior'),
-        (4, 'Other'),
     )
     PROFILE_IMG_OPTIONS = (
         (0, 'Facebook Default'),
@@ -83,7 +81,8 @@ class User(AbstractUser, StatusModel):
     hometown = models.CharField(max_length=255, blank=True)
     chapter = models.ForeignKey('chapters.Chapter', blank=True, null=True,
                                 help_text="Select your chapter " \
-                                          "*note: your active status will be pending until approved by an administrator")
+                                          "*note: your membership will be pending until it is approved by " \
+                                          "your chapter's administrator")
     university = models.ForeignKey('universities.University', blank=True, null=True)
     fraternity = models.ForeignKey('fraternities.Fraternity', blank=True, null=True)
     position = models.ForeignKey('chapters.Position', blank=True, null=True)
@@ -192,7 +191,6 @@ class User(AbstractUser, StatusModel):
 
     def get_api_url(self):
         return "/users/~#/users/%d" % self.id
-
 
 
 @receiver(signals.post_save, sender=User)

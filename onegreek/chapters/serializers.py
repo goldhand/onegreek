@@ -34,6 +34,7 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     ctype_id = serializers.SerializerMethodField('get_content_type_id')
     name = serializers.Field('name')
     api_url = serializers.Field('get_api_url')
+    average_gpa = serializers.Field('get_chapter_gpa')
 
     class Meta:
         model = Chapter
@@ -42,6 +43,7 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
             'ctype_id',
             'url',
             'api_url',
+            'name',
             'rush_url',
             'rush_form_url',
             'rush_form_id',
@@ -61,6 +63,7 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
             'potential_new_members',
             'cost',
             'gpa',
+            'average_gpa',
             'status',
             'fraternity_id',
             'fraternity_title',
