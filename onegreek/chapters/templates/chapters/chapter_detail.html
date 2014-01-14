@@ -6,6 +6,22 @@
 
     <div ng-controller="ChapterDetailCtrl">
     <div class="span9">
+
+      {% if request.user.is_chapter_admin and request.user.chapter_id == chapter.id %}
+        <div class="dropdown pull-right">
+        <a class="dropdown-toggle btn btn-link btn-mini">
+          <i class="fa fa-cog fa-lg"></i>
+          <span class="caret"></span>
+        </a>
+
+        <ul class="dropdown-menu">
+          <li><a href="{% url 'chapters:update' request.user.chapter_id %}">Edit Chapter Info</a></li>
+          <li><a href="{% url 'users:list' %}">Manage Members</a></li>
+          <li><a href="{% url 'imagestore:upload'  %}{[{ chapter.ctype_id }]}/{[{ chapter.id }]}/">Add Images</a></li>
+        </ul>
+        </div>
+
+      {% endif %}
         <h1 ng-show="globals.ogLoading.chapter" class="page-header" ng-cloak>
             {[{ chapter.fraternity_title }]}
             <br/>
@@ -31,7 +47,6 @@
                     </dt>
                     <dd>
                         <p>{[{ chapter.description }]}</p>
-                        <a href="#" class="pull-right"><small>more...</small></a>
                         <br/>
                         <br/>
                     </dd>
@@ -40,7 +55,6 @@
                     </dt>
                     <dd>
                         <p>{[{ chapter.awards }]}</p>
-                        <a href="#" class="pull-right"><small>more...</small></a>
                         <br/>
                         <br/>
                     </dd>
@@ -49,7 +63,6 @@
                     </dt>
                     <dd>
                         <p>{[{ chapter.philanthropy }]}</p>
-                        <a href="#" class="pull-right"><small>more...</small></a>
                         <br/>
                         <br/>
                     </dd>
@@ -58,7 +71,6 @@
                     </dt>
                     <dd>
                         <p>{[{ chapter.potential_new_members }]}</p>
-                        <a href="#" class="pull-right"><small>more...</small></a>
                         <br/>
                         <br/>
                     </dd>
@@ -90,7 +102,7 @@
                     <tab ng-show="globals.ogLoading.users" heading="Members">
                         <tab-content>
                         <div class="user-detail media" ng-repeat="user in users">
-                            <a href="{[{ user.extra_data.link }]}" target="_blank" class="pull-left">
+                            <a href="{[{ user.fb_extra_data.link }]}" target="_blank" class="pull-left" title="{[{ user.first_name }]} on Facebook">
                                 <img class="media-object thumbnail" ng-src="{[{ user.profile_image_url }]}">
                             </a>
 
@@ -104,6 +116,7 @@
                         </div>
                         </tab-content>
                     </tab>
+                {% comment %}
                     <tab ng-show="globals.ogLoading.comments" heading="Comments">
                         <tab-content>
                             <div ng-repeat="comment in comments" class="media">
@@ -127,6 +140,7 @@
                             {% endif %}
                         </tab-content>
                     </tab>
+                    {% endcomment %}
                     <tab ng-show="globals.ogLoading.chapter" heading="Info">
                         <tab-content>
                             <dl>
@@ -164,7 +178,7 @@
                                 House Address
                               </dt>
                               <dd>
-                                <p>{[{ chapter.house_address }]}</p>
+                                <p>{[{ chapter.chapter_address }]}</p>
                               </dd>
                             </dl>
                         </tab-content>

@@ -14,9 +14,17 @@ class ChapterForm(forms.ModelForm):
     class Meta:
         model = Chapter
         fields = [
-            'title', 'description', 'university', 'fraternity',
-            'cost', 'gpa',
-            'description', 'awards', 'philanthropy', 'potential_new_members',
+            'title',
+            'university',
+            'fraternity',
+            'description',
+            'cost',
+            'chapter_website',
+            'founding_year',
+            'chapter_address',
+            'awards',
+            'philanthropy',
+            'potential_new_members',
             ]
 
     def __init__(self, *args, **kwargs):
@@ -32,19 +40,28 @@ class ChapterForm(forms.ModelForm):
                     Field('title', css_class="input-block-level"),
                     Field('fraternity', css_class="input-block-level"),
                     Field('university', css_class="input-block-level"),
+                    Field('chapter_website', css_class="input-block-level"),
+                    Field('founding_year', css_class="input-block-level"),
                     Field('cost', css_class="input-block-level"),
-                    Field('gpa', css_class="input-block-level"),
-                    Field('description', css_class="input-block-level", rows='6'),
+                    Field('description', css_class="input-block-level", rows='4'),
                     css_class="span6"
                 ),
                 Div(
-                    Field('awards', css_class="input-block-level", rows='6'),
-                    Field('philanthropy', css_class="input-block-level", rows='6'),
-                    Field('potential_new_members', css_class="input-block-level", rows='6'),
+                    Field('chapter_address', css_class="input-block-level", rows='4'),
+                    Field('awards', css_class="input-block-level", rows='4'),
+                    Field('philanthropy', css_class="input-block-level", rows='4'),
+                    Field('potential_new_members', css_class="input-block-level", rows='4'),
                     css_class="span6"
                 ),
                 css_class='row',
             ),
-            Submit('submit', 'Submit')
+            FormActions(
+                Div(
+                    Submit('submit', 'Submit', css_class="btn btn-primary btn-large"),
+                    HTML('<a href="/chapters/" class="btn btn-default btn-large">Cancel</a>'),
+                    css_class="btn-group pull-right"
+                ),
+                Div(css_class="clearfix")
+            )
 
         )

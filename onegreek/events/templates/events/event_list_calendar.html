@@ -101,12 +101,14 @@
                 </span>
                 <br/>
                 <small>
+                Start:
                 <span>
-                            {[{ event.start | date }]}
+                            {[{ event.start | date:'short' }]}
                 </span>
-                -
+                <br/>
+                End:
                 <span>
-                            {[{ event.end | date }]}
+                            {[{ event.end | date:'short' }]}
                 </span>
                 </small>
             </h4>

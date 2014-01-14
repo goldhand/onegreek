@@ -6,6 +6,8 @@ from django.template import RequestContext
 from django.views import generic
 from django.views.generic import edit
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
+from django.http import Http404, HttpResponseRedirect
 
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, renderer_classes
@@ -46,6 +48,12 @@ class ChapterCreate(generic.CreateView):
 class ChapterUpdate(generic.UpdateView):
     model = Chapter
     form_class = ChapterForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            if request.user.is_chapter_admin():
+                return super(ChapterUpdate, self).dispatch(request, *args, **kwargs)
+        return HttpResponseRedirect(reverse('chapters:list'))
 
 
 class ChapterList(generic.ListView):

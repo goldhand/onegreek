@@ -181,7 +181,7 @@
             <div class="container">
             <div class="row">
             <div class="span4">
-                    <img class="" src="holder.js/300x100">
+                    <img class="" src="{% static 'img/logos/300x100logo.jpg' %}">
             </div>
 
         {% if request.user.is_authenticated %}
@@ -190,7 +190,7 @@
                 <div class="span4 offset4">
                     {% with request.user as user %}
                     <div class="user-detail2 media">
-                        <a class="pull-left" href="#">
+                        <a class="pull-left" href="{% url 'users:detail' request.user.id %}">
                             <img class="thumbnail" src="{{ user.profile_image_url }}">
                         </a>
                         <div class="media-body">
