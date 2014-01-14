@@ -46,9 +46,9 @@ class ImageForm(forms.ModelForm):
 class ImageFormCrispy(forms.ModelForm):
     class Meta(object):
         model = Image
-        exclude = ('user', 'order', 'album', 'status_changed', 'content_type', 'object_pk',
+        exclude = ('user', 'order', 'album', 'status_changed',
                    )
-        fields = ['image', 'status']
+        fields = ['content_type', 'object_pk', 'image', 'status']
         widgets = {
             'status': forms.HiddenInput(),
             'content_type': forms.HiddenInput(),
