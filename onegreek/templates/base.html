@@ -254,6 +254,18 @@
             {% endfor %}
         </div><!-- .row -->
     {% endif %}
+    {% if request.user.is_authenticated %}
+    {% if not request.user.profile_complete %}
+    <div class="row">
+                <div data-alert class="alert alert-box radius alert-danger">
+                
+                    You need to complete your profile to participate in OneGreek events <a href="{% url 'users:detail' request.user.id %}" class="btn btn-danger pull-right">Edit Profile</a>
+                    <div class="clearfix"></div>
+                </div><!-- .alert-box -->
+           
+        </div><!-- .row -->
+    {% endif %}
+    {% endif %}
 <div class="pull-right">
     {% block breadcrumb %}
     {% endblock breadcrumb %}

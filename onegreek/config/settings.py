@@ -289,12 +289,19 @@ class Common(Configuration):
 
     ########## END AUTHENTICATION PROVIDERS
 
-
     ########## Custom user app defaults
     # Select the correct user model
     AUTH_USER_MODEL = "users.User"
     LOGIN_REDIRECT_URL = "users:redirect"
     ########## END Custom user app defaults
+
+    ########## AVATAR CONFIG
+    AVATAR_AUTO_GENERATE_SIZES = (80, 300)
+    AVATAR_HASH_USERDIRNAMES = True
+    AVATAR_CLEANUP_DELETED = True
+    AVATAR_HASH_FILENAMES = True
+    AVATAR_MAX_SIZE = 1048576
+    ########## END AVATAR CONFIG
 
     ########## SLUGLIFIER
     AUTOSLUG_SLUGIFY_FUNCTION = "slugify.slugify"
@@ -405,7 +412,7 @@ class Local(Common):
             'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
             'NAME': 'onegreek',                      # Or path to database file if using sqlite3.
             # The following settings are not used with sqlite3:
-            'USER': 'wpl',
+            'USER': 'goldhand',
             'PASSWORD': '',
             'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
             'PORT': '',                      # Set to empty string for default.

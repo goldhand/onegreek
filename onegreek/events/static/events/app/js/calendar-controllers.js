@@ -191,7 +191,7 @@ eventsControllers.controller('EventListCtrl', [
         $scope.eventSource = {
             url: "http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic",
             className: 'gcal-event',           // an option!
-            currentTimezone: 'America/Chicago' // an option!
+            currentTimezone: 'America/Phoenix' // an option!
         };
 
         /* event source that calls a function on every view switch */
@@ -283,7 +283,7 @@ eventsControllers.controller('EventListCtrl', [
                 header:{
                     left: 'title',
                     center: '',
-                    right: 'month agendaWeek agendaDay today prev,next'
+                    right: 'month agendaWeek agendaDay prev,next'
                 },
                 dayClick: $scope.alertEventOnClick,
                 eventDrop: $scope.alertOnDrop,

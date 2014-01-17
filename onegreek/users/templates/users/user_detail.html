@@ -17,7 +17,7 @@
         <div class="span10">
             <h2>
                 {{ object.get_full_name }}
-                <small>{{ object.status }}</small>
+                <small>{{ object.get_status_display }}</small>
             </h2>
             <h4>
                 {% if object.status != 'rush' %}

@@ -54,31 +54,8 @@
         <div class="span9">
 
                             <div class="calendar" ng-model="eventSources" calendar="tab.calendar" config="uiConfig.calendar" ui-calendar="uiConfig.calendar"></div>
-
-
-        <tabset>
-                            <tab
-                              ng-repeat="tab in tabs"
-                              ng-hide="tab.hidden"
-                              heading="{[{tab.title}]}"
-                              active="tab.active"
-                              disabled="tab.disabled"
-                              select="renderCalendar(tab.calendar);">
-                              <tab-content>
-
-
-                              <div class="alert-success calAlert" ng-show="alertMessage != undefined && alertMessage != ''">
-                                <h4>{[{ alertMessage }]}</h4>
-                              </div>
-                            </tab-content>
-                           </tab>
-
-        </tabset>
-
-
-
-
         </div>
+
 
     </script>
 
@@ -185,7 +162,7 @@
                                         {[{ user.last_name }]}
                                </li>
                                <li>
-                                        {[{ user.status }]}
+                                        {[{ user.status_display }]}
                                </li>
                            </ul>
                         </a>
@@ -219,7 +196,7 @@
                                         {[{ user.last_name }]}
                                </li>
                                <li>
-                                        {[{ user.status }]}
+                                        {[{ user.status_display }]}
                                </li>
                            </ul>
                         </a>

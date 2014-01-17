@@ -25,11 +25,10 @@ def validate_gpa(value):
 
 rush_or_active_toggle_widget = \
     '<div class="control-group">' \
-    '<label for="rush-or-active" class="control-label">Are you </label>' \
     '<div class="controls">' \
     '<div class="btn-group" id="rush-or-active">' \
     '<button type="button" class="btn btn-primary" ng-click="userForm.reveal(\'rush\')"' \
-    'ng-model="user.rush" btn-radio="true">Rush</button>' \
+    'ng-model="user.rush" btn-radio="true">Rushee</button>' \
     '<button type="button" class="btn btn-primary" ng-click="userForm.reveal(\'active\')"' \
     'ng-model="user.rush" btn-radio="false">Active</button>' \
     '</div>' \

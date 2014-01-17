@@ -160,6 +160,11 @@ def rsvp_event(request, event_id, format=None):
         user = get_object_or_404(User, pk=request.GET['user_id'])
     else:
         user = request.user
+    
+    if not user.profile_complete:
+        # If a rushee has not completed their user profile they can't attend
+        response = {'success': False, 'rsvp': False, 'display': 'Complete Profile to Attend'}
+        return Response(response)
 
     if request.method == "POST":
 

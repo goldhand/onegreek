@@ -95,7 +95,7 @@
                                         <img class="pull-left thumbnail" ng-src="{[{ user.profile_image_url }]}">
                                </li>
                                <li>
-                                        {[{ user.status }]}
+                                        {[{ user.status_display }]}
                                </li>
                                <li>
                                         {[{ user.first_name }]}
@@ -217,13 +217,13 @@
 
                 {% comment %}
                         <a href="#/users/{[{ user.id }]}"
-                                class="{[{ user.status }]}"
+                                class="{[{ user.status_display }]}"
                                 data-popover="
                                 {[{ user.phone }]}
                                 {[{ user.email }]}
                                 {[{ user.year_display }]}
                                 {[{ user.major }]}
-                                {[{ user.status }]}
+                                {[{ user.status_display }]}
                                 "
                                 data-popover-title="{[{ user.last_name }]}, {[{ user.first_name }]}"
                                 data-popover-placement="right"
@@ -257,7 +257,7 @@
     <div class="span6">
     <h3>{[{ user.get_full_name }]}
     <small>
-        {[{ user.status }]}
+        {[{ user.status_display }]}
     </small>
     </h3>
 

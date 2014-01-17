@@ -74,8 +74,8 @@ class User(AbstractUser, StatusModel):
 
     university_email = models.EmailField(max_length=255, blank=True)
     phone = models.CharField(max_length=10, blank=True)
-    highschool_gpa = models.FloatField(null=True, blank=True)
-    gpa = models.FloatField(null=True, blank=True)
+    highschool_gpa = models.DecimalField(null=True, blank=True, max_digits=3, decimal_places=2)
+    gpa = models.DecimalField(null=True, blank=True, max_digits=3, decimal_places=2)
     year = models.IntegerField(choices=COLLEGE_YEARS, default=0)
     major = models.CharField(max_length=255, blank=True)
     hometown = models.CharField(max_length=255, blank=True)
@@ -191,6 +191,16 @@ class User(AbstractUser, StatusModel):
 
     def get_api_url(self):
         return "/users/~#/users/%d" % self.id
+
+    @property
+    def profile_complete(self):
+        if self.status == 'rush':
+            if self.first_name and self.last_name and self.phone and self.hometown:
+                if self.gpa or self.highschool_gpa:
+                    return True
+            return False
+        else:
+            return True
 
 
 @receiver(signals.post_save, sender=User)

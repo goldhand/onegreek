@@ -78,7 +78,8 @@
 
             </div>
             <div class="span4">
-               {% if not request.user.chapter_id %}
+                {% if not request.user.chapter_id %}
+                    {% if request.user.is_authenticated and request.user.profile_complete %}
                  <div ng-show="globals.ogLoading.rush">
 
                 <div ng-hide="chapter.rush.hide" style="display: table; margin-left: auto; margin-right: auto; margin-bottom: 30px;">
@@ -89,6 +90,14 @@
                     {{ chapter.rush_form.content }}
 
                  </div>
+                    {% else %}
+
+                    <div ng-hide="chapter.rush.hide" style="display: table; margin-left: auto; margin-right: auto; margin-bottom: 30px;">
+                        <a ng-disabled="chapter.rush.disabled" 
+                        ng-href="{% if request.user.is_authenticated %}{% url 'users:detail' request.user.id %}{% else %}{% url 'account_login' %}{% endif %}" class="btn btn-primary btn-large" > {[{ chapter.rush.title }]} </a>
+                    </div>
+                    {% endif %}
+
                 {% endif %}
 
                 {% if chapter.fb_status %}

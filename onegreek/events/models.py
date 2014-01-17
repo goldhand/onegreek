@@ -130,6 +130,11 @@ def set_group(sender, **kwargs):
             chapter.linked_rush_group,
             chapter.linked_active_group
         ]
+    if event.status == 'call':
+        chapter_groups = [
+            chapter.linked_call_group,
+            chapter.linked_active_group
+        ]
     if event.status == 'pledge':
         chapter_groups = [
             chapter.linked_pledge_group,

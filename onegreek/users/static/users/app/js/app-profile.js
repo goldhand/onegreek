@@ -21,6 +21,7 @@ var userApp = angular.module('userApp', [
 userApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    $routeProvider.when('/', {});
     $routeProvider.when('/events/calendar/', {
             templateUrl: 'list.html',
             controller: 'EventListCtrl'
@@ -28,7 +29,7 @@ userApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $htt
     $routeProvider.when('/img/', {
         controller: 'ProfileImgCtrl'
     });
-    $routeProvider.otherwise({redirectTo: '/events/calendar/'});
+    $routeProvider.otherwise({redirectTo: '/'});
 }]);
 
 

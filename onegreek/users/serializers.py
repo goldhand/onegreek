@@ -26,6 +26,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     #text_color_class = serializers.Field('get_status_text_class')
     name = serializers.Field('name')
     api_url = serializers.Field('get_api_url')
+    status_display = serializers.Field('get_status_display')
 
     class Meta:
         model = User
@@ -48,6 +49,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'fb_access_token',
             'fb_extra_data',
             'status',
+            'status_display',
             'position',
             'is_chapter_admin',
             'email',
