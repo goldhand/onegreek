@@ -22,6 +22,39 @@ from .forms import ChapterForm
 
 logger = logging.getLogger(__name__)
 
+import urllib2, urllib
+#from django.contrib.sites.models import Site
+
+CAPTION = str('OneGreek is redefining Greek recruitment. Review fraternity profiles, register for rush, and manage upcoming events.  All for free, entirely through Facebook.')
+
+
+def post_to_facebook(
+    user, 
+    link="http://arizona.onegreek.org", 
+    name="Onegreek.org",
+    picture="https://djangonu-onegreek.s3.amazonaws.com/img/logos/800x600logo.jpg",
+    caption=CAPTION,
+    chapter="",
+    message="",
+    adverb="rushing"
+    ):
+
+    post_url = "https://graph.facebook.com/{}/feed".format(user.fb_uid)
+    #site = Site.objects.get(id=1)
+    post_data = [
+        ("message", "{} is {} {} on Onegreek.org".format(user.get_full_name(), adverb, chapter)),
+        #("link", site.domain),
+        #("name", site.name),
+        ("link", link),
+        ("name", name),
+        ("picture", picture),
+        ("caption", caption),
+        ('access_token', user.get_fb_access_token().token)
+        ]
+    result = urllib2.urlopen(post_url, urllib.urlencode(post_data))
+
+
+
 
 class ChapterViewSet(viewsets.ModelViewSet):
     queryset = Chapter.objects.all()
@@ -100,6 +133,14 @@ def rush_chapter_view(request, pk, format=None):
                     title = 'Stop Rushing %s' % chapter.fraternity_title
                     rushing = True
                     #messages.success(request, message)
+
+                    #Send facebook update
+                    post_to_facebook(
+                        request.user,
+                        chapter=chapter.fraternity_title,
+                        )
+
+
             success = True
     else:
         if not request.user.is_authenticated():

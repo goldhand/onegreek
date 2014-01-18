@@ -27,6 +27,38 @@ from .forms import UserForm, UserRegisterForm, UploadAvatarFormNu, DeleteAvatarF
 User = get_user_model() # use this function for swapping user model
 from django.contrib.auth.models import Group
 
+import urllib2, urllib
+#from django.contrib.sites.models import Site
+
+CAPTION = str('OneGreek is redefining Greek recruitment. Review fraternity profiles, register for rush, and manage upcoming events.  All for free, entirely through Facebook.')
+
+
+def post_to_facebook(
+    user, 
+    link="http://arizona.onegreek.org", 
+    name="Onegreek.org",
+    picture="https://djangonu-onegreek.s3.amazonaws.com/img/logos/800x600logo.jpg",
+    caption=CAPTION,
+    chapter="",
+    message="",
+    adverb="rushing"
+    ):
+
+    post_url = "https://graph.facebook.com/{}/feed".format(user.fb_uid)
+    #site = Site.objects.get(id=1)
+    post_data = [
+        ("message", "{} is {} {} on Onegreek.org".format(user.get_full_name(), adverb, chapter)),
+        #("link", site.domain),
+        #("name", site.name),
+        ("link", link),
+        ("name", name),
+        ("picture", picture),
+        ("caption", caption),
+        ('access_token', user.get_fb_access_token().token)
+        ]
+    result = urllib2.urlopen(post_url, urllib.urlencode(post_data))
+
+
 
 class UserDetailView(LoginRequiredMixin, FormMixin, DetailView):
     model = User
@@ -256,6 +288,16 @@ def mod_user_groups(request, format=None):
                         user.chapter = chapter
                         # set chapter for new member
                         user.status = new_status
+
+                        #send facebook post for active chapter
+                        post_to_facebook(
+                            user,
+                            chapter=chapter.fraternity_title,
+                            adverb="a registered active of"
+                        )
+
+
+
                     else:
                         user.groups.add(new_group.id)
                 else:

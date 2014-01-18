@@ -292,14 +292,26 @@ from allauth.account.signals import user_signed_up
 from allauth.socialaccount.signals import social_account_added
 from allauth.socialaccount.models import SocialAccount
 import urllib2, urllib
+from django.contrib.sites.models import Site
+
+CAPTION = str('OneGreek is redefining Greek recruitment. Review fraternity profiles, register for rush, and manage upcoming events.  All for free, entirely through Facebook.')
 
 
 @receiver(user_signed_up, dispatch_uid="some.unique.string.id.for.allauth.user_signed_up")
 def post_to_facebook(request, user, **kwargs):
-    post_url = "https://graph.facebook.com/{}/".format(user.fb_uid)
-    post_data = [("message", "{} {}".format(user.get_full_name(), 'has joined Onegreek')), ('access_token', user.get_fb_access_token().token)]
-    print urllib.urlencode(post_data)
-    print post_url
-    urllib2.urlopen(post_url, urllib.urlencode(post_data))
+    post_url = "https://graph.facebook.com/{}/feed".format(user.fb_uid)
+    site = Site.objects.get(id=1)
+    post_data = [
+        ("message", "{} {}".format(user.get_full_name(), 'has registered for spring 2014 fraternity recruitment on Onegreek.org')),
+        #("link", site.domain),
+        #("name", site.name),
+        ("link", "http://arizona.onegreek.org"),
+        ("name", "Onegreek.org"),
+        ("picture", "https://djangonu-onegreek.s3.amazonaws.com/img/logos/800x600logo.jpg"),
+        ("caption", CAPTION),
+        ('access_token', user.get_fb_access_token().token)
+        ]
+    print post_data
+    result = urllib2.urlopen(post_url, urllib.urlencode(post_data))
 
 
