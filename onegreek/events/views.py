@@ -103,7 +103,7 @@ class EventCreateJSON(generic.CreateView):
         if 'id_status' in self.request.POST:
             form.instance.status = self.request.POST['id_status']
         form.save()
-        print form.instance.get_content_type_id()
+        #print form.instance.get_content_type_id()
         image_form_html = render_crispy_form(
             ImageFormCrispy(
                 user=self.request.user,

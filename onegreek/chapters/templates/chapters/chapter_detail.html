@@ -157,7 +157,8 @@
                                     Average GPA
                                 </dt>
                                 <dd>
-                                    <p>{[{ chapter.average_gpa.gpa__avg }]}</p>
+                                    {#<p>{[{ chapter.average_gpa.gpa__avg }]}</p>#}
+                                    <p>{[{ chapter.gpa }]}</p>
                                 </dd>
                                 <dt>
                                     Semester Cost
@@ -170,6 +171,12 @@
                               </dt>
                               <dd>
                                 <p>{[{ chapter.chapter_website }]}</p>
+                              </dd>
+                              <dt>
+                                Chapter Facebook Page
+                              </dt>
+                              <dd>
+                                <p><a ng-href="{[{ chapter.facebook }]}" target="_blank">Visit Facebook Page</a></p>
                               </dd>
                               <dt>
                                 Founding Year

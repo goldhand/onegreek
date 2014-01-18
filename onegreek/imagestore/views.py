@@ -370,7 +370,9 @@ class CreateImageFor(CreateImage):
         return super(CreateImage, self).dispatch(*args, **kwargs)
 
     def get_form(self, form_class):
-        return form_class(user=self.request.user, **self.get_form_kwargs())
+        ctype = ContentType.objects.get(id=self.kwargs['ctype_id'])
+        obj_id = self.kwargs['obj_id']
+        return form_class(user=self.request.user, content_type=ctype, object_pk=obj_id, **self.get_form_kwargs())
 
     def form_valid(self, form):
         self.object = form.save(commit=False)

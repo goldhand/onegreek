@@ -32,9 +32,11 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     rush_count = serializers.Field('get_rush_count')
     call_count = serializers.Field('get_call_count')
     ctype_id = serializers.SerializerMethodField('get_content_type_id')
+    color_class = serializers.SerializerMethodField('get_color_class')
     name = serializers.Field('name')
     api_url = serializers.Field('get_api_url')
     average_gpa = serializers.Field('get_chapter_gpa')
+    has_admin = serializers.Field('has_admin')
 
     class Meta:
         model = Chapter
@@ -59,6 +61,7 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
             'call_count',
             'description',
             'chapter_website',
+            'facebook',
             'founding_year',
             'chapter_address',
             'awards',
@@ -73,6 +76,8 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
             'university_id',
             'university_title',
             'groups',
+            'has_admin',
+            'color_class',
             'linked_group_id',
             'linked_active_group_id',
             'linked_pending_group_id',
@@ -105,3 +110,10 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_content_type_id(self, obj):
         return ContentType.objects.get_for_model(Chapter).id
+
+    def get_color_class(self, obj):
+        if obj:
+            if obj.has_admin():
+                return 'primary'
+        return 'muted'
+

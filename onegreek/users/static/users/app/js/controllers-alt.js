@@ -169,7 +169,13 @@ userControllers.controller('UserListCtrl', [
                                     user.status = data.new_status;
                                 }
                             }
+                            $http.get('/api/users/').success(function(data) {
+                            $scope.globals.updateUsers(data);
+                            $scope.globals.users = data;
+                            $scope.filterForUserStatus(status);
+                        });
                         }
+                        
                     }
             });
         };

@@ -34,8 +34,8 @@ class Chapter(Slugged, StatusModel):
     potential_new_members = SplitField(blank=True)
     facebook = models.URLField(blank=True)
     fb_status = models.TextField(blank=True)
-    cost = models.IntegerField(blank=True, null=True)
-    gpa = models.FloatField(blank=True, null=True)
+    cost = models.CharField(blank=True, null=True, max_length=255)
+    gpa = models.DecimalField(null=True, blank=True, max_digits=3, decimal_places=2)
 
     chapter_website = models.URLField(blank=True)
     founding_year = models.IntegerField(blank=True, null=True)

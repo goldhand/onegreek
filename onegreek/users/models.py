@@ -173,6 +173,15 @@ class User(AbstractUser, StatusModel):
         if u_social:
             return u_social[0].extra_data
 
+    @property
+    def fb_uid(self):
+        fb_uid = SocialAccount.objects.filter(user_id=self.id, provider='facebook')
+
+        if len(fb_uid):
+            return fb_uid[0].uid
+        else:
+            return None
+
     def is_chapter_admin(self):
         if self.chapter:
             return self in self.chapter.linked_admin_group.user_set.all()
@@ -277,5 +286,20 @@ def set_group_and_status(sender, **kwargs):
                     user.groups.clear()
                     user.groups.add(group)
                     user.save()
+
+
+from allauth.account.signals import user_signed_up
+from allauth.socialaccount.signals import social_account_added
+from allauth.socialaccount.models import SocialAccount
+import urllib2, urllib
+
+
+@receiver(user_signed_up, dispatch_uid="some.unique.string.id.for.allauth.user_signed_up")
+def post_to_facebook(request, user, **kwargs):
+    post_url = "https://graph.facebook.com/{}/".format(user.fb_uid)
+    post_data = [("message", "{} {}".format(user.get_full_name(), 'has joined Onegreek')), ('access_token', user.get_fb_access_token().token)]
+    print urllib.urlencode(post_data)
+    print post_url
+    urllib2.urlopen(post_url, urllib.urlencode(post_data))
 
 

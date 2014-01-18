@@ -187,7 +187,65 @@
         {% if request.user.is_authenticated %}
 
 
-                <div class="span4 offset4">
+                <div class="span4">
+                    <ul class="inline text-center">
+                        <li class="nav-header">
+                            <a class="" ng-click="isCollapsed = !isCollapsed">
+                                Account
+                            </a>
+                        </li>
+                        {% if request.user.chapter_id %}
+                        <li class="nav-header">
+                            <a class="" ng-click="isCollapsed = !isCollapsed">
+                                Chapter
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-header">
+                            <a class="" ng-click="isCollapsed = !isCollapsed">
+                                Calendar
+                            </a>
+                        </li>
+                    </ul>
+                    <div collapse="!isCollapsed">
+                        <ul class="inline text-center">
+                            <li>
+                                <ul class="unstyled">
+                                    <li>
+                                        <a href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            {% if request.user.chapter_id %}
+                            <li>
+                                <ul class="unstyled">
+                                    
+                                    <li>
+                                        <a href="{% url 'chapters:detail' request.user.chapter_id %}">
+                                            {% trans "Profile" %}
+                                        </a> 
+                                    </li>
+
+                                    <li>
+                                        <a href="{% url 'users:list' %}">{% trans "Members" %}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            {% endif %}
+                            <li>
+                                <a href="{% url 'events:list' %}">
+                                    Events
+                                </a>
+                            </li>
+                        </ul>
+
+
+                    </div>
+                </div>
+
+
+
+                <div class="span4">
                     {% with request.user as user %}
                     <div class="user-detail2 media">
                         <a class="pull-left" href="{% url 'users:detail' request.user.id %}">
@@ -254,18 +312,20 @@
             {% endfor %}
         </div><!-- .row -->
     {% endif %}
+    {% block profile_complete %}
     {% if request.user.is_authenticated %}
     {% if not request.user.profile_complete %}
     <div class="row">
                 <div data-alert class="alert alert-box radius alert-danger">
                 
-                    You need to complete your profile to participate in OneGreek events <a href="{% url 'users:detail' request.user.id %}" class="btn btn-danger pull-right">Edit Profile</a>
+                    You need to complete your profile to participate in OneGreek events <a href="{% url 'users:register' %}" class="btn btn-danger pull-right">Edit Profile</a>
                     <div class="clearfix"></div>
                 </div><!-- .alert-box -->
            
         </div><!-- .row -->
     {% endif %}
     {% endif %}
+    {% endblock profile_complete %}
 <div class="pull-right">
     {% block breadcrumb %}
     {% endblock breadcrumb %}

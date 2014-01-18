@@ -86,8 +86,8 @@
     background-color: #fff;
 }
 .top-bar {
-    background: linear-gradient(to right, #c41e3a, #000080);
-    height: 30px;
+    background: linear-gradient(to right, #c41e3a 35%, #000080 65%);
+    height: 22px;
     width: 100%;
     padding: 0 40px;
 }

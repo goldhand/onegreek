@@ -20,20 +20,27 @@
 <h4>
   <a href="{% url 'chapters:list' %}">Chapters</a>
 </h4>
-    <ul class="nav nav-pills nav-stacked" ng-cloak>
-      <li ng-repeat="chapter in chapters | filter:chapterFilter | orderBy:'start'">
+    <ul class="nav nav-pills nav-stacked" ng-cloak ng-init="chaptersLimit=5">
+      <li ng-repeat="chapter in chapters | filter:chapterFilter | orderBy:['has_admin', 'fraternity_title'] | limitTo:chaptersLimit">
         <a ng-href="{[{ chapter.absolute_url }]}"
            data-popover="
                                 {[{ chapter.university_title }]}
-                                <br/>
+                               
                                 {[{ chapter.fraternity_title }]}
                                 "
            data-popover-title="{[{ chapter.fraternity_title }]}"
            data-popover-placement="right"
            data-popover-trigger="mouseenter"
            data-popover-popup-delay="500"
-           ng-bind="chapter.fraternity_title">
+           ng-bind="chapter.fraternity_title"
+           class="{[{ chapter.color_class }]}">
         </a>
+      </li>
+      <li ng-show="chaptersLimit==5">
+        <a ng-click="chaptersLimit=100">Show More</a>
+      </li>
+      <li ng-show="chaptersLimit==100">
+        <a ng-click="chaptersLimit=5">Show Less</a>
       </li>
     </ul>
 
