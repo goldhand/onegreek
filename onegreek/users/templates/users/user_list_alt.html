@@ -61,7 +61,7 @@
                  active="tab.active"
                  select="tab.select()">
                 <tab-heading>
-                    {[{ tab.heading }]}  <span class="badge badge-info">{[{ tab.count }]}</span>
+                    {[{ tab.heading }]}
                 </tab-heading>
                 <tab-content>
                 {% if request.user.is_chapter_admin %}
@@ -71,7 +71,7 @@
             </tab>
             <tab select="globals.getGroup('/users/filter/group/', 'Call List')">
                 <tab-heading>
-                     Call List  <span class="badge badge-info">{[{ globals.chapter.call_count }]}</span>
+                     Call List
                 </tab-heading>
                 <tab-content>
                 {% if request.user.is_chapter_admin %}
