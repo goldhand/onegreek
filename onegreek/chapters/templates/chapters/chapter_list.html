@@ -71,7 +71,14 @@
   {% include 'includes/left_content.html' %}
 {% endblock left_content %}
 
+{% block jquery %}
+  <script type="text/javascript" src="{% static 'ui-calendar-master/bower_components/jquery/jquery.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ui-calendar-master/bower_components/jquery-ui/ui/jquery-ui.js' %}"></script>
+{% endblock jquery %}
 
+{% block angular_core %}
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js"></script>
+{% endblock angular_core %}
 
 {% block angular_app_name %}chapterApp{% endblock angular_app_name %}
 

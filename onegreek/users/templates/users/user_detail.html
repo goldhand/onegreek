@@ -59,13 +59,17 @@
                 <div class="row">
                     <div class="span3">
                         <fieldset>
+                          {% comment %}
                             <legend>
                                 Other Links
                             </legend>
+                            {% endcomment %}
                             <ul class="unstyled">
+                              {% comment %}
                                 <li>
                                     <a class="" href="{% url 'account_email' %}">Manage E-Mail</a>
                                 </li>
+                              {% endcomment %}
                                 <li>
                                     <a class="" href="{% url 'events:list' %}">Events List</a>
                                 </li>
@@ -75,9 +79,7 @@
                                            href="{% url 'chapters:detail' object.chapter_id %}">{{ object.chapter.fraternity.title }}</a>
                                     </li>
                                 {% endif %}
-                                <li>
-                                  <a href="{% url 'chapters:list' %}">Chapters List</a>
-                                </li>
+                                
                             </ul>
                         </fieldset>
                     </div>
@@ -99,6 +101,7 @@
 
                         <tabset type="nav-pills">
                           <tab ng-hide="true"></tab>
+                          {% comment %}
                           <tab class="nav-stacked" heading="Uploaded Photos" select="setUserImg(0)">
                             <tab-content>
                               {% if not avatars %}
@@ -118,6 +121,7 @@
 
                             </tab-content>
                           </tab>
+                          {% endcomment %}
                           <tab class="nav-stacked" heading="Upload New Photo" select="setUserImg(2)">
                             <tab-content>
                               <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}?next={{ request.path }}" id="avatar-add">
@@ -189,6 +193,7 @@
 
                                 </form>
                             </tab>
+
                             <tab heading="Set Default">
                                 <div id="avatar-change-panel">
                                   {% if not avatars %}

@@ -35,8 +35,10 @@
             <div class="span5">
                 <div class="chapter-carousel">
                 <carousel>
-                    <slide ng-repeat="image in images">
+                    <slide ng-repeat="image in chapter.images">
+                       
                         <img class="image-responsive" ng-src="{[{ image.lg_img_url }]}">
+             
                     </slide>
                 </carousel>
                 </div>

@@ -74,6 +74,7 @@ chapterControllers.controller('ChapterDetailCtrl', [
     '$http',
     '$modal',
     '$routeParams',
+    '$window',
     'filterFilter',
     'GlobalService',
     function (
@@ -81,6 +82,7 @@ chapterControllers.controller('ChapterDetailCtrl', [
         $http,
         $modal,
         $routeParams,
+        $window,
         filterFilter,
         GlobalService
         ) {
@@ -145,8 +147,8 @@ chapterControllers.controller('ChapterDetailCtrl', [
         };
         $scope.getImages = function(ctype, obj) {
             $http.get('/api/images/?ctype=' + ctype + '&obj=' + obj).success(function(data) {
-                console.log(data);
-                $scope.images = data;
+
+                $scope.chapter.images = data;
                 $scope.globals.ogLoading.images = true;
             });
         };
@@ -162,6 +164,7 @@ chapterControllers.controller('ChapterDetailCtrl', [
         $scope.rushFormSubmit = function() {
             $http.post($scope.chapter.rush_form_url, $scope.rush_form).success(function(data) {
                 console.log(data);
+                $window.location.reload()
             });
         };
         $scope.commentSubmit = function() {

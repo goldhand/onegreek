@@ -296,8 +296,6 @@ def mod_user_groups(request, format=None):
                             adverb="a registered active of"
                         )
 
-
-
                     else:
                         user.groups.add(new_group.id)
                 else:

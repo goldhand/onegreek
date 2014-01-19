@@ -64,7 +64,9 @@
                     {[{ tab.heading }]}  <span class="badge badge-info">{[{ tab.count }]}</span>
                 </tab-heading>
                 <tab-content>
+                {% if request.user.is_chapter_admin %}
                     <a ng-show="{[{ tab.status == 'rush' }]}" ng-click="globals.openCarouselModal()" class="btn btn-link pull-right">Slide Show</a>
+                {% endif %}
                 </tab-content>
             </tab>
             <tab select="globals.getGroup('/users/filter/group/', 'Call List')">
@@ -72,7 +74,9 @@
                      Call List  <span class="badge badge-info">{[{ globals.chapter.call_count }]}</span>
                 </tab-heading>
                 <tab-content>
+                {% if request.user.is_chapter_admin %}
                    <a ng-click="globals.openCarouselModal()" class="btn btn-link pull-right">Slide Show</a>
+                {% endif %}
                 </tab-content>
             </tab>
 
@@ -104,7 +108,7 @@
                                <li>
                            </ul>
                 </a>
-
+                {% if request.user.is_chapter_admin %}
                     <div class="user-edit-menu dropdown btn-group">
                       <a class="dropdown-toggle btn btn-link btn-mini">
                       <i class="fa fa-cog fa-lg"></i>
@@ -198,7 +202,7 @@
                             </li>
                             <li ng-hide="user.status == 'pledge'">
                                 <a ng-click="modUser(user, 'add', 'rush', 'pledge')">
-                                Make Pledge
+                                Add To Bid List
                                 </a>
                             </li>
                             <li ng-show="user.status == 'rush'">
@@ -212,7 +216,7 @@
 
 
                     </div>
-
+                {% endif %}
 
 
                 {% comment %}
@@ -406,7 +410,7 @@
                             </li>
                             <li ng-hide="user.status == 'pledge'">
                                 <a ng-click="globals.modUser(user, 'add', 'rush', 'pledge')">
-                                Make Pledge
+                                Add To Bid List
                                 </a>
                             </li>
                             <li ng-show="user.status == 'rush'">
@@ -681,7 +685,7 @@
                             </li>
                             <li ng-hide="user.status == 'pledge'">
                                 <a ng-click="modUser(user, 'add', 'rush', 'pledge')">
-                                Make Pledge
+                                Add To Bid List
                                 </a>
                             </li>
                             <li ng-show="user.status == 'rush'">

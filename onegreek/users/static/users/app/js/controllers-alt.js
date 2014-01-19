@@ -44,7 +44,7 @@ userControllers.controller('UserGlobalCtrl', [
                         },
                         {
                             active: false,
-                            heading: 'Pledge',
+                            heading: 'Bid List',
                             status: 'pledge',
                             count: $scope.globals.chapter.pledge_count,
                             order: 2

@@ -104,7 +104,10 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_user_count(self, obj):
         if obj:
-            return obj.user_set.count()
+            if obj.user_set.count():
+                return obj.user_set.count()
+            else:
+                return obj.member_count_placeholder
         else:
             return 0
 

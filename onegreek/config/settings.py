@@ -296,6 +296,7 @@ class Common(Configuration):
     ########## END Custom user app defaults
 
     ########## AVATAR CONFIG
+    AVATAR_MAX_AVATARS_PER_USER = 1
     AVATAR_AUTO_GENERATE_SIZES = (80, 300)
     AVATAR_HASH_USERDIRNAMES = True
     AVATAR_CLEANUP_DELETED = True

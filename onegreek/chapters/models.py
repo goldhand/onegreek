@@ -40,6 +40,7 @@ class Chapter(Slugged, StatusModel):
     chapter_website = models.URLField(blank=True)
     founding_year = models.IntegerField(blank=True, null=True)
     chapter_address = models.TextField(blank=True)
+    member_count_placeholder = models.IntegerField(blank=True, null=True)
 
 
 
