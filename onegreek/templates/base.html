@@ -181,7 +181,9 @@
             <div class="container">
             <div class="row">
             <div class="span4">
+                <a href="/">
                     <img class="" src="{% static 'img/logos/300x100logo.png' %}">
+                </a>
             </div>
 
         {% if request.user.is_authenticated %}
@@ -225,10 +227,11 @@
                                             {% trans "Profile" %}
                                         </a> 
                                     </li>
-
+                                    {% if request.user.status != 'active_pending' %}
                                     <li>
                                         <a href="{% url 'users:list' %}">{% trans "Members" %}</a>
                                     </li>
+                                    {% endif %}
                                 </ul>
                             </li>
                             {% endif %}

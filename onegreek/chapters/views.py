@@ -25,8 +25,8 @@ logger = logging.getLogger(__name__)
 import urllib2, urllib
 #from django.contrib.sites.models import Site
 
+#CAPTION = str('OneGreek is redefining Greek recruitment. Explore chapters, register for rush, and manage events.')
 CAPTION = str('OneGreek is redefining Greek recruitment. Review fraternity profiles, register for rush, and manage upcoming events.  All for free, entirely through Facebook.')
-
 
 def post_to_facebook(
     user, 

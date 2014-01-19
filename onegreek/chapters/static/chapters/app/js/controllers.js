@@ -65,6 +65,13 @@ chapterControllers.controller('ChapterListCtrl', [
                 $scope.events = filterFilter($scope.globals.events, {chapter_id: chapter.id});
             }
         };
+        $scope.getAllChapterImages = function(ctype) {
+            $http.get('/api/images/?ctype=' + ctype).success(function(data) {
+
+                $scope.images = data;
+                
+            });
+        };
 
 
     }]);

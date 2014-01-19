@@ -34,17 +34,14 @@
 
             <div class="span5">
                 <div class="chapter-carousel">
-                <carousel>
-                    <slide ng-repeat="image in chapter.images">
-                       
-                        <img class="image-responsive" ng-src="{[{ image.lg_img_url }]}">
+         
+                        <img class="image-responsive" ng-src="{[{ chapter.images.0.lg_img_url }]}">
              
-                    </slide>
-                </carousel>
+          
                 </div>
 
                 <dl ng-show="globals.ogLoading.chapter">
-                    <dt>
+                    <dt ng-if="chapter.description">
                         Description:
                     </dt>
                     <dd>
@@ -52,7 +49,7 @@
                         <br/>
                         <br/>
                     </dd>
-                    <dt>
+                    <dt ng-if="chapter.awards">
                         Awards:
                     </dt>
                     <dd>
@@ -60,7 +57,7 @@
                         <br/>
                         <br/>
                     </dd>
-                    <dt>
+                    <dt ng-if="chapter.philanthropy">
                         Philanthropy:
                     </dt>
                     <dd>
@@ -68,7 +65,7 @@
                         <br/>
                         <br/>
                     </dd>
-                    <dt>
+                    <dt ng-if="chapter.potential_new_members">
                         Note to Potential New Members:
                     </dt>
                     <dd>

@@ -352,6 +352,9 @@ class ImageViewSet(viewsets.ModelViewSet):
         q = super(ImageViewSet, self).get_queryset()
         if 'ctype' in self.request.GET and'obj' in self.request.GET:
             return q.filter(content_type_id=self.request.GET['ctype'], object_pk=self.request.GET['obj'])
+        elif 'ctype' in self.request.GET:
+            return q.filter(content_type_id=self.request.GET['ctype'])
+
 
         elif 'user' in self.request.GET:
             return q.filter(user_id=self.request.GET['user'])

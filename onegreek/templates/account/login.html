@@ -5,6 +5,7 @@
 {% load url from future %}
 {% load crispy_forms_tags %}
 {% load socialaccount %}
+{% load staticfiles %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 {% block user_panel %}{% endblock user_panel %}
@@ -14,11 +15,15 @@
   <div class="row">
 
     <div class="span4 offset4">
-    <div class="well centered" style="margin:100px 0; text-align: center;">
-    <hr>
-    <h1>OneGreek.org</h1>
-    <hr>
-
+    <div class="centered" style="margin:100px 0; text-align: center;">
+    
+    <img class="" src="{% static 'img/logos/300x100logo.png' %}">
+    <p class="lead" style="font-size: 13px;">
+      Explore Fraternities. 
+      Register to rush.
+      Attend Events. </br>
+      <em>All through Facebook. Always free.</em>
+    </p>
       {% if socialaccount.providers  %}
       <div class="socialaccount_ballot">
 

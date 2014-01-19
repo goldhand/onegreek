@@ -295,7 +295,7 @@ import urllib2, urllib
 from django.contrib.sites.models import Site
 
 CAPTION = str('OneGreek is redefining Greek recruitment. Review fraternity profiles, register for rush, and manage upcoming events.  All for free, entirely through Facebook.')
-
+#CAPTION = str('OneGreek is redefining Greek recruitment. Explore chapters, register for rush, and manage events.')
 
 @receiver(user_signed_up, dispatch_uid="some.unique.string.id.for.allauth.user_signed_up")
 def post_to_facebook(request, user, **kwargs):
