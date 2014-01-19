@@ -4,12 +4,7 @@
 
 {% block content %}
 
-
-
-<div ng-view></div>
-<script type="text/ng-template" id="detail.html">
-
-    <div>
+    <div ng-controller="ChapterDetailCtrl">
     <div class="span9">
 
       {% if request.user.is_chapter_admin and request.user.chapter_id == chapter.id %}
@@ -213,8 +208,6 @@
         </div>
     </div>
     </div>
-
-    </script>
 
   <script type="text/ng-template" id="RushFormModal.html">
 
