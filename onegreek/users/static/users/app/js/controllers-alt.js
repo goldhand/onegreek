@@ -47,14 +47,14 @@ userControllers.controller('UserGlobalCtrl', [
                             heading: 'Bid List',
                             status: 'pledge',
                             count: $scope.globals.chapter.pledge_count,
-                            order: 2
+                            order: 3
                         },
                         {
                             active: false,
                             heading: 'Rush',
                             status: 'rush',
                             count: $scope.globals.chapter.rush_count,
-                            order: 3
+                            order: 2
                         }
                     ];
 
@@ -486,7 +486,7 @@ userControllers.controller('UserListCtrl', [
             });
         };
 
-        $scope.globals.openCarouselModal = function () {
+        $scope.globals.openCarouselModal = function (slideshow_type) {
             var group_name_prefix = 'chapter_' + $scope.globals.chapter_id;
             var call_group = $scope.filterForGroupName(group_name_prefix + ' Call List');
             var modalInstance = $modal.open({
@@ -501,16 +501,33 @@ userControllers.controller('UserListCtrl', [
                         return call_group;
                     },
                     chapter_id: function () {
-                        return $scope.globals.chapter_id
+                        return $scope.globals.chapter_id;
                     },
                     rush_form_id: function () {
-                        return $scope.globals.rush_form_id
+                        return $scope.globals.rush_form_id;
+                    },
+                    slideshow_type: function() {
+                        return slideshow_type;
+                    },
+                    globals: function() {
+                        return $scope.globals;
                     }
                 }
             });
 
             modalInstance.result.then(function () {
                 $scope.updateUsers($scope.users);
+                $http.get('/api/users/').success(function(data) {
+                    $scope.updateUsers(data);
+                    $scope.globals.users = data;
+                    if(slideshow_type == 'Call List') {
+                        $scope.globals.getGroup('/users/filter/group/', 'Call List');
+                    } else {
+                        $scope.globals.filterForUserStatus('rush');
+                    }
+                    });
+                
+                
             }, function () {});
         };
     }]);
@@ -567,6 +584,10 @@ userControllers.controller('UserDetailCtrl', ['$scope', '$http', '$routeParams',
 }]);
 
 
+
+//*************************** Carousel Modal *************************//
+
+
 userControllers.controller('CarouselModalInstanceCtrl', [
     '$scope',
     '$timeout',
@@ -577,6 +598,8 @@ userControllers.controller('CarouselModalInstanceCtrl', [
     'call_list',
     'rush_form_id',
     'chapter_id',
+    'slideshow_type',
+    'globals',
     function (
         $scope,
         $timeout,
@@ -586,7 +609,9 @@ userControllers.controller('CarouselModalInstanceCtrl', [
         users,
         call_list,
         rush_form_id,
-        chapter_id
+        chapter_id,
+        slideshow_type,
+        globals
         ) {
 
         $scope.users = users;
@@ -594,6 +619,8 @@ userControllers.controller('CarouselModalInstanceCtrl', [
         $scope.events = [];
         $scope.rush_form_id = rush_form_id;
         $scope.chapter_id = chapter_id;
+        $scope.slideshow_type = slideshow_type;
+        $scope.globals = globals;
 
         $scope.getRushEvents = function() {
             $http.get('/api/events/?rush_week=true&nest=true').success(function(data) {

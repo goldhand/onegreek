@@ -65,7 +65,7 @@
                 </tab-heading>
                 <tab-content>
                 {% if request.user.is_chapter_admin %}
-                    <a ng-show="{[{ tab.status == 'rush' }]}" ng-click="globals.openCarouselModal()" class="btn btn-link pull-right">Slide Show</a>
+                    <a ng-show="{[{ tab.status == 'rush' }]}" ng-click="globals.openCarouselModal('Rushees')" class="btn btn-link pull-right">Slide Show</a>
                 {% endif %}
                 </tab-content>
             </tab>
@@ -75,7 +75,7 @@
                 </tab-heading>
                 <tab-content>
                 {% if request.user.is_chapter_admin %}
-                   <a ng-click="globals.openCarouselModal()" class="btn btn-link pull-right">Slide Show</a>
+                   <a ng-click="globals.openCarouselModal('Call List')" class="btn btn-link pull-right">Slide Show</a>
                 {% endif %}
                 </tab-content>
             </tab>
@@ -438,13 +438,13 @@
 
 <div class="container top-bar"></div>
 
-        <carousel interval="5000">
+        <carousel>
             <slide ng-repeat="user in users" active="user.active">
         <div class="modal-header">
             <button type="button" class="close" ng-click="ok()">&times;</button>
                             <h3>
                                 {[{ user.first_name }]} {[{ user.last_name }]}
-                                <small>  -  {[{ user.status }]}</small>
+                                <small>  -  {[{ user.status_display }]}</small>
                             </h3>
         </div>
 
@@ -526,6 +526,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                <div class="btn-group" ng-if="user.status == 'rush'">
+                    <button ng-if="slideshow_type == 'Call List'" type="button" class="btn btn-default" ng-click="modUser(user, 'add', 'rush', 'pledge')">
+                        Add to bid list
+                    </button>
+
+                 
 
                     <button ng-hide="user.is_call" type="button" class="btn btn-default" ng-click="modUser(user, 'add', 'rush', 'call')" ng-model="user.is_call" btn-radio="true">
                         Add to call list
@@ -533,6 +539,12 @@
                     <button ng-show="user.is_call" type="button" class="btn btn-default" ng-click="modUser(user, 'remove', 'rush', 'call')" ng-model="user.is_call" btn-radio="false">
                         Remove from call list
                     </button>
+                </div>
+                <button ng-show="user.status == 'pledge'" ng-click="globals.modUser(user, 'remove', 'pledge', 'rush')">
+                                
+                                Remove from bid list
+                                
+                </button>
 
             {% comment %}
             {# Thumbs up / down call list functionality #}

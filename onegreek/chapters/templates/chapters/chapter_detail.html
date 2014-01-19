@@ -110,7 +110,8 @@
                 {% endif %}
 
                 <tabset ng-cloak>
-                    <tab ng-show="globals.ogLoading.users" heading="Members">
+                
+                    <tab heading="Members" ng-if="users.length > 0">
                         <tab-content>
                         <div class="user-detail media" ng-repeat="user in users">
                             <a href="{[{ user.fb_extra_data.link }]}" target="_blank" class="pull-left" title="{[{ user.first_name }]} on Facebook">
@@ -232,7 +233,7 @@
     {{ chapter.fraternity_title }} has not yet registered with onegreek.
     <br>
     <small>
-    Are you the {{ chapter.fraternity_title }} President, then <a href="#">register {{ chapter.fraternity_title }}.</a>
+    If you are the {{ chapter.fraternity_title }} President, please <a href="#">email info@OneGreek.org{# register {{ chapter.fraternity_title }}#}.</a>
     </small>
     </p>
     {% endif %}

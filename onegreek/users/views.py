@@ -283,18 +283,18 @@ def mod_user_groups(request, format=None):
                 if status == 'rush':
                     if new_status != 'call':
                         # If action: add and status: rush and not new status: call the user is being added to chapter
-                        user.groups.remove(group.id)
+                        user.groups.remove(group.id, chapter.linked_call_group.id)
                         # remove from rush group here because 'add' action won't remove groups otherwise
                         user.chapter = chapter
                         # set chapter for new member
                         user.status = new_status
 
                         #send facebook post for active chapter
-                        post_to_facebook(
-                            user,
-                            chapter=chapter.fraternity_title,
-                            adverb="a registered active of"
-                        )
+                        #post_to_facebook(
+                        #    user,
+                        #    chapter=chapter.fraternity_title,
+                        #    adverb="a registered active of"
+                        #)
 
                     else:
                         user.groups.add(new_group.id)

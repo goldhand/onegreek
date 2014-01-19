@@ -20,11 +20,13 @@
                 <small>{{ object.get_status_display }}</small>
             </h2>
             <h4>
-                {% if object.status != 'rush' %}
+                {% if object.status != 'rush' and object.chapter_id %}
+                <a href="{% url 'chapters:detail' object.chapter_id %}">
                     {{ object.chapter.fraternity.title }}
                     <small>
                         {{ object.chapter.title }} chapter - {{ object.university.title }}
                     </small>
+                  </a>
                 {% endif %}
             </h4>
         </div>
@@ -69,16 +71,12 @@
                                 <li>
                                     <a class="" href="{% url 'account_email' %}">Manage E-Mail</a>
                                 </li>
-                              {% endcomment %}
+                              
                                 <li>
                                     <a class="" href="{% url 'events:list' %}">Events List</a>
                                 </li>
-                                {% if object.chapter %}
-                                    <li>
-                                        <a class=""
-                                           href="{% url 'chapters:detail' object.chapter_id %}">{{ object.chapter.fraternity.title }}</a>
-                                    </li>
-                                {% endif %}
+                                {% endcomment %}
+                                
                                 
                             </ul>
                         </fieldset>
@@ -88,7 +86,7 @@
                     <div class="span3">
                         <fieldset>
                             <legend>
-                                Profile Image
+                                Change Profile Image
                             </legend>
                         </fieldset>
                     </div>
@@ -122,7 +120,7 @@
                             </tab-content>
                           </tab>
                           {% endcomment %}
-                          <tab class="nav-stacked" heading="Upload New Photo" select="setUserImg(2)">
+                          <tab class="nav-stacked" heading="Upload From Computer" select="setUserImg(2)">
                             <tab-content>
                               <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}?next={{ request.path }}" id="avatar-add">
                                 <input class="btn btn-primary btn-small pull-right" type="submit" value="{% trans "Save" %}" ng-click="submit()" />
@@ -131,7 +129,7 @@
                               </form>
                             </tab-content>
                           </tab>
-                          <tab class="nav-stacked" heading="Facebook Photo Albums" select="setUserImg(1)">
+                          <tab class="nav-stacked" heading="Pull From Facebook" select="setUserImg(1)">
                             <tab-content>
                               <div id="fb-select">
                                   <div ng-init="getUser({{ request.user.id }})">
