@@ -10,7 +10,7 @@ var chapterApp = angular.module('chapterApp', [
     'chapterControllers',
     'leftContentControllers',
     'chapterServices',
-    'chapterDirectives'
+    //'chapterDirectives'
 ],
     function($interpolateProvider) {
         $interpolateProvider.startSymbol("{[{");
@@ -21,4 +21,9 @@ var chapterApp = angular.module('chapterApp', [
 chapterApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    $routeProvider.when('/', {
+        templateUrl: 'detail.html',
+        controller: 'ChapterDetailCtrl',
+    });
+    $routeProvider.otherwise({redirectTo: '/'});
 }]);

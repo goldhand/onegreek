@@ -302,6 +302,7 @@
 
 <div class="container top-bar"></div>
 <div class="container page-wrapper">
+    {% block messages %}
     {% if messages %}
         <div class="row">
             {% for message in messages %}
@@ -312,6 +313,7 @@
             {% endfor %}
         </div><!-- .row -->
     {% endif %}
+    {% endblock %}
     {% block profile_complete %}
     {% if request.user.is_authenticated %}
     {% if not request.user.profile_complete %}

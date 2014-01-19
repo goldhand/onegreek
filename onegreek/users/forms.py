@@ -19,8 +19,13 @@ def validate_phone_number(value):
         raise ValidationError(u'%s is not a ten digit phone number' % value)
 
 def validate_gpa(value):
-    if value < 0 or value > 5:
+    if value < 0 or value > 4:
         raise ValidationError(u'%s is not a valid gpa between 0.0 and 4.0' % value)
+
+def validate_hs_gpa(value):
+    if value < 0 or value > 5:
+        raise ValidationError(u'%s is not a valid gpa between 0.0 and 5.0' % value)
+
 
 
 rush_or_active_toggle_widget = \
@@ -38,7 +43,7 @@ rush_or_active_toggle_widget = \
 
 class UserRegisterForm(NgModelFormMixin, forms.ModelForm):
     phone = forms.CharField(validators=[validate_phone_number], required=True)
-    highschool_gpa = forms.FloatField(validators=[validate_gpa], required=False)
+    highschool_gpa = forms.FloatField(validators=[validate_hs_gpa], required=False)
     gpa = forms.FloatField(validators=[validate_gpa], label='Current College GPA (if applicable)', required=False)
 
     first_name = forms.CharField(required=True)

@@ -65,7 +65,7 @@ userApp.controller('ProfileImgCtrl', [
         $scope.submit = function() {
             $http.put('/api/users/' + $scope.user.id + '/', $scope.user).success(function(user_data) {
                 console.log(user_data);
-                $scope.globals.addAlert("success", "Profile image updated. Refresh to see changes.")
+                $scope.globals.addAlert("success", "Profile image updated. Refresh to see changes.");
             });
         };
 
@@ -86,6 +86,9 @@ userApp.controller('ProfileImgCtrl', [
                     album.collapse = true;
                 });
                 console.log($scope.user);
+            }).error(function(data) {
+                $scope.globals.addAlert("error", "Please login again to use facebook photo albums");
+               
             });
         };
         $scope.expandFbAlbum = function(user, album) {

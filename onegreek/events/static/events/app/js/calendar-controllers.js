@@ -330,6 +330,7 @@ eventsApp.controller('EventDetailCtrl', [
         $scope.getImages = function(ctype, obj) {
             $http.get('/api/images/?ctype=' + ctype + '&obj=' + obj).success(function(data) {
                 $scope.event.images = data;
+                console.log(data);
             });
         };
 

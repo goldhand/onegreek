@@ -22,16 +22,16 @@
       {% if socialaccount.providers  %}
       <div class="socialaccount_ballot">
 
-      <div class="btn-group">
-          <a class="btn btn-primary" href="{% provider_login_url "facebook" method="js_sdk" next="/users/~register/" %}">Sign up</a>
-          <a class="btn btn-info" href="{% provider_login_url "facebook" method="js_sdk" next="/users/~redirect/" %}">Log in</a>
-      </div>
-
-          <div class="login-or">{% trans 'or' %}</div>
-
-      <a href="{% url "home" %}?guest=true" title="Continue as guest">Continue as a guest</a>
-
-      </div>
+     
+        <ul class="nav nav-pills nav-stacked">
+          <li class="active">
+            <a class="" href="{% provider_login_url "facebook" method="js_sdk" next="/users/~register/" %}">Sign up</a>
+          </li>
+          <li>
+          <a class="" href="{% provider_login_url "facebook" method="js_sdk" next="/users/~redirect/" %}"><small class="muted">or</small> Sign in</a>
+        </li>
+      </ul>
+      
       </div>
 
 

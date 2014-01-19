@@ -34,17 +34,24 @@
     <hr>
 {% endblock header_content %}
 
-
-{% block content %}
-
-    {% if object == request.user %}
+{% block messages %}
+{{ block.super }}
         <!-- Action buttons -->
+
+        <div class="row">
+            <div class="span12">
       <div ng-controller="AlertCtrl">
         <alert ng-repeat="alert in globals.alerts" type="alert.type" close="globals.closeAlert($index)">{[{ alert.msg }]}</alert>
       </div>
+            </div>
+        </div>
+{% endblock messages %}
+
+{% block content %}
+
 
         <div class="row">
-
+  {% if object == request.user %}
             <div class="span6">
               <h3>Profile</h3>
                         <form class="form-horizontal" method="post"

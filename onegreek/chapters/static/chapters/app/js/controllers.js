@@ -118,11 +118,12 @@ chapterControllers.controller('ChapterDetailCtrl', [
         $scope.getChapter = function(chapter_id) {
             $http.get('/api/chapters/' + chapter_id + '/').success(function(data) {
                 $scope.chapter = data;
+                console.log(data);
                 if(data.rush_url) {
                     $scope.getChapterRush(data.rush_url);
                 }
                 if(data.ctype_id) {
-                    $scope.getComments(data.ctype_id, data.id);
+                    //$scope.getComments(data.ctype_id, data.id);
                     $scope.getImages(data.ctype_id, data.id);
                 }
                 // filters events for chapter
@@ -149,6 +150,7 @@ chapterControllers.controller('ChapterDetailCtrl', [
             $http.get('/api/images/?ctype=' + ctype + '&obj=' + obj).success(function(data) {
 
                 $scope.chapter.images = data;
+                console.log(data);
                 $scope.globals.ogLoading.images = true;
             });
         };
