@@ -177,12 +177,35 @@ userControllers.controller('UserListCtrl', [
 
                                 });
                             } else {
-                                $http.get('/api/users/').success(function(data) {
-                                $scope.globals.updateUsers(data);
-                                $scope.globals.users = data;
-                                $scope.filterForUserStatus('active');
+                                if(data.new_status == 'rush') {
+                                        
+                                    $http.get('/api/users/').success(function(data) {
+                                    
+                                    
+                                        $scope.globals.updateUsers(data);
+                                        $scope.globals.users = data;
+                                        $scope.filterForUserStatus('rush');
+
+                                
 
                                 });
+
+                                        
+                                    } else {
+                                
+                                    $http.get('/api/users/').success(function(data) {
+                                    
+                                    
+                                        $scope.globals.updateUsers(data);
+                                        $scope.globals.users = data;
+                                        $scope.filterForUserStatus('active');
+
+                                
+
+                                });
+
+                                    }
+                                
                             }
                         }
                         

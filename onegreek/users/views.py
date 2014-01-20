@@ -315,7 +315,11 @@ def mod_user_groups(request, format=None):
 
                     # If action: remove and status: active_pending the user is being removed permanently
                     if status == 'active_pending':
+                        
+                        call_group = chapter.linked_call_group
                         user.groups.remove(new_group.id)
+                        user.groups.remove(call_group.id)
+
 
                 user.status = new_status
             else:
