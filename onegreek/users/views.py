@@ -317,8 +317,10 @@ def mod_user_groups(request, format=None):
                     if status == 'active_pending':
                         
                         call_group = chapter.linked_call_group
+                        admin_group = chapter.linked_admin_group
                         user.groups.remove(new_group.id)
                         user.groups.remove(call_group.id)
+                        user.groups.remove(admin_group.id)
 
 
                 user.status = new_status
