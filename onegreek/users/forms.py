@@ -42,7 +42,7 @@ rush_or_active_toggle_widget = \
 
 
 class UserRegisterForm(NgModelFormMixin, forms.ModelForm):
-    phone = forms.CharField(validators=[validate_phone_number], required=True)
+    phone = forms.CharField(validators=[validate_phone_number], label='Phone Number, digits only (e.g 1114443333)', required=True)
     highschool_gpa = forms.FloatField(validators=[validate_hs_gpa], required=False)
     gpa = forms.FloatField(validators=[validate_gpa], label='Current College GPA (if applicable)', required=False)
 
