@@ -24,8 +24,8 @@ Pillow==2.1.0
 
 # For user registration, either via email or social
 # Well-built with regular release cycles!
-git+git://github.com/goldhand/django-allauth
-#django-allauth==0.15.0
+#git+git://github.com/goldhand/django-allauth
+django-allauth==0.15.0
 
 # For the persistance stores
 psycopg2==2.5
